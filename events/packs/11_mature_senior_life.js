@@ -83,7 +83,8 @@ window.defineEvent({
             "happiness": 3,
             "bond": {
               "role": "mentor",
-              "status": "acquaintance"
+              "status": "acquaintance",
+              "metContext": "陶芸教室の先生・仲間"
             }
           },
           "narrative": "ひんやりとした粘土の感触。回転する台の上で、掌の力を微妙にコントロールしながら器の形を整えていく。雑念が消え去り、土と向き合う静かな時間。窯で焼き上がった自分だけの器でお茶を飲むひとときは格別の味わいだった。",
@@ -279,6 +280,15 @@ window.defineEvent({
               "path": "state.mood",
               "op": "add",
               "value": 3
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "club_mate",
+                "status": "close",
+                "metContext": "シニア期の学びを通じて出会った仲間"
+              }
             }
           ]
         }
@@ -320,6 +330,15 @@ window.defineEvent({
               "path": "skill.communication_skill",
               "op": "add",
               "value": 5
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "neighbor",
+                "status": "close",
+                "metContext": "退職後の地域・趣味活動の仲間"
+              }
             }
           ]
         }
@@ -441,6 +460,15 @@ window.defineEvent({
               "path": "state.stress",
               "op": "add",
               "value": -2
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "neighbor",
+                "status": "close",
+                "metContext": "老後に支え合う地域の友人"
+              }
             }
           ]
         }

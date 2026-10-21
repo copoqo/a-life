@@ -380,6 +380,12 @@ function applyStateAndStageRules(id, minAge, maxAge, presets, choices) {
   }
 
   // 4. パートナー性別・性的指向の整合性
+  if (id === 'same_sex_awakening') {
+    pSet.add('same_sex_open');
+  }
+  if (id === 'partner_bereavement') {
+    pSet.add('partnered');
+  }
   if (id === 'same_sex_first_kiss') {
     pSet.add('same_sex_open');
     pSet.add('first_kiss_unexperienced');
@@ -470,8 +476,223 @@ function applyStateAndStageRules(id, minAge, maxAge, presets, choices) {
     minAge = 14;
   }
 
+  // 7. 選択肢ごとの人間関係 (bond) 効果の付与
+  const bondMap = CHOICE_BOND_EFFECTS[id];
+  if (bondMap && Array.isArray(choices)) {
+    choices.forEach((c, idx) => {
+      const bondSpec = bondMap[idx];
+      if (bondSpec && c && Array.isArray(c.outcomes) && c.outcomes[0]) {
+        const effs = c.outcomes[0].effects;
+        if (Array.isArray(effs)) {
+          c.outcomes[0].effects = effs.filter(eff => eff.path !== 'bond');
+          c.outcomes[0].effects.push({
+            path: 'bond',
+            op: 'set',
+            value: bondSpec
+          });
+        } else if (effs && typeof effs === 'object') {
+          effs.bond = bondSpec;
+        } else {
+          c.outcomes[0].effects = [{
+            path: 'bond',
+            op: 'set',
+            value: bondSpec
+          }];
+        }
+      }
+    });
+  }
+
   return { minAge, maxAge, presets: Array.from(pSet) };
 }
+
+const EVENT_OUTCOMES_ADDITIONS = {
+  confessed_to: ['rejection', 'friend_accept', 'friend_consider', 'accept_partner', 'accept_partner_kiss'],
+  street_encounter_allure: ['none', 'none', 'meeting_stranger', 'closer_stranger', 'intimate_stranger'],
+  adult_romantic_encounter: ['romantic_encounter', 'none'],
+  adult_marriage_proposal: ['marry', 'mutual_talk', 'mutual_talk'],
+  marriage_ceremony: ['marry', 'marry'],
+  marital_infidelity_temptation: ['infidelity', 'boundary', 'infidelity'],
+  encounter_teacher: ['meeting_teacher', 'meeting_teacher', 'meeting_teacher', 'meeting_teacher', 'meeting_teacher'],
+  same_sex_awakening: ['same_sex_awakening', 'reflection'],
+  same_sex_first_kiss: ['same_sex_first_kiss', 'reflection'],
+  same_sex_secret_fingers: ['shared_intimacy', 'shared_intimacy'],
+  same_sex_intimate_bath: ['shared_intimacy', 'shared_intimacy'],
+  same_sex_society_bond: ['mutual_talk', 'mutual_talk'],
+  teen_friend_fallout: ['reconcile_friend', 'distance']
+};
+
+const CHOICE_BOND_EFFECTS = {
+  fixed_milestone_sex_education: {
+    2: { role: 'classmate', status: 'close', gender: 'female', metContext: '保健の授業後に語り合った友達' }
+  },
+  fixed_milestone_coming_of_age_18: {
+    1: { role: 'classmate', status: 'close', metContext: '成人式で再会した同級生' }
+  },
+  fixed_milestone_age_20_birthday: {
+    0: { role: 'friend', status: 'close', metContext: '20歳の誕生日に乾杯した大切な人' },
+    1: { role: 'bar_encounter', status: 'acquaintance', metContext: '20歳の夜にバーで出会った人' }
+  },
+  childhood_daily_play: {
+    0: { role: 'childhood_friend', status: 'acquaintance', metContext: '砂場遊びの友達' },
+    1: { role: 'childhood_friend', status: 'acquaintance', metContext: '一緒に泥団子を作った友達' }
+  },
+  elem_bicycle_scraped_knee: {
+    1: { role: 'childhood_friend', status: 'close', metContext: '自転車練習で励ましてくれた友達' }
+  },
+  elem_park_stranger_swings: {
+    1: { role: 'friend', status: 'acquaintance', metContext: '夕暮れ公園のブランコで出会った子' }
+  },
+  child_first_friend: {
+    0: { role: 'childhood_friend', status: 'close', gender: 'female', affection: 65, trust: 60, metContext: '放課後の秘密を分け合った親友' },
+    1: { role: 'classmate', status: 'acquaintance', gender: 'female', metContext: '放課後に話したクラスメイト' }
+  },
+  elem_cram_school_first_day: {
+    1: { role: 'cram_school_friend', status: 'acquaintance', gender: 'female', metContext: '進学塾で隣の席になった他校の子' }
+  },
+  elem_cram_school_steamed_bun: {
+    0: { role: 'cram_school_friend', status: 'close', gender: 'female', metContext: '塾帰りに肉まんを分け合った親友' },
+    1: { role: 'cram_school_friend', status: 'close', gender: 'female', metContext: '模試のクラスアップを誓った塾仲間' }
+  },
+  elem_sleepover_pajama_party: {
+    0: { role: 'friend', status: 'close', gender: 'female', metContext: 'お泊まり会で夜更かしした友達' },
+    1: { role: 'friend', status: 'close', gender: 'female', metContext: 'お泊まり会で本音を話した親友' }
+  },
+  elem_secret_base_shrine: {
+    0: { role: 'childhood_friend', status: 'close', metContext: '秘密基地の仲間' },
+    1: { role: 'childhood_friend', status: 'close', metContext: '秘密基地の掟を交わした仲間' }
+  },
+  elem_dodgeball_rivalry: {
+    0: { role: 'classmate', status: 'acquaintance', gender: 'male', metContext: 'ドッジボールで競い合った男子' },
+    1: { role: 'classmate', status: 'acquaintance', gender: 'male', metContext: 'ドッジボールのライバル男子' }
+  },
+  elem_graduation_autograph_tears: {
+    0: { role: 'classmate', status: 'close', gender: 'male', romanticInterest: 65, metContext: '卒業式で寄せ書きをくれた男子' },
+    1: { role: 'childhood_friend', status: 'close', gender: 'female', affection: 70, metContext: '小学校卒業時に誓い合った親友' }
+  },
+  child_club: {
+    0: { role: 'club_mate', status: 'close', metContext: '部活で共に汗を流した仲間' },
+    1: { role: 'club_mate', status: 'acquaintance', metContext: '部活の仲間' }
+  },
+  teen_club_activity_tournament: {
+    0: { role: 'club_mate', status: 'close', metContext: '最後の地区総体を共に戦った部活仲間' },
+    1: { role: 'club_mate', status: 'close', metContext: '部活の大会で支え合った仲間' }
+  },
+  teen_first_smartphone_group: {
+    0: { role: 'classmate', status: 'close', metContext: '深夜のグループ通話の仲間' }
+  },
+  teen_cultural_festival_haunted: {
+    0: { role: 'classmate', status: 'close', metContext: '文化祭を一緒に盛り上げた同級生' },
+    1: { role: 'classmate', status: 'acquaintance', metContext: '文化祭のクラスメイト' }
+  },
+  teen_school_trip_night: {
+    0: { role: 'friend', status: 'close', gender: 'female', metContext: '修学旅行の夜に恋バナした友達' }
+  },
+  teen_karaoke_afterschool: {
+    0: { role: 'friend', status: 'close', metContext: '放課後カラオケで盛り上がった友達' },
+    1: { role: 'friend', status: 'acquaintance', metContext: '放課後カラオケの友達' }
+  },
+  teen_first_love: {
+    0: { role: 'classmate', status: 'acquaintance', romanticInterest: 78, affection: 48, metContext: '密かに初恋を寄せた同級生' },
+    1: { role: 'classmate', status: 'close', romanticInterest: 78, affection: 55, metContext: '初恋の相手' }
+  },
+  teen_first_part_time_job: {
+    0: { role: 'colleague', status: 'close', metContext: '初バイト先の仲間' },
+    1: { role: 'colleague', status: 'acquaintance', metContext: '初バイト先の同僚' }
+  },
+  friends_story: {
+    2: { role: 'friend', status: 'close', gender: 'female', metContext: '恋や経験談を話してくれた友達' },
+    3: { role: 'friend', status: 'close', gender: 'female', metContext: '秘密の関心を打ち明け合った親友' },
+    4: { role: 'friend', status: 'close', gender: 'female', metContext: '深い経験談を語り合った友達' }
+  },
+  mild_sexuality_first_period_panic: {
+    0: { role: 'friend', status: 'close', gender: 'female', metContext: '初めての生理で助けてくれた友達' }
+  },
+  mild_sexuality_accidental_brush: {
+    0: { role: 'classmate', status: 'acquaintance', gender: 'male', romanticInterest: 68, metContext: '理科室で隣り合った男子' }
+  },
+  mild_sexuality_whisper_earlobe: {
+    0: { role: 'senior', status: 'close', gender: 'male', romanticInterest: 72, metContext: '図書室で声をかけてきた先輩' }
+  },
+  stretched_secret_piercing: {
+    0: { role: 'friend', status: 'close', gender: 'female', metContext: 'お揃いのピアスを開けた親友' }
+  },
+  stretched_night_drive_view: {
+    0: { role: 'senior', status: 'close', gender: 'male', romanticInterest: 70, metContext: '夜のドライブに誘ってくれた先輩' }
+  },
+  stretched_bar_counter_solo: {
+    0: { role: 'bar_encounter', status: 'acquaintance', gender: 'male', metContext: 'バーのカウンターで出会った人' }
+  },
+  stretched_night_club_bass: {
+    0: { role: 'friend', status: 'acquaintance', metContext: 'ナイトクラブで意気投合した仲間' }
+  },
+  hobby: {
+    0: { role: 'club_mate', status: 'acquaintance', metContext: '新しい趣味を通じて出会った仲間' }
+  },
+  local_community: {
+    0: { role: 'neighbor', status: 'acquaintance', metContext: '地域活動で知り合ったご近所さん' }
+  },
+  young_mentor: {
+    0: { role: 'mentor', status: 'close', trust: 60, metContext: '親身に導いてくれた職場の先輩' }
+  },
+  youth_job_hunting_suit: {
+    0: { role: 'colleague', status: 'acquaintance', metContext: '就活の選考で出会った同期' },
+    1: { role: 'colleague', status: 'close', metContext: '就活を共に励まし合った仲間' }
+  },
+  youth_live_concert_fever: {
+    0: { role: 'club_mate', status: 'acquaintance', metContext: 'ライブ会場で意気投合したファン仲間' }
+  },
+  career_workplace_friend: {
+    0: { role: 'colleague', status: 'close', metContext: '仕事以外でも親しくなった職場の同僚' },
+    1: { role: 'colleague', status: 'acquaintance', metContext: '職場の信頼できる同僚' }
+  },
+  career_unemployment: {
+    3: { role: 'colleague', status: 'close', trust: 58, metContext: '退職時に相談に乗ってくれた先輩・同僚' }
+  },
+  travel_company: {
+    0: { role: 'colleague', status: 'close', metContext: '社員旅行で親睦を深めた同僚' },
+    2: { role: 'colleague', status: 'close', metContext: '社員旅行で本音を語り合った同僚' }
+  },
+  travel_friends: {
+    0: { role: 'friend', status: 'close', gender: 'female', metContext: '温泉旅行で本音を語り明かした女友達' },
+    1: { role: 'friend', status: 'close', gender: 'female', metContext: '温泉街を一緒に散策した女友達' }
+  },
+  adult_cooking_class_challenge: {
+    0: { role: 'club_mate', status: 'acquaintance', metContext: '週末の料理教室の仲間' }
+  },
+  adult_pet_adoption_shelter: {
+    0: { role: 'friend', status: 'close', metContext: '保護猫の譲渡会で知り合った友人' }
+  },
+  adult_marathon_finish_line: {
+    0: { role: 'club_mate', status: 'acquaintance', metContext: '市民マラソンのランナー仲間' },
+    1: { role: 'club_mate', status: 'close', metContext: '市民マラソンを共に完走した仲間' }
+  },
+  adult_career_promotion_responsibility: {
+    0: { role: 'junior', status: 'close', trust: 58, metContext: 'リーダーとして指導した信頼できる後輩' }
+  },
+  adult_class_reunion_thirties: {
+    0: { role: 'classmate', status: 'close', metContext: '三十歳の同窓会で再会した旧友' },
+    1: { role: 'classmate', status: 'close', romanticInterest: 72, metContext: '同窓会で語り合った昔の想い人' }
+  },
+  life_friend_marriage: {
+    0: { role: 'friend', status: 'close', metContext: '結婚式で幸せを分かち合った親友' }
+  },
+  life_friend_distance: {
+    0: { role: 'friend', status: 'close', metContext: '久しぶりに連絡を取り合って絆が戻った友人' }
+  },
+  mature_pottery_wheel_focus: {
+    0: { role: 'mentor', status: 'acquaintance', metContext: '陶芸教室の先生・仲間' }
+  },
+  older_new_hobby: {
+    1: { role: 'club_mate', status: 'close', metContext: 'シニア期の学びを通じて出会った仲間' }
+  },
+  retirement: {
+    0: { role: 'neighbor', status: 'close', metContext: '退職後の地域・趣味活動の仲間' }
+  },
+  older_support_network: {
+    0: { role: 'neighbor', status: 'close', metContext: '老後に支え合う地域の友人' }
+  }
+};
 
 function cleanEventSchema(e) {
   let minAge = e.age ? e.age[0] : e.min;
@@ -571,7 +792,8 @@ function cleanEventSchema(e) {
 
   if (cleanChoices.length > 0) out.choices = cleanChoices;
   if (e.effects) out.effects = e.effects;
-  if (e.outcomes) out.outcomes = e.outcomes;
+  const outList = EVENT_OUTCOMES_ADDITIONS[e.id] || e.outcomes;
+  if (outList) out.outcomes = outList;
   if (e.sexualEffects) out.sexualEffects = e.sexualEffects;
   if (e.diary) out.diary = e.diary;
   const femVar = e.femaleVariant || FEMALE_VARIANTS_ADDITIONS[e.id];

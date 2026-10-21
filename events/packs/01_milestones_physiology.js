@@ -58,7 +58,13 @@ window.defineEvent({
           "effects": {
             "communication": 2,
             "intimacyNeed": 2,
-            "happiness": 2
+            "happiness": 2,
+            "bond": {
+              "role": "classmate",
+              "status": "close",
+              "gender": "female",
+              "metContext": "保健の授業後に語り合った友達"
+            }
           },
           "narrative": "「ねえ、胸のところ、チクチク痛くなったりしない？」「うん、私も……！」誰もいない渡り廊下の隅で、友達と小声でささやき合った。自分だけじゃないんだという安堵と、大人の身体へと歩き出す秘密を共有した絆が温かかった。",
           "id": "outcome_2"
@@ -114,7 +120,12 @@ window.defineEvent({
           "effects": {
             "communication": 3,
             "happiness": 3,
-            "intimacyNeed": 1
+            "intimacyNeed": 1,
+            "bond": {
+              "role": "classmate",
+              "status": "close",
+              "metContext": "成人式で再会した同級生"
+            }
           },
           "narrative": "式典会場のあちこちで響く歓声。すっかり大人びた旧友たちと写真を撮り合い、学生時代の思い出話に花を咲かせた。「みんな大人になったね」と笑い合いながら、温かい絆を再確認した。",
           "id": "outcome_1"
@@ -238,7 +249,12 @@ window.defineEvent({
           "effects": {
             "happiness": 3,
             "intimacyNeed": 2,
-            "communication": 2
+            "communication": 2,
+            "bond": {
+              "role": "friend",
+              "status": "close",
+              "metContext": "20歳の誕生日に乾杯した大切な人"
+            }
           },
           "narrative": "「20歳のお誕生日おめでとう」と掲げられたグラス。カチンと鳴る澄んだ音とともに、甘いカクテルをひと口含む。喉を滑り落ちる心地よい熱と、じんわりと温まる身体。大人たちの仲間入りをした実感が嬉しかった。",
           "id": "outcome_0"
@@ -254,7 +270,12 @@ window.defineEvent({
           "effects": {
             "curiosity": 2,
             "initiative": 2,
-            "selfKnowledge": 2
+            "selfKnowledge": 2,
+            "bond": {
+              "role": "bar_encounter",
+              "status": "acquaintance",
+              "metContext": "20歳の夜にバーで出会った人"
+            }
           },
           "narrative": "間接照明が灯る落ち着いたバー。マスターに勧められたお酒をゆっくり味わう。タバコの煙の香りや静かなジャズ、グラスを傾ける大人たちの世界に足を踏み入れたスリルに胸が躍った。",
           "id": "outcome_1"

@@ -43,7 +43,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "general",
   "presets": [
-    "school_student"
+    "school_student",
+    "same_sex_open"
   ],
   "weight": {
     "base": 18,
@@ -107,6 +108,10 @@ window.defineEvent({
         }
       ]
     }
+  ],
+  "outcomes": [
+    "same_sex_awakening",
+    "reflection"
   ],
   "diary": [
     "同じ女の子の身体なのに、あんなに胸が締めつけられて下腹が熱くなるなんて。汗の匂いと透ける肌の白さが頭から離れず、夜になっても秘所がじっとりと濡れていた。",
@@ -495,6 +500,10 @@ window.defineEvent({
       ]
     }
   ],
+  "outcomes": [
+    "same_sex_first_kiss",
+    "reflection"
+  ],
   "diary": [
     "男の子の唇とは違う、柔らかく湿った彼女の唇の感触。触れ合った瞬間、身体中に電流が走り、舌が絡み合うたびに下腹の奥が蜜で満たされていくのが分かった。",
     "唇が触れた瞬間の甘い痺れ。静かな図書室で響く互いの呼吸音に、身体中が熱く蕩けてしまいそうだった。"
@@ -642,9 +651,11 @@ window.defineEvent({
     }
   ],
   "outcomes": [
-    "meeting",
-    "none",
-    "none"
+    "rejection",
+    "friend_accept",
+    "friend_consider",
+    "accept_partner",
+    "accept_partner_kiss"
   ]
 });
 
@@ -710,6 +721,10 @@ window.defineEvent({
         }
       ]
     }
+  ],
+  "outcomes": [
+    "shared_intimacy",
+    "shared_intimacy"
   ],
   "diary": [
     "布団の中で衣擦れの音を立てながら、濡れた秘所に指先を深く沈められた。水音を立てるたび、彼女の指がキュウキュウと締めつけられ、声を殺して何度も絶頂した。",
@@ -1048,6 +1063,10 @@ window.defineEvent({
       ]
     }
   ],
+  "outcomes": [
+    "shared_intimacy",
+    "shared_intimacy"
+  ],
   "diary": [
     "温かいシャワーの下で抱き締め合い、濡れた肌と肌を密着させた。愛液と湯水が混ざり合いながら、彼女の指に掻き回される感触に、声を上げて震えた。",
     "湯船の中で絡み合う脚。お互いの身体を隅々まで知り尽くすように触れ合い、身体の芯まで蕩けるような快楽に満たされた。"
@@ -1118,6 +1137,13 @@ window.defineEvent({
         "secrecy": 5
       }
     }
+  ],
+  "outcomes": [
+    "none",
+    "none",
+    "meeting_stranger",
+    "closer_stranger",
+    "intimate_stranger"
   ],
   "variations": [
     {
@@ -1309,6 +1335,10 @@ window.defineEvent({
         }
       ]
     }
+  ],
+  "outcomes": [
+    "romantic_encounter",
+    "none"
   ],
   "diary": [
     "今日、素敵な人と出会った。落とし物を拾ってくれた時の優しい笑顔が頭から離れない。思い切って連絡先を交換したから、今度の週末が待ちきれない！",
@@ -2147,6 +2177,10 @@ window.defineEvent({
         }
       ]
     }
+  ],
+  "outcomes": [
+    "mutual_talk",
+    "mutual_talk"
   ],
   "diary": [
     "誰に認められなくとも、この愛は本物。指輪を交わし、彼女の温かい身体を抱きしめた夜、涙が止まらなかった。",

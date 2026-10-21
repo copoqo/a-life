@@ -242,7 +242,8 @@ window.defineEvent({
             "bond": {
               "role": "friend",
               "status": "close",
-              "gender": "female"
+              "gender": "female",
+              "metContext": "初めての生理で助けてくれた友達"
             }
           },
           "narrative": "放課後、椅子から立ち上がった瞬間に感じた下腹部のぬるりとした重み。スカートの裏側に小さな赤い染みを見つけて血の気が引いた。パニックになりかけた私に、仲良しの友達が何も言わずに自分のカーディガンを腰に巻いてくれた。「保健室、一緒に行こ」。保健室の先生からナプキンをもらい、優しく説明を受けながら、大人の女性の身体になった重みと、女友達の温かい絆に涙がこぼれた。",
@@ -439,7 +440,9 @@ window.defineEvent({
             "bond": {
               "role": "classmate",
               "status": "acquaintance",
-              "gender": "male"
+              "gender": "male",
+              "romanticInterest": 68,
+              "metContext": "理科室で隣り合った男子"
             }
           },
           "narrative": "雨の日の通学電車。急ブレーキで揺れた瞬間、吊り革を掴む隣の男子の二の腕が、私の肩と薄い制服の胸元にぐっと密着した。女子とは全く違う、硬い筋肉の感触と男の子特有の石鹸混じりの汗の匂い。びりりと背筋に電流が走ったように全身が硬直した。相手が「あ、ごめん」と小声で謝ったけれど、触れ合っていた場所が火照ったように熱く、下腹部の奥がきゅんと痺れて次の駅まで息を止めるように俯いた。",
@@ -725,7 +728,8 @@ window.defineEvent({
             "stress": -2,
             "bond": {
               "role": "club_mate",
-              "status": "close"
+              "status": "close",
+              "metContext": "最後の地区総体を共に戦った部活仲間"
             }
           },
           "narrative": "体育館の床に滴る汗と、メガホンの大歓声。苦しい練習を共にしてきた仲間と円陣を組み、最後の一秒まで全力でボールを追いかけた。試合が終わった瞬間、勝敗を超えて全員で抱き合い、熱い涙が頬を濡らした。",
@@ -742,7 +746,12 @@ window.defineEvent({
           "effects": {
             "communication": 3,
             "morality": 2,
-            "happiness": 3
+            "happiness": 3,
+            "bond": {
+              "role": "club_mate",
+              "status": "close",
+              "metContext": "部活の大会で支え合った仲間"
+            }
           },
           "narrative": "選手たちにタオルと冷たいドリンクを手渡し、声をからして応援した。自分が支えたチームが粘り強く戦う姿に胸が熱くなり、チームの一員としての誇りを深く実感した。",
           "id": "outcome_1"
@@ -836,7 +845,12 @@ window.defineEvent({
           "effects": {
             "happiness": 4,
             "communication": 3,
-            "curiosity": 2
+            "curiosity": 2,
+            "bond": {
+              "role": "classmate",
+              "status": "close",
+              "metContext": "深夜のグループ通話の仲間"
+            }
           },
           "narrative": "手に入れたばかりの自分だけのスマートフォン。可愛いケースをつけ、仲の良い友達とグループを作った。ベッドの中でイヤホンを耳に入れ、深夜まで他愛のないおしゃべりで笑い転げる時間は魔法のようだった。",
           "id": "outcome_0"
@@ -943,6 +957,10 @@ window.defineEvent({
         }
       ]
     }
+  ],
+  "outcomes": [
+    "reconcile_friend",
+    "distance"
   ],
   "diary": [
     "夕暮れの教室で涙を流しながら本音をぶつけ合った。雨降って地固まるように、二人の絆がより深いものになった。",
@@ -1087,7 +1105,8 @@ window.defineEvent({
             "communication": 2,
             "bond": {
               "role": "classmate",
-              "status": "close"
+              "status": "close",
+              "metContext": "文化祭を一緒に盛り上げた同級生"
             }
           },
           "narrative": "絵の具とティッシュで作ったリアルな傷メイクに、暗闇から飛び出すタイミングの猛特訓。扉が開いて入ってきた他校の生徒や後輩が「ギャーッ！」と本気で悲鳴を上げた瞬間、物陰で友達とハイタッチして笑い転げた。",
@@ -1104,7 +1123,12 @@ window.defineEvent({
           "effects": {
             "communication": 3,
             "happiness": 3,
-            "leadership": 1
+            "leadership": 1,
+            "bond": {
+              "role": "classmate",
+              "status": "acquaintance",
+              "metContext": "文化祭のクラスメイト"
+            }
           },
           "narrative": "廊下にできた大行列をテキパキと案内し、待ち時間の間もお客さんを楽しませた。教室の外まで響く悲鳴と笑い声。クラス全員で一つのものを作り上げた達成感に包まれた。",
           "id": "outcome_1"
@@ -1146,7 +1170,8 @@ window.defineEvent({
             "bond": {
               "role": "friend",
               "status": "close",
-              "gender": "female"
+              "gender": "female",
+              "metContext": "修学旅行の夜に恋バナした友達"
             }
           },
           "narrative": "消灯のベルが鳴った後の旅館の広い和室。並べられた敷布団の上で、廊下の見回り先生の足音が遠ざかるのを確認して一斉に起き上がった。懐中電灯の小さな光を囲み、普段は言えない将来の夢や、誰が好きかという秘密の告白で朝方まで小声で語り明かした。",
@@ -1258,7 +1283,8 @@ window.defineEvent({
             "communication": 2,
             "bond": {
               "role": "friend",
-              "status": "acquaintance"
+              "status": "close",
+              "metContext": "放課後カラオケで盛り上がった友達"
             }
           },
           "narrative": "テスト終わりの放課後、友達と駆け込んだ駅前のカラオケボックス。山盛りのフライドポテトをつまみながら、マイクを握って大熱唱。タンバリンを激しく打ち鳴らして大笑いし、日頃のストレスが綺麗さっぱり吹き飛んだ。",
@@ -1275,7 +1301,12 @@ window.defineEvent({
           "effects": {
             "happiness": 3,
             "aesthetics": 2,
-            "selfKnowledge": 2
+            "selfKnowledge": 2,
+            "bond": {
+              "role": "friend",
+              "status": "acquaintance",
+              "metContext": "放課後カラオケの友達"
+            }
           },
           "narrative": "照明を少し落として、大好きなバラードをしっとり歌った。曲が終わった瞬間の友達の「鳥肌立った！」という歓声が嬉しくて、温かい気持ちになった。",
           "id": "outcome_1"
@@ -1319,8 +1350,11 @@ window.defineEvent({
               "passion": 3
             },
             "bond": {
-              "role": "classmate",
-              "status": "close"
+              "role": "senior",
+              "status": "close",
+              "gender": "male",
+              "romanticInterest": 72,
+              "metContext": "図書室で声をかけてきた先輩"
             }
           },
           "narrative": "夕暮れの図書室の奥、高い本棚に囲まれた静寂の中。背伸びして高い棚の本を取ろうとした時、背後からスッと伸びてきた腕が本を取ってくれた。その瞬間、耳元すれすれの距離で「これ探してたの？」と囁かれた熱い吐息。湿り気を帯びた息が耳たぶから首筋を撫でた途端、ぞくぞくっと鳥肌が立ち、足の力が抜けそうになった。振り向くと至近距離にある相手の瞳。心臓が跳ね上がり、声も出ないまま本を受け取って俯いた。",
@@ -1376,7 +1410,19 @@ window.defineEvent({
           "id": "outcome_0",
           "weight": 1,
           "description": "熱い想いを胸に秘め、日記に赤裸々な恋心を綴る。",
-          "effects": []
+          "effects": [
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "classmate",
+                "status": "acquaintance",
+                "romanticInterest": 78,
+                "affection": 48,
+                "metContext": "密かに初恋を寄せた同級生"
+              }
+            }
+          ]
         }
       ]
     },
@@ -1398,6 +1444,17 @@ window.defineEvent({
               "path": "state.stress",
               "op": "add",
               "value": 1
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "classmate",
+                "status": "close",
+                "romanticInterest": 78,
+                "affection": 55,
+                "metContext": "初恋の相手"
+              }
             }
           ]
         }
@@ -1735,6 +1792,16 @@ window.defineEvent({
               "path": "state.current_libido",
               "op": "add",
               "value": 15
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "friend",
+                "status": "close",
+                "gender": "female",
+                "metContext": "恋や経験談を話してくれた友達"
+              }
             }
           ]
         }
@@ -1758,6 +1825,16 @@ window.defineEvent({
               "path": "state.current_libido",
               "op": "add",
               "value": 20
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "friend",
+                "status": "close",
+                "gender": "female",
+                "metContext": "秘密の関心を打ち明け合った親友"
+              }
             }
           ]
         }
@@ -1786,6 +1863,16 @@ window.defineEvent({
               "path": "state.current_embarrassment",
               "op": "add",
               "value": 10
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "friend",
+                "status": "close",
+                "gender": "female",
+                "metContext": "深い経験談を語り合った友達"
+              }
             }
           ]
         }
@@ -1942,7 +2029,9 @@ window.defineEvent({
             "stress": -1,
             "bond": {
               "role": "friend",
-              "status": "close"
+              "status": "close",
+              "gender": "female",
+              "metContext": "お揃いのピアスを開けた親友"
             }
           },
           "narrative": "友達の部屋のこたつに入り、保冷剤で感覚がなくなるまで冷やした耳たぶ。位置を決めて印をつけ、互いに手を握り合ってピアッサーを押し込んだ。パチン、という乾いた音と共に走る鈍い熱と痛み。鏡を覗くと、耳元にキラリと小さなシルバースタッドが光っている。親や学校の敷いたレールから少しだけはみ出したような、甘美な自由がそこにあった。",
@@ -2057,7 +2146,8 @@ window.defineEvent({
             "stress": 1,
             "bond": {
               "role": "colleague",
-              "status": "acquaintance"
+              "status": "close",
+              "metContext": "初バイト先の仲間"
             }
           },
           "narrative": "ピシッとした制服に身を包み、ハンディの使い方とお辞儀の角度を必死で頭に叩き込んだ。ピークタイムの忙しさに目が回りそうになりながらも、お客様からの「ありがとう」と、月末に手渡された給与明細の重みに社会の一員となった実感が湧いた。",
@@ -2075,7 +2165,12 @@ window.defineEvent({
             "money": 4,
             "health": 2,
             "knowledge": 2,
-            "independence": 2
+            "independence": 2,
+            "bond": {
+              "role": "colleague",
+              "status": "acquaintance",
+              "metContext": "初バイト先の同僚"
+            }
           },
           "narrative": "厨房での仕込みや片付けを素早くテキパキとこなした。店長から「助かるよ」と褒められ、自分の手で稼いだお金で欲しかった靴を買いに行った時の喜びは格別だった。",
           "id": "outcome_1"
@@ -2257,7 +2352,9 @@ window.defineEvent({
             "bond": {
               "role": "senior",
               "status": "close",
-              "gender": "male"
+              "gender": "male",
+              "romanticInterest": 70,
+              "metContext": "夜のドライブに誘ってくれた先輩"
             }
           },
           "narrative": "少し年上の知り合いが運転する車の助手席。重厚なドアが閉まった瞬間、街の喧騒が遮断され、革シートの独特な匂いと静かな音楽だけが車内を満たす。首都高のカーブを抜けるたび、身体に心地よい遠心力がかかり、並んで座る相手の横顔が街灯の光に照らされる。子供の頃には知らなかった夜の東京の美しさと、助手席に座る資格を得たような優越感に息を呑んだ。",
@@ -2614,7 +2711,8 @@ window.defineEvent({
             "bond": {
               "role": "bar_encounter",
               "status": "acquaintance",
-              "gender": "male"
+              "gender": "male",
+              "metContext": "バーのカウンターで出会った人"
             }
           },
           "narrative": "一枚板の重厚なカウンターに腰掛け、「柑橘系でさっぱりしたショートカクテルを」と静かに注文。シェイカーを振るリズミカルな氷の音、薄張りのカクテルグラスに注がれる淡いエメラルドグリーンの液体。冷たいグラスに唇を触れ、アルコールの刺激が喉を通り抜ける時、居酒屋の喧騒とは違う、洗練された静寂をひとりで嗜む大人の贅沢に心が満たされた。",
@@ -2675,7 +2773,8 @@ window.defineEvent({
             },
             "bond": {
               "role": "friend",
-              "status": "acquaintance"
+              "status": "acquaintance",
+              "metContext": "ナイトクラブで意気投合した仲間"
             }
           },
           "narrative": "地下への階段を降り、分厚い防音ドアを開けた瞬間に身体を直撃する大音量のキックベース。スモークが焚かれた暗闇の中、緑や青のレーザー光線が交錯する。プラスチックカップのジントニックを飲み干し、押し寄せる人々の波に混ざって音の洪水に身を浸す。骨まで震わせる重低音が理性のリミッターを解除し、日常のしがらみを全て脱ぎ捨てたような爆発的な快感に酔い痴れた。",

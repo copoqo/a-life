@@ -1,5 +1,5 @@
 'use strict';
-const BUILD_VERSION = 'v1.20.0 (b20261021-1)';
+const BUILD_VERSION = 'v1.22.0 (b20261021-3)';
 (function initBuildVersion() {
   const verEl = document.getElementById('buildVersion');
   if (verEl) verEl.textContent = BUILD_VERSION;
@@ -1117,6 +1117,11 @@ function makeState(seed) {
     pending: null,
     history: [],
     yearEvents: [],
+    monthEvents: [],
+    eventsThisYear: 0,
+    sweetThisYear: false,
+    crisisThisYear: false,
+    tabooCountThisYear: 0,
     chains: [],
     showImpactInHistory: false,
     finished: false
@@ -1152,9 +1157,27 @@ function changeSummary(before, after) {
     if (Math.abs(dCash) >= 10000) changes.push(`所持金${dCash > 0 ? '+' : ''}${Math.round(dCash / 10000)}万円`);
   }
   if (before.occupation && after.occupation && before.occupation !== after.occupation) changes.push(`${after.occupation}`);
-  if (after.bonds?.length > before.bonds?.length) changes.push(`新しい出会い ${after.bonds.length - before.bonds.length}人`);
-  const statuses = after.bonds?.filter(b => before.bonds?.some(a => a.id === b.id && a.status !== b.status)).map(b => `${b.name}：${({ partner: '交際開始', former: '交際終了', close: '親しい人になった' })[b.status] || '関係が変化'}`) || [];
-  return [...changes, ...statuses].join(' / ') || '目立った数値の変化はなかった';
+  const statusNameMap = { acquaintance: '知人', close: '親しい友人', partner: '交際中', spouse: '配偶者', former: '元交際', widowed: '死別' };
+  const newBonds = (after.bonds || []).filter(b => !(before.bonds || []).some(a => a.id === b.id));
+  if (newBonds.length > 0) {
+    newBonds.forEach(b => {
+      const rLabel = BOND_ROLE_LABELS[b.role] || '知人';
+      const sLabel = statusNameMap[b.status] || b.status;
+      changes.push(`人間関係＋${b.name}（${rLabel}・${sLabel}）`);
+    });
+  }
+  const statusChanges = (after.bonds || []).filter(b => (before.bonds || []).some(a => a.id === b.id && a.status !== b.status)).map(b => `${b.name}：${({ spouse: '結婚（配偶者）', partner: '交際開始', former: '関係解消', widowed: '死別', close: '親しい友人になった', acquaintance: '知人になった' })[b.status] || '関係が変化'}`);
+  const bondDeepened = (after.bonds || []).filter(b => {
+    const prev = (before.bonds || []).find(a => a.id === b.id);
+    if (!prev || prev.status !== b.status) return false;
+    return ((b.affection || 0) - (prev.affection || 0) >= 4) || ((b.trust || 0) - (prev.trust || 0) >= 4) || (!prev.kissed && b.kissed) || (!prev.intimate && b.intimate);
+  }).map(b => `${b.name}との絆が深まった`);
+  const bondDistanced = (after.bonds || []).filter(b => {
+    const prev = (before.bonds || []).find(a => a.id === b.id);
+    if (!prev || prev.status !== b.status) return false;
+    return ((b.affection || 0) - (prev.affection || 0) <= -5) || ((b.trust || 0) - (prev.trust || 0) <= -5);
+  }).map(b => `${b.name}と距離が生まれた`);
+  return [...changes, ...statusChanges, ...bondDeepened, ...bondDistanced].join(' / ') || '目立った数値の変化はなかった';
 }
 function snapshot() {
   return {
@@ -1162,7 +1185,7 @@ function snapshot() {
     display: { ...(s.display || {}) },
     economy: { ...(s.economy || {}) },
     health: s.health, happiness: s.happiness, knowledge: s.knowledge, social: s.social, stress: s.stress, money: s.money,
-    bonds: s.bonds.map(b => ({ id: b.id, name: b.name, status: b.status }))
+    bonds: s.bonds.map(b => ({ id: b.id, name: b.name, role: b.role, status: b.status, affection: b.affection, trust: b.trust, kissed: b.kissed, intimate: b.intimate }))
   };
 }
 
@@ -1195,6 +1218,9 @@ function getChoiceEffect(c) {
         else if (e.path === 'state.current_embarrassment') eff.shyness = e.value;
         else if (e.path === 'person.career.employment_status') eff.occupation = e.value;
         else if (e.path === 'chain') eff.chain = e.value;
+        else if (e.path === 'bond') eff.bond = e.value;
+        else if (e.path === 'meeting') eff.meeting = e.value;
+        else if (e.path === 'relationship') eff.relationship = e.value;
         else if (e.path.startsWith('history.flags.')) eff.flag = e.path.replace('history.flags.', '');
       }
     }
@@ -1330,129 +1356,156 @@ function recordMilestone(key, text, diary = null, month = null) {
   log(text, ageDiary(diary));
   if (month != null) s.current_month = prevM;
 }
-function lifeMilestones() {
+function lifeMilestones(isBirthMonth = false) {
   const a = s.age;
-  // 3歳：幼稚園・保育園（4月）
-  if (a === 3) recordMilestone('preschool', '幼稚園・保育園などに通う年頃になった。', null, 4);
+  const m = s.current_month || 4;
+  // 4月生まれの場合は3月時点では誕生日直前（a歳）で翌4月にa+1歳になるため、3月卒業判定の学年年齢を補正
+  const schoolAge = (m === 3 && s.birth_month === 4) ? a + 1 : a;
 
-  // 6歳：小学校入学（4月）
-  if (a === 6) {
-    s.occupation = '学生';
-    recordMilestone('elementary', '小学校に入学した。ピカピカのランドセルを背負い、桜舞う通学路を歩いた。', '新しい教室、新しい友達。少し緊張したけれど、楽しみでもある。', 4);
+  // === 3月：卒業マイルストーン ===
+  if (m === 3) {
+    // 小学校卒業（3月）
+    if (schoolAge === 12 && s.flags.milestone_elementary) {
+      recordMilestone('elem_grad', '小学校を卒業した。慣れ親しんだ校舎と友達に別れを告げ、ランドセルを下ろした。', '6年間通った小学校とお別れ。友達とアルバムにメッセージを書き合って別れを惜しんだ。');
+    }
+    // 中学校卒業（3月）
+    if (schoolAge === 15 && s.flags.milestone_middle_entry) {
+      recordMilestone('middle_grad', '中学校を卒業した。義務教育を終え、それぞれ別の道へ進む仲間たちと記念写真を撮った。', 'あっという間の3年間だった。仲良くなったみんなと離れるのは寂しい。');
+    }
+    // 高校卒業（3月）
+    if (schoolAge === 18 && s.flags.milestone_high_entry) {
+      recordMilestone('high_grad', '高校を卒業した。制服を着る日々が終わり、かけがえのない青春に別れを告げた。', '制服を着る日々が終わった。まだ実感はないけれど、人生の節目だと思う。');
+    }
+    // 大学卒業（3月）：入学から4年目の3月に卒業
+    const entryAge = s.flags.university_entry_age || 18;
+    const monthsInUni = (s.age_months || 0) - (s.flags.university_entry_age_months ?? (entryAge * 12));
+    if (s.flags.university && (monthsInUni >= 44 || schoolAge === entryAge + 4)) {
+      s.flags.university = false;
+      s.flags.university_graduated = true;
+      s.flags.just_graduated_uni = true;
+      const isAdultStudent = entryAge >= 25;
+      const gradText = isAdultStudent
+        ? '社会人学生としての4年間の学びを修め、大学を卒業した。'
+        : (entryAge > 18 ? `${entryAge - 18}年遅れで掴んだ大学生活を駆け抜け、袴を身にまとい誇らしく卒業した。` : '大学を卒業した。袴を身にまとい、学生生活にピリオドを打った。');
+      const diaryText = isAdultStudent
+        ? '仕事や生活と両立しながらやり遂げた。この経験と知識は一生の財産になると思う。'
+        : '学んだことも、出会った人も、これからの私を支えてくれると思う。';
+      recordMilestone('unigrad_' + schoolAge, gradText, diaryText);
+    }
   }
 
-  // 12歳：小学校卒業（3月）と 中学校入学（4月）
-  if (a === 12) {
-    recordMilestone('elem_grad', '小学校を卒業した。慣れ親しんだ校舎と友達に別れを告げ、ランドセルを下ろした。', '6年間通った小学校とお別れ。友達とアルバムにメッセージを書き合って別れを惜しんだ。', 3);
-    recordMilestone('middle_entry', '中学校に入学した。少し大きめの新しい制服に袖を通し、門をくぐった。', '制服を着ると、急にお姉さんになった気分。これからどんな毎日になるのだろう。', 4);
-  }
+  // === 4月：入学・進学・新年度就職マイルストーン ===
+  if (m === 4) {
+    // 3歳：幼稚園・保育園（4月）
+    if (a === 3) recordMilestone('preschool', '幼稚園・保育園などに通う年頃になった。', null);
 
-  // 15歳：中学校卒業（3月）と 高校入学（4月）
-  if (a === 15) {
-    recordMilestone('middle_grad', '中学校を卒業した。義務教育を終え、それぞれ別の道へ進む仲間たちと記念写真を撮った。', 'あっという間の3年間だった。仲良くなったみんなと離れるのは寂しい。', 3);
-    recordMilestone('high_entry', '高校に入学した。憧れの高校生活が始まり、新しい出会いに胸を高鳴らせた。', '少し大人に近づいた気がする。自分の好きなことを見つけたい。', 4);
-  }
+    // 6歳：小学校入学（4月）
+    if (a === 6) {
+      s.occupation = '学生';
+      recordMilestone('elementary', '小学校に入学した。ピカピカのランドセルを背負い、桜舞う通学路を歩いた。', '新しい教室、新しい友達。少し緊張したけれど、楽しみでもある。');
+    }
 
-  // 18歳：高校卒業（3月）と 進学／就職／浪人（4月）
-  if (a === 18) {
-    recordMilestone('high_grad', '高校を卒業した。制服を着る日々が終わり、かけがえのない青春に別れを告げた。', '制服を着る日々が終わった。まだ実感はないけれど、人生の節目だと思う。', 3);
-    if (s.occupation === '学生' && !s.flags.university && !s.flags.employed) {
+    // 12歳：中学校入学（4月）
+    if (a === 12) {
+      s.occupation = '学生';
+      recordMilestone('middle_entry', '中学校に入学した。少し大きめの新しい制服に袖を通し、門をくぐった。', '制服を着ると、急にお姉さんになった気分。これからどんな毎日になるのだろう。');
+    }
+
+    // 15歳：高校入学（4月）
+    if (a === 15) {
+      s.occupation = '学生';
+      recordMilestone('high_entry', '高校に入学した。憧れの高校生活が始まり、新しい出会いに胸を高鳴らせた。', '少し大人に近づいた気がする。自分の好きなことを見つけたい。');
+    }
+
+    // 18歳：進学／就職／浪人（4月）
+    if (a === 18 && s.occupation === '学生' && !s.flags.university && !s.flags.employed) {
       const know = s.abilities?.knowledge ?? s.knowledge ?? 0;
       const cash = s.money ?? 0;
-      // 現役合格・大学入学（学力40以上かつ経済的困窮なし）
       if (know >= 40 && cash >= -2 && !s.flags.prevent_university) {
         s.flags.university = true;
         s.flags.university_entry_age = 18;
+        s.flags.university_entry_age_months = s.age_months;
         s.occupation = '学生';
-        recordMilestone('university_entry', '大学に入学した。キャンパスに桜が舞い、自由で刺激的な学問と学生生活が始まった。', '知らないことばかりで刺激的。自分の世界が広がりそう。', 4);
+        recordMilestone('university_entry', '大学に入学した。キャンパスに桜が舞い、自由で刺激的な学問と学生生活が始まった。', '知らないことばかりで刺激的。自分の世界が広がりそう。');
       } else if (know >= 32 && !s.flags.prevent_university && rng.next() < 0.65) {
-        // もう少しで届きそうな場合：浪人して再挑戦を選択
         s.flags.ronin = true;
         s.occupation = '浪人生';
-        recordMilestone('ronin_entry', '志望大学合格を目指し、浪人生活に入った。予備校に通いながら机に向かう日々が始まる。', '悔しさをバネに、もう一年頑張ることを決めた。来年の春こそは。', 4);
+        recordMilestone('ronin_entry', '志望大学合格を目指し、浪人生活に入った。予備校に通いながら机に向かう日々が始まる。', '悔しさをバネに、もう一年頑張ることを決めた。来年の春こそは。');
       } else if ((s.social ?? 0) >= 25 || (s.independence ?? 0) >= 25) {
         s.flags.employed = true;
         s.occupation = '一般職';
-        recordMilestone('firstjob_entry', '社会人として入社式を迎えた。スーツに身を包み、自立への第一歩を踏み出した。', '初めての仕事は緊張する。自分の力で暮らしていけるだろうか。', 4);
+        recordMilestone('firstjob_entry', '社会人として入社式を迎えた。スーツに身を包み、自立への第一歩を踏み出した。', '初めての仕事は緊張する。自分の力で暮らしていけるだろうか。');
       } else {
         s.occupation = '無職';
       }
     }
-  }
 
-  // 19歳〜24歳：浪人・再受験・準備期間からの大学入学判定（4月）
-  if (a >= 19 && a <= 24 && !s.flags.university && !s.flags.university_graduated) {
-    const know = s.abilities?.knowledge ?? s.knowledge ?? 0;
-    const cash = s.money ?? 0;
-    // 浪人中、または学力があり学びを志した場合
-    if (s.flags.ronin || (know >= 40 && cash >= -3 && (s.occupation === '無職' || s.occupation === 'パート・アルバイト' || rng.next() < 0.35))) {
-      const passChance = s.flags.ronin ? (know >= 38 ? 0.85 : 0.60) : 0.45;
-      if (rng.next() < passChance) {
+    // 19歳〜24歳：浪人・再受験・準備期間からの大学入学判定（4月）
+    if (a >= 19 && a <= 24 && !s.flags.university && !s.flags.university_graduated) {
+      const know = s.abilities?.knowledge ?? s.knowledge ?? 0;
+      const cash = s.money ?? 0;
+      if (s.flags.ronin || (know >= 40 && cash >= -3 && (s.occupation === '無職' || s.occupation === 'パート・アルバイト' || rng.next() < 0.35))) {
+        const passChance = s.flags.ronin ? (know >= 38 ? 0.85 : 0.60) : 0.45;
+        if (rng.next() < passChance) {
+          s.flags.university = true;
+          s.flags.university_entry_age = a;
+          s.flags.university_entry_age_months = s.age_months;
+          s.flags.ronin = false;
+          s.occupation = '学生';
+          const roninYears = a - 18;
+          const roninText = roninYears === 1 ? '一浪を経て' : `${roninYears}年の浪人・準備期間を経て`;
+          recordMilestone('university_entry_' + a, `${roninText}、大学に合格し入学した。努力が実を結び、満開の桜の下でキャンパスライフが始まった。`, '机に向かい続けた日々が報われた。苦労した分、大学での学びを大切にしたい。');
+        } else if (s.flags.ronin && a >= 20) {
+          s.flags.ronin = false;
+          if ((s.social ?? 0) >= 20 || (s.independence ?? 0) >= 20) {
+            s.flags.employed = true;
+            s.occupation = '一般職';
+            recordMilestone('ronin_giveup_job', '浪人生活に区切りをつけ、就職して社会人としての道を歩み始めた。', '思い描いた通りにはならなかったけれど、ここから新しい一歩を踏み出そう。');
+          } else {
+            s.occupation = 'パート・アルバイト';
+          }
+        }
+      }
+    }
+
+    // 25歳〜64歳：社会人大学・リカレント教育・学び直しでの大学入学（4月）
+    if (a >= 25 && a <= 64 && !s.flags.university && !s.flags.university_graduated && s.occupation !== '学生') {
+      const know = s.abilities?.knowledge ?? s.knowledge ?? 0;
+      const indep = s.states?.self_efficacy ?? s.independence ?? 0;
+      if (know >= 50 && indep >= 15 && (s.flags.aspires_higher_education || rng.next() < 0.08)) {
         s.flags.university = true;
         s.flags.university_entry_age = a;
-        s.flags.ronin = false;
+        s.flags.university_entry_age_months = s.age_months;
+        s.flags.aspires_higher_education = false;
+        s.flags.prev_occupation = s.occupation;
         s.occupation = '学生';
-        const roninYears = a - 18;
-        const roninText = roninYears === 1 ? '一浪を経て' : `${roninYears}年の浪人・準備期間を経て`;
-        recordMilestone('university_entry_' + a, `${roninText}、大学に合格し入学した。努力が実を結び、満開の桜の下でキャンパスライフが始まった。`, '机に向かい続けた日々が報われた。苦労した分、大学での学びを大切にしたい。', 4);
-      } else if (s.flags.ronin && a >= 20) {
-        // 浪人に区切りをつける
-        s.flags.ronin = false;
-        if ((s.social ?? 0) >= 20 || (s.independence ?? 0) >= 20) {
-          s.flags.employed = true;
-          s.occupation = '一般職';
-          recordMilestone('ronin_giveup_job', '浪人生活に区切りをつけ、就職して社会人としての道を歩み始めた。', '思い描いた通りにはならなかったけれど、ここから新しい一歩を踏み出そう。', 4);
+        recordMilestone('university_entry_adult_' + a, `${a}歳にして大学（社会人枠・夜間学部）に入学した。これまでの経験を深めるため、再び学問の門をくぐった。`, '大人になってからの学びは、学生時代とは全く違う新鮮さがある。仕事や生活の合間を縫って、学びを深めたい。');
+      }
+    }
+
+    // 3月に大学卒業した直後の4月：新卒就職・現場復帰
+    if (s.flags.just_graduated_uni) {
+      s.flags.just_graduated_uni = false;
+      const entryAge = s.flags.university_entry_age || 18;
+      const isAdultStudent = entryAge >= 25;
+      if (s.occupation === '学生') {
+        if (s.flags.prev_occupation && isAdultStudent) {
+          s.occupation = s.flags.prev_occupation;
+          recordMilestone('graduate_returnjob', '大学での学びを携え、仕事の現場へと復帰した。', '得た知見をこれからの働き方に活かしていきたい。');
         } else {
-          s.occupation = 'パート・アルバイト';
+          s.occupation = '一般職';
+          s.flags.employed = true;
+          recordMilestone('graduatejob', '学びを終え、本格的に社会人として働き始めた。', 'ここからは新しい生活。少しずつ自分の居場所を作りたい。');
         }
       }
     }
   }
 
-  // 25歳〜64歳：社会人大学・リカレント教育・学び直しでの大学入学（4月）
-  if (a >= 25 && a <= 64 && !s.flags.university && !s.flags.university_graduated && s.occupation !== '学生') {
-    const know = s.abilities?.knowledge ?? s.knowledge ?? 0;
-    const indep = s.states?.self_efficacy ?? s.independence ?? 0;
-    if (know >= 50 && indep >= 15 && (s.flags.aspires_higher_education || rng.next() < 0.08)) {
-      s.flags.university = true;
-      s.flags.university_entry_age = a;
-      s.flags.aspires_higher_education = false;
-      s.flags.prev_occupation = s.occupation;
-      s.occupation = '学生';
-      recordMilestone('university_entry_adult_' + a, `${a}歳にして大学（社会人枠・夜間学部）に入学した。これまでの経験を深めるため、再び学問の門をくぐった。`, '大人になってからの学びは、学生時代とは全く違う新鮮さがある。仕事や生活の合間を縫って、学びを深めたい。', 4);
-    }
-  }
-
-  // 大学卒業（3月）と 就職・復職（4月）：入学から4年目の春に卒業！
-  const entryAge = s.flags.university_entry_age || 18;
-  if (s.flags.university && a === entryAge + 4) {
-    s.flags.university = false;
-    s.flags.university_graduated = true;
-    const isAdultStudent = entryAge >= 25;
-    const gradText = isAdultStudent
-      ? '社会人学生としての4年間の学びを修め、大学を卒業した。'
-      : (entryAge > 18 ? `${entryAge - 18}年遅れで掴んだ大学生活を駆け抜け、袴を身にまとい誇らしく卒業した。` : '大学を卒業した。袴を身にまとい、学生生活にピリオドを打った。');
-    const diaryText = isAdultStudent
-      ? '仕事や生活と両立しながらやり遂げた。この経験と知識は一生の財産になると思う。'
-      : '学んだことも、出会った人も、これからの私を支えてくれると思う。';
-    recordMilestone('unigrad_' + a, gradText, diaryText, 3);
-
-    if (s.occupation === '学生') {
-      if (s.flags.prev_occupation && isAdultStudent) {
-        s.occupation = s.flags.prev_occupation;
-        recordMilestone('graduate_returnjob', '大学での学びを携え、仕事の現場へと復帰した。', '得た知見をこれからの働き方に活かしていきたい。', 4);
-      } else {
-        s.occupation = '一般職';
-        s.flags.employed = true;
-        recordMilestone('graduatejob', '学びを終え、本格的に社会人として働き始めた。', 'ここからは新しい生活。少しずつ自分の居場所を作りたい。', 4);
-      }
-    }
-  }
-
-  // 結婚後の第一子誕生（23〜41歳・異性配偶者との婚姻中）
+  // === 月次判定：結婚後の第一子誕生（23〜41歳・異性配偶者との婚姻中） ===
   if (a >= 23 && a <= 41 && hasSpouse(s) && hasMalePartner(s) && !s.flags.hasChildren && !s.flags.childfree_chosen) {
-    const birthProb = s.flags.trying_for_baby ? 0.45 : 0.22;
-    if (rng.next() < birthProb) {
+    const annualBirthProb = s.flags.trying_for_baby ? 0.45 : 0.22;
+    const monthlyBirthProb = 1 - Math.pow(1 - annualBirthProb, 1 / 12);
+    if (rng.next() < monthlyBirthProb) {
       s.flags.hasChildren = true;
       s.flags.childBirthAge = a;
       const sp = getPrimaryPartner(s);
@@ -1461,16 +1514,18 @@ function lifeMilestones() {
     }
   }
 
-  // 65歳：シニア期節目
-  if (a === 65) {
-    recordMilestone('senior', '65歳を迎え、これからの暮らし方を考える節目になった。', '振り返れば長い道のりだった。まだやりたいことはある。');
-    if (s.occupation === '一般職') {
-      s.occupation = '無職';
-      s.flags.employed = false;
+  // === 誕生月：加齢に伴う身体・人生の節目 ===
+  if (isBirthMonth) {
+    if (a === 65) {
+      recordMilestone('senior', '65歳を迎え、これからの暮らし方を考える節目になった。', '振り返れば長い道のりだった。まだやりたいことはある。');
+      if (s.occupation === '一般職') {
+        s.occupation = '無職';
+        s.flags.employed = false;
+      }
     }
+    if (a === s.flags.menarcheAge) recordMilestone('menarche', '初経を迎え、身体の変化を実感した。', '驚いたし、少し戸惑った。自分の身体について、これから知っていきたい。');
+    if (a === s.flags.menopauseAge) recordMilestone('menopause', '月経の終わりに向かう身体の変化を感じるようになった。', '身体の変化に戸惑う日もある。これまでの私も、これからの私も大切にしたい。');
   }
-  if (a === s.flags.menarcheAge) recordMilestone('menarche', '初経を迎え、身体の変化を実感した。', '驚いたし、少し戸惑った。自分の身体について、これから知っていきたい。');
-  if (a === s.flags.menopauseAge) recordMilestone('menopause', '月経の終わりに向かう身体の変化を感じるようになった。', '身体の変化に戸惑う日もある。これまでの私も、これからの私も大切にしたい。');
 }
 
 function balancedChoiceEffect(event, effect) {
@@ -1936,33 +1991,39 @@ function getSeasonName(month) {
   return '冬';
 }
 
-function assignEventMonth(e, index = 0, total = 1) {
-  if (!e) return Math.min(12, Math.max(1, 1 + Math.floor(rng.next() * 12)));
-  if (typeof e.seasonMonth === 'number') return clamp(e.seasonMonth, 1, 12);
+function getPreferredMonths(e) {
+  if (!e) return null;
+  if (typeof e.seasonMonth === 'number') return [clamp(e.seasonMonth, 1, 12)];
   const t = (e.title || '') + ' ' + (e.text || '') + ' ' + (e.id || '');
+  if (/正月|初詣|元旦|成人式|新年/.test(t)) return [1];
+  if (/節分|バレンタイン|チョコ/.test(t)) return [2];
+  if (/卒業|ひな祭り|春休み|早春/.test(t)) return [3];
+  if (/入学|新学期|桜|身体測定|花見/.test(t)) return [4];
+  if (/五月|ゴールデンウィーク|新緑|母の日|初夏/.test(t)) return [5];
+  if (/梅雨|プール|水着|父の日/.test(t)) return [6, 7];
+  if (/七夕|夏休み|海|キャンプ|盛夏|日焼け/.test(t)) return [7, 8];
+  if (/お盆|花火|夏祭り|猛暑|宿題|晩夏/.test(t)) return [8];
+  if (/初秋|秋雨|月見|台風/.test(t)) return [9];
+  if (/文化祭|運動会|ハロウィン|紅葉/.test(t)) return [10, 11];
+  if (/七五三|晩秋|木枯らし|勤労感謝/.test(t)) return [11];
+  if (/クリスマス|年末|大掃除|冬休み|忘年会/.test(t)) return [12];
+  if (/春/.test(t)) return [3, 4, 5];
+  if (/夏/.test(t)) return [6, 7, 8];
+  if (/秋/.test(t)) return [9, 10, 11];
+  if (/冬|雪|寒波|こたつ/.test(t)) return [12, 1, 2];
+  return null;
+}
 
-  // 季節キーワードの判定
-  if (/正月|初詣|元旦|成人式|新年/.test(t)) return 1;
-  if (/節分|バレンタイン|チョコ|寒波|雪/.test(t)) return 2;
-  if (/卒業|ひな祭り|春休み|早春/.test(t)) return 3;
-  if (/入学|新学期|桜|身体測定|花見|春/.test(t)) return 4;
-  if (/五月|ゴールデンウィーク|新緑|母の日|初夏/.test(t)) return 5;
-  if (/梅雨|プール|雨|水着|父の日/.test(t)) return 6;
-  if (/七夕|夏休み|海|キャンプ|盛夏|日焼け/.test(t)) return 7;
-  if (/お盆|花火|夏祭り|猛暑|宿題|晩夏/.test(t)) return 8;
-  if (/初秋|秋雨|月見|台風/.test(t)) return 9;
-  if (/文化祭|運動会|ハロウィン|読書|秋|紅葉/.test(t)) return 10;
-  if (/七五三|晩秋|木枯らし|勤労感謝/.test(t)) return 11;
-  if (/クリスマス|年末|大掃除|冬休み|初冬|忘年会/.test(t)) return 12;
+function isEventMonthCompatible(e, month) {
+  const pref = getPreferredMonths(e);
+  if (!pref) return true;
+  return pref.includes(month);
+}
 
-  // キーワードがない場合：年間を通してバランスよく分散
-  if (total <= 1) {
-    return 4 + Math.floor(rng.next() * 6); // 4〜9月の中頃
-  }
-  const span = Math.floor(10 / total);
-  const base = 2 + index * span;
-  const jitter = Math.floor(rng.next() * 2);
-  return Math.min(12, Math.max(1, base + jitter));
+function assignEventMonth(e, index = 0, total = 1) {
+  const pref = getPreferredMonths(e);
+  if (pref && pref.length) return pref[Math.floor(rng.next() * pref.length)];
+  return s?.current_month || (1 + Math.floor(rng.next() * 12));
 }
 // === ストーリーディレクター：文脈アーク重みづけ・同一年内の矛盾排他・時系列順序 ===
 const SWEET_ROMANCE_IDS = new Set([
@@ -2052,140 +2113,119 @@ function getStoryArcBoost(e, st = s) {
   return boost;
 }
 
-function pickYearEvents() {
+function pickMonthEvents() {
+  const curM = s.current_month || 4;
+  const isBirthMonth = curM === (s.birth_month || 4);
   s.chains ??= [];
   const triggered = [];
   const remainingChains = [];
+
+  // 1. 予約チェーンイベントの月次判定
   for (const c of s.chains) {
-    if (c.targetAge <= s.age) {
-      const e = eventDefs.find(x => x.id === c.eventId);
-      if (e && isEventEligible(e, s)) {
-        if (chance(c.prob ?? 1.0)) triggered.push(c.eventId);
-      }
+    const e = eventDefs.find(x => x.id === c.eventId);
+    if (!e) continue;
+    if (e.max !== undefined && s.age > e.max) continue; // 年齢上限を過ぎたチェーンは破棄
+    const dueByMonths = c.targetAgeMonths != null ? (s.age_months || 0) >= c.targetAgeMonths : s.age >= (c.targetAge ?? s.age);
+    if (dueByMonths && isEventEligible(e, s) && isEventMonthCompatible(e, curM)) {
+      if (chance(c.prob ?? 1.0)) triggered.push(c.eventId);
     } else {
       remainingChains.push(c);
     }
   }
   s.chains = remainingChains;
 
-  // 1. 固定マイルストーンイベント（trigger === 'fixed' / is_fixed: true かつ適格な場合、確実に発生）
+  // 2. 固定マイルストーンイベント（誕生月または該当月・適格時に発生）
   const fixedEvents = eventDefs.filter(e => (e.trigger === 'fixed' || e.is_fixed) && isEventEligible(e, s));
   for (const fe of fixedEvents) {
-    if (!triggered.includes(fe.id)) triggered.push(fe.id);
-  }
-
-  // 2. 通常抽選イベント（Story Director による文脈ブースト＆優先度ソート）
-  const ageMultiplier = s.age < 6 ? .30 : s.age < 10 ? .58 : s.age < 15 ? .82 : s.age <= 35 ? 1.35 : s.age <= 49 ? 1.05 : s.age <= 64 ? .85 : s.age <= 79 ? .7 : .55;
-  const candidatePool = [];
-  for (const e of eventDefs) {
-    const trig = e.trigger || (e.is_fixed ? 'fixed' : 'normal');
-    if (trig !== 'normal') continue;
-    if (triggered.includes(e.id)) continue;
-    if (!isEventEligible(e, s)) continue;
-    const arcBoost = getStoryArcBoost(e, s);
-    const prob = Math.min(0.95, eventProbability(e) * ageMultiplier * arcBoost);
-    if (rng.next() < prob) {
-      candidatePool.push({ e, priority: arcBoost + rng.next() * 0.8 });
+    if (triggered.includes(fe.id)) continue;
+    if (fe.id === 'fixed_milestone_sex_education') {
+      // 11歳の6月（授業）または誕生月直前に確実に発生
+      const nextM = (curM % 12) + 1;
+      if (curM === 6 || nextM === (s.birth_month || 4)) triggered.push(fe.id);
+    } else {
+      // 18歳・20歳の節目は誕生月に発生（未発生のままなら翌月以降も救済）
+      if (isBirthMonth || !s.seen?.[fe.id]) triggered.push(fe.id);
     }
   }
 
-  // 文脈ブーストが高い（今まさに起きるべき）イベントを優先しつつシャッフル性を維持
-  candidatePool.sort((a, b) => b.priority - a.priority);
-
-  const limit = Math.max(annualEventLimit(s.age), triggered.length);
-  const selectedIds = [...triggered];
-  let hasSweet = selectedIds.some(id => SWEET_ROMANCE_IDS.has(id));
-  let hasCrisis = selectedIds.some(id => CRISIS_ROMANCE_IDS.has(id));
-  let tabooCount = selectedIds.filter(id => getEventNarrativeConflictGroup(eventDefs.find(x => x.id === id)) === 'stranger_taboo').length;
-  const maxTabooPerYear = s.occupation === '風俗' ? 2 : 1;
-
-  for (const { e } of candidatePool) {
-    if (selectedIds.length >= limit) break;
-    const grp = getEventNarrativeConflictGroup(e);
-    // 同一年のトーン矛盾を排他制御（甘い記念日と冷めきった破局危機を同年に混ぜない）
-    if (grp === 'sweet_romance' && hasCrisis) continue;
-    if (grp === 'crisis_romance' && hasSweet) continue;
-    if (grp === 'stranger_taboo' && tabooCount >= maxTabooPerYear) continue;
-
-    selectedIds.push(e.id);
-    if (grp === 'sweet_romance') hasSweet = true;
-    if (grp === 'crisis_romance') hasCrisis = true;
-    if (grp === 'stranger_taboo') tabooCount++;
-  }
-
-  // 関係マイルストーンが同年に複数ある場合、段階順（デート→初キス→初夜→プロポーズ→結婚式）に整列
-  selectedIds.sort((a, b) => {
-    const oa = MILESTONE_STAGE_ORDER[a] ?? 50;
-    const ob = MILESTONE_STAGE_ORDER[b] ?? 50;
-    return oa - ob;
-  });
-
-  const mappedEvents = selectedIds.map((id, idx) => {
-    const evObj = eventDefs.find(x => x.id === id);
-    const month = assignEventMonth(evObj, idx, selectedIds.length);
-    return { id, month, stageOrder: MILESTONE_STAGE_ORDER[id] ?? null };
-  });
-
-  // 段階順序のあるマイルストーン同士は月も段階順になるよう補正
-  for (let i = 0; i < mappedEvents.length; i++) {
-    for (let j = i + 1; j < mappedEvents.length; j++) {
-      if (mappedEvents[i].stageOrder !== null && mappedEvents[j].stageOrder !== null) {
-        if (mappedEvents[i].stageOrder < mappedEvents[j].stageOrder && mappedEvents[i].month > mappedEvents[j].month) {
-          const tmp = mappedEvents[i].month;
-          mappedEvents[i].month = mappedEvents[j].month;
-          mappedEvents[j].month = tmp;
-        }
-      }
-    }
-  }
-
-  // 月の昇順（春→夏→秋→冬）にソート
-  mappedEvents.sort((a, b) => a.month - b.month);
-
-  // 3. 宣言的な先行伏線イベント (trigger === 'precursor') の自動挿入
-  const precursors = eventDefs.filter(e => e.trigger === 'precursor' && Array.isArray(e.precursor_for));
-  for (const pre of precursors) {
-    if (!isEventEligible(pre, s)) continue;
-    const targetItem = mappedEvents.find(m => pre.precursor_for.includes(m.id));
-    if (targetItem && !mappedEvents.some(m => m.id === pre.id)) {
-      const preMonth = Math.max(1, targetItem.month - 3);
-      mappedEvents.push({ id: pre.id, month: preMonth });
-    }
-  }
-
-  // 4. 宣言的な状態連鎖ナラティブ (trigger === 'state_narrative') の自動挿入
+  // 3. 状態連鎖ナラティブ (trigger === 'state_narrative') の月次判定
   const stateNarratives = eventDefs.filter(e => e.trigger === 'state_narrative' && e.auto_trigger);
   for (const sn of stateNarratives) {
+    if (triggered.includes(sn.id)) continue;
     if (!isEventEligible(sn, s)) continue;
-    const { flag, minVal = 1, monthOffset = 1 } = sn.auto_trigger;
-    if ((s.flags?.[flag] || 0) >= minVal && !mappedEvents.some(m => m.id === sn.id)) {
-      mappedEvents.push({ id: sn.id, month: Math.min(12, (s.current_month || 6) + monthOffset) });
+    const { flag, minVal = 1 } = sn.auto_trigger;
+    if ((s.flags?.[flag] || 0) >= minVal) {
+      triggered.push(sn.id);
+      break;
     }
   }
 
-  // 月の昇順（春→夏→秋→冬）に再ソート
-  mappedEvents.sort((a, b) => a.month - b.month);
+  // 4. 通常抽選イベント（月ごとの抽選・季節親和性・年間上限管理）
+  const maxPerYear = annualEventLimit(s.age);
+  const usedThisYear = s.eventsThisYear || 0;
+  if (usedThisYear < maxPerYear && triggered.length === 0) {
+    const ageMultiplier = s.age < 6 ? .30 : s.age < 10 ? .58 : s.age < 15 ? .82 : s.age <= 35 ? 1.35 : s.age <= 49 ? 1.05 : s.age <= 64 ? .85 : s.age <= 79 ? .7 : .55;
+    const candidatePool = [];
+    for (const e of eventDefs) {
+      const trig = e.trigger || (e.is_fixed ? 'fixed' : 'normal');
+      if (trig !== 'normal') continue;
+      if (triggered.includes(e.id)) continue;
+      if (!isEventMonthCompatible(e, curM)) continue;
+      if (!isEventEligible(e, s)) continue;
 
-  // 同月なら少しずらす
-  for (let i = 1; i < mappedEvents.length; i++) {
-    if (mappedEvents[i].month <= mappedEvents[i - 1].month && mappedEvents[i - 1].month < 12) {
-      mappedEvents[i].month = mappedEvents[i - 1].month + 1;
+      const prefMonths = getPreferredMonths(e);
+      // 季節限定イベントはその該当月・季節で本来の確率を発揮し、通年イベントは月次（約1/10.5）に分散
+      const monthScale = prefMonths ? (1 / Math.max(1, prefMonths.length * 0.85)) : (1 / 10.5);
+      const arcBoost = getStoryArcBoost(e, s);
+      const prob = Math.min(0.85, eventProbability(e) * ageMultiplier * arcBoost * monthScale);
+      if (rng.next() < prob) {
+        const seasonBonus = prefMonths ? 0.6 : 0;
+        candidatePool.push({ e, priority: arcBoost + seasonBonus + rng.next() * 0.8 });
+      }
+    }
+
+    candidatePool.sort((a, b) => b.priority - a.priority);
+    const maxTabooPerYear = s.occupation === '風俗' ? 2 : 1;
+
+    for (const { e } of candidatePool) {
+      const grp = getEventNarrativeConflictGroup(e);
+      if (grp === 'sweet_romance' && s.crisisThisYear) continue;
+      if (grp === 'crisis_romance' && s.sweetThisYear) continue;
+      if (grp === 'stranger_taboo' && (s.tabooCountThisYear || 0) >= maxTabooPerYear) continue;
+
+      // 先行伏線イベント (trigger === 'precursor') が適格かつ未発生なら、今月は伏線を発生させ本編を2ヶ月後に予約
+      const precursor = eventDefs.find(pre => pre.trigger === 'precursor' && Array.isArray(pre.precursor_for) && pre.precursor_for.includes(e.id) && isEventEligible(pre, s));
+      if (precursor && !s.chains.some(c => c.eventId === e.id)) {
+        triggered.push(precursor.id);
+        s.chains.push({ eventId: e.id, targetAgeMonths: (s.age_months || 0) + 2, targetAge: s.age, prob: 1.0 });
+      } else {
+        triggered.push(e.id);
+      }
+
+      s.eventsThisYear = (s.eventsThisYear || 0) + 1;
+      if (grp === 'sweet_romance') s.sweetThisYear = true;
+      if (grp === 'crisis_romance') s.crisisThisYear = true;
+      if (grp === 'stranger_taboo') s.tabooCountThisYear = (s.tabooCountThisYear || 0) + 1;
+      break; // 1ヶ月に発生する通常イベントは最大1件
     }
   }
 
-  return mappedEvents;
+  // 段階順序のあるマイルストーンが同月に重なった場合は段階順に整列
+  triggered.sort((a, b) => (MILESTONE_STAGE_ORDER[a] ?? 50) - (MILESTONE_STAGE_ORDER[b] ?? 50));
+
+  return triggered.map(id => ({ id, month: curM }));
 }
-function processYearEvents() {
-  while (s.yearEvents.length && !s.pending && !s.finished) {
-    const item = s.yearEvents.shift();
+const pickYearEvents = pickMonthEvents;
+
+function processMonthEvents() {
+  const queue = s.monthEvents?.length ? s.monthEvents : (s.yearEvents || []);
+  while (queue.length && !s.pending && !s.finished) {
+    const item = queue.shift();
     const id = typeof item === 'object' ? item.id : item;
-    const month = typeof item === 'object' ? item.month : (4 + Math.floor(rng.next() * 6));
     const e = eventDefs.find(x => x.id === id);
     if (!e || !isEventEligible(e, s)) continue;
 
     s.pending = e.id;
-    s.current_month = month;
-    s.age_months = s.age * 12 + (month - 1);
     s.activeVariantIndex = Math.floor(rng.next() * 20);
 
     const isNarrative = e.is_narrative || !e.choices || e.choices.length === 0;
@@ -2202,6 +2242,7 @@ function processYearEvents() {
   s.rngState = rng.state();
   return !s.pending;
 }
+const processYearEvents = processMonthEvents;
 function chance(p) { return rng.next() < Math.max(0, Math.min(1, p)) }
 function getSexualPartnerList(st = s) {
   normalizeSexuality(st);
@@ -2289,6 +2330,19 @@ function getPrimaryPartner(st = s) { return st?.bonds?.find(b => b.status === 's
 function hasFemalePartner(st = s) { const p = getPrimaryPartner(st); return !!(p && p.gender === 'female'); }
 function hasMalePartner(st = s) { const p = getPrimaryPartner(st); return !!(p && p.gender === 'male'); }
 function prefersWomen(st = s) { const w = st?.orientation?.women ?? 0; const m = st?.orientation?.men ?? 0; return w >= 0.45 || w >= m; }
+function isRomanticallyCompatible(b, st = s) {
+  if (!b) return false;
+  if (b.gender === 'female') return prefersWomen(st) || !!st?.flags?.same_sex_awakened;
+  if (b.gender === 'male') return (st?.orientation?.men ?? 0.5) >= 0.25;
+  return true;
+}
+function getRomanticTargetGender(st = s) {
+  const m = st?.orientation?.men ?? 0.8;
+  const w = (st?.orientation?.women ?? 0.2) + (st?.flags?.same_sex_awakened ? 0.35 : 0);
+  if (m >= 0.7 && w < 0.35) return 'male';
+  if (w >= 0.7 && m < 0.35) return 'female';
+  return rng.next() < (w / (m + w)) ? 'female' : 'male';
+}
 function assignBondName(b, st) { const candidates = PARTNER_NAMES[b.gender] || PARTNER_NAMES.female; const used = new Set(st.bonds.filter(x => x.id !== b.id).map(x => x.name)); const start = Math.floor(rng.next() * candidates.length); for (let i = 0; i < candidates.length; i++) { const candidate = candidates[(start + i) % candidates.length]; if (!used.has(candidate)) { b.name = candidate; return } } b.name = candidates[start] + '（' + b.id + '）' }
 function normalizeBond(b, seed) { const h = [...String(b.id)].reduce((n, c) => (Math.imul(n, 31) + c.charCodeAt(0)) >>> 0, seed >>> 0); const r = random(h || 1); b.gender ??= (r.next() < .52 ? 'female' : 'male'); b.role ??= 'friend'; const list = PARTNER_NAMES[b.gender] || PARTNER_NAMES.female; b.name ??= list[Math.floor(r.next() * list.length)]; b.ageGap ??= Math.floor(r.next() * 13) - 6; b.romanticInterest ??= clamp(20 + r.next() * 75); b.desire ??= clamp(15 + r.next() * 80); b.initiative ??= clamp(10 + r.next() * 85); b.shyness ??= clamp(10 + r.next() * 85); b.intimacyNeed ??= clamp(15 + r.next() * 80); b.boundaryVoice ??= clamp(20 + r.next() * 70); b.affection ??= 30; b.trust ??= 35; b.openness ??= 50; b.lastProgressAge ??= -1; b.private ??= false; return b }
 function createBond(role = null, gender = null, customProps = {}) {
@@ -2418,17 +2472,19 @@ function advanceBonds() {
   normalizeSexuality(s);
   const x = s.sexuality;
   const active = s.bonds.filter(b => b.status !== 'former' && b.status !== 'widowed');
-  if (active.length < 7 && chance(.12 + (s.social / 900))) {
+  // 月次出会い判定（年率 .12 + s.social/900 を12ヶ月に分散）
+  if (active.length < 7 && chance((.12 + (s.social / 900)) / 12)) {
     const b = createBond();
     s.bonds.push(b);
     recordExperience('meeting', b.name + 'と知り合った', b.id);
     log('新たな出会いがあった。');
   }
+  const curAgeMonths = s.age_months || (s.age * 12 + (s.current_month || 1));
   for (const b of active) {
     if (s.pending) break;
-    if (b.lastProgressAge === s.age) continue;
-    b.lastProgressAge = s.age;
-    if (b.status === 'acquaintance' && chance(.36)) {
+    if (b.lastProgressAgeMonths === curAgeMonths) continue;
+    b.lastProgressAgeMonths = curAgeMonths;
+    if (b.status === 'acquaintance' && chance(.36 / 12)) {
       b.affection = clamp(b.affection + 4 + rng.next() * 11);
       b.trust = clamp(b.trust + 3);
       if (b.affection >= 44) {
@@ -2436,38 +2492,47 @@ function advanceBonds() {
         recordExperience('friendship', b.name + 'と親しくなった', b.id);
         log(b.name + 'との交流が深まった。');
       }
-    } else if (b.status === 'close' && chance(.20 + x.initiative / 500)) {
-      if (chance(approachProbability(b))) {
-        b.affection = clamp(b.affection + 12);
-        if (b.affection >= 56 && chance(b.romanticInterest / 115)) {
-          proposeRelationship(b);
+    } else if (b.status === 'close' && chance((.20 + x.initiative / 500) / 12)) {
+      if (isRomanticallyCompatible(b, s)) {
+        if (chance(approachProbability(b))) {
+          b.affection = clamp(b.affection + 12);
+          if (b.affection >= 56 && chance(b.romanticInterest / 115)) {
+            proposeRelationship(b);
+          }
+        } else {
+          b.trust = clamp(b.trust - 2);
         }
       } else {
-        b.trust = clamp(b.trust - 2);
+        // 恋愛対象外の親しい友人とは友情・信頼を深める
+        b.affection = clamp(b.affection + 4);
+        b.trust = clamp(b.trust + 4);
       }
     } else if (b.status === 'partner') {
-      b.partnerYears = (b.partnerYears || 0) + 1;
-      b.trust = clamp(b.trust + (chance(.65) ? 2 : -3));
-      b.affection = clamp(b.affection + (chance(.58) ? 2 : -3));
+      b.partnerMonths = (b.partnerMonths || 0) + 1;
+      if (b.partnerMonths % 12 === 0) b.partnerYears = (b.partnerYears || 0) + 1;
+      if (chance(1 / 12)) {
+        b.trust = clamp(b.trust + (chance(.65) ? 2 : -3));
+        b.affection = clamp(b.affection + (chance(.58) ? 2 : -3));
+      }
       // 2人目以降のパートナー（既に初キスイベント消化済み）または交際2年経過時はキス段階へ自然進行
-      if (!b.kissed && b.partnerYears >= 1 && (s.seen?.first_kiss_milestone || s.flags?.firstKiss || b.partnerYears >= 2)) {
+      if (!b.kissed && (b.partnerYears >= 1 || (b.partnerMonths || 0) >= 12) && (s.seen?.first_kiss_milestone || s.flags?.firstKiss || (b.partnerYears || 0) >= 2)) {
         b.kissed = true;
         s.flags.had_first_kiss_with_partner = true;
       }
       // 2人目以降のパートナーで成人後・既に性経験あり・キス済み・交際2年以上の場合は初体験段階へ自然進行可能
-      if (s.age >= 18 && b.kissed && !b.intimate && b.partnerYears >= 2 && hasHadSex(s)) {
+      if (s.age >= 18 && b.kissed && !b.intimate && (b.partnerYears || 0) >= 2 && hasHadSex(s)) {
         b.intimate = true;
         b.intimateSinceAge ??= s.age;
         s.flags.had_first_intimacy_with_partner = true;
       }
-      if (chance(.16)) {
+      if (chance(.16 / 12)) {
         recordExperience('communication', b.name + 'と関係への希望を話し合った', b.id, { mutual: true });
       }
       // 初体験イベントを飛び越さないよう、そのパートナーと既に肉体関係がある（b.intimate）場合のみ日常の営みを発生させる
-      if (s.age >= 18 && b.intimate && chance(.11 + x.intimacyNeed / 1200)) {
+      if (s.age >= 18 && b.intimate && chance((.11 + x.intimacyNeed / 1200) / 12)) {
         resolveSharedIntimacy(b);
       }
-      if (b.trust < 18 || b.affection < 18 || chance(.018)) {
+      if ((b.trust < 18 || b.affection < 18) ? chance(1 / 6) : chance(.018 / 12)) {
         b.status = 'former';
         b.consent = false;
         s.flags.cohabiting = false;
@@ -2475,19 +2540,22 @@ function advanceBonds() {
         log(b.name + 'との関係に区切りをつけた。');
       }
     } else if (b.status === 'spouse') {
-      b.partnerYears = (b.partnerYears || 0) + 1;
+      b.partnerMonths = (b.partnerMonths || 0) + 1;
+      if (b.partnerMonths % 12 === 0) b.partnerYears = (b.partnerYears || 0) + 1;
       b.kissed = true;
       b.intimate = true;
       b.cohabiting = true;
-      b.trust = clamp(b.trust + (chance(.62) ? 2 : -2));
-      b.affection = clamp(b.affection + (chance(.58) ? 2 : -2));
-      if (chance(.15)) {
+      if (chance(1 / 12)) {
+        b.trust = clamp(b.trust + (chance(.62) ? 2 : -2));
+        b.affection = clamp(b.affection + (chance(.58) ? 2 : -2));
+      }
+      if (chance(.15 / 12)) {
         recordExperience('communication', b.name + 'と夫婦のこれからの生活を話し合った', b.id, { mutual: true });
       }
-      if (s.age >= 18 && !isVirgin(s) && chance(.10 + x.intimacyNeed / 1300)) {
+      if (s.age >= 18 && !isVirgin(s) && chance((.10 + x.intimacyNeed / 1300) / 12)) {
         resolveSharedIntimacy(b);
       }
-      if (b.trust < 15 && b.affection < 15 && chance(.04)) {
+      if (b.trust < 15 && b.affection < 15 && chance(.04 / 12)) {
         b.status = 'former';
         b.consent = false;
         s.flags.married = false;
@@ -2589,6 +2657,104 @@ function isHandledBySettleIntimacy(eventId) {
     eventId.startsWith('partner_weekend_') || eventId.startsWith('partner_cohabitation_');
 }
 
+function upsertEventBond(spec = {}, event = null) {
+  const role = spec.role || null;
+  const gender = spec.gender || null;
+  const targetStatus = spec.status || 'acquaintance';
+  const metContext = spec.metContext || (event?.title ? event.title : null);
+  const mode = spec.mode || 'upsert';
+
+  // 既存の同種・同属性の知人/友人がいるか探す（createモード以外）
+  if (mode !== 'create') {
+    const existing = s.bonds.find(b =>
+      (b.status === 'acquaintance' || b.status === 'close') &&
+      (!role || b.role === role) &&
+      (!gender || b.gender === gender)
+    );
+    if (existing) {
+      const wasAcq = existing.status === 'acquaintance';
+      if (targetStatus === 'close' && wasAcq) {
+        existing.status = 'close';
+      }
+      existing.affection = clamp((existing.affection || 35) + (spec.affectionDelta ?? (targetStatus === 'close' ? 12 : 7)));
+      existing.trust = clamp((existing.trust || 35) + (spec.trustDelta ?? (targetStatus === 'close' ? 8 : 5)));
+      if (spec.romanticInterest != null) existing.romanticInterest = Math.max(existing.romanticInterest || 0, spec.romanticInterest);
+      if (metContext) existing.metContext = metContext;
+      const roleLabel = BOND_ROLE_LABELS[existing.role] || '知人';
+      if (wasAcq && existing.status === 'close') {
+        recordExperience('friendship', `${existing.name}（${roleLabel}）と親しくなった${metContext ? `（${metContext}）` : ''}`, existing.id);
+        log(`${existing.name}（${roleLabel}）との絆が深まり、「親しい友人」になった。`);
+      } else {
+        recordExperience('friendship', `${existing.name}（${roleLabel}）との親交を深めた${metContext ? `（${metContext}）` : ''}`, existing.id);
+      }
+      s.relationships = s.bonds.length;
+      return existing;
+    }
+  }
+
+  if (s.bonds.length >= 30) return null;
+  const custom = { ...spec, status: targetStatus };
+  if (metContext) custom.metContext = metContext;
+  const b = createBond(role, gender, custom);
+  if (spec.affection != null) b.affection = clamp(spec.affection);
+  else if (targetStatus === 'close') b.affection = Math.max(b.affection || 45, 52);
+  if (spec.trust != null) b.trust = clamp(spec.trust);
+  else if (targetStatus === 'close') b.trust = Math.max(b.trust || 40, 45);
+  if (spec.romanticInterest != null) b.romanticInterest = clamp(spec.romanticInterest);
+  s.bonds.push(b);
+  s.relationships = s.bonds.length;
+  const roleLabel = BOND_ROLE_LABELS[b.role] || '知人';
+  if (targetStatus === 'close') {
+    recordExperience('friendship', `${b.name}（${roleLabel}）と出会い、親しい友人になった${metContext ? `（${metContext}）` : ''}`, b.id);
+    log(`${b.name}（${roleLabel}）と親しくなり、人間関係に「親しい友人」として記録された。`);
+  } else {
+    recordExperience('meeting', `${b.name}（${roleLabel}）と知り合った${metContext ? `（${metContext}）` : ''}`, b.id);
+    log(`${b.name}（${roleLabel}）との新たな出会いがあり、人間関係に記録された。`);
+  }
+  return b;
+}
+
+function resolveRoleSpecificBond(eventId) {
+  if (!eventId) return null;
+  if (eventId.startsWith('encounter_teacher')) {
+    let b = s.bonds.find(x => x.role === 'teacher');
+    if (!b && s.bonds.length < 30) {
+      b = createBond('teacher', 'male', { status: 'close', private: true, metContext: '放課後の個別指導の先生' });
+      s.bonds.push(b);
+      s.relationships = s.bonds.length;
+    }
+    return b;
+  }
+  if (eventId.startsWith('encounter_colleague')) {
+    let b = s.bonds.find(x => x.role === 'colleague');
+    if (!b && s.bonds.length < 30) {
+      b = createBond('colleague', 'male', { status: 'close', private: true, metContext: '深夜残業の職場の同僚' });
+      s.bonds.push(b);
+      s.relationships = s.bonds.length;
+    }
+    return b;
+  }
+  if (eventId.startsWith('encounter_parent_friend')) {
+    let b = s.bonds.find(x => x.role === 'parent_friend');
+    if (!b && s.bonds.length < 30) {
+      b = createBond('parent_friend', 'male', { status: 'close', private: true, metContext: '送迎で知り合った子供の友達の親' });
+      s.bonds.push(b);
+      s.relationships = s.bonds.length;
+    }
+    return b;
+  }
+  if (eventId.startsWith('encounter_partner_sibling')) {
+    let b = s.bonds.find(x => x.role === 'partner_sibling');
+    if (!b && s.bonds.length < 30) {
+      b = createBond('partner_sibling', 'male', { status: 'close', private: true, metContext: 'パートナーのきょうだい' });
+      s.bonds.push(b);
+      s.relationships = s.bonds.length;
+    }
+    return b;
+  }
+  return null;
+}
+
 function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
   // 選択肢効果 (choiceEff) や choice に指定された明示的な人間関係定義
   const bondDef = choiceEff.bond || choiceEff.relationship;
@@ -2598,73 +2764,164 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
   if (typeof outcome !== 'string') outcome = null;
 
   if (bondDef || meetingDef) {
-    if (s.bonds.length >= 30) return;
-    const role = typeof bondDef === 'object' ? bondDef.role : (typeof meetingDef === 'string' ? meetingDef : null);
-    const gender = typeof bondDef === 'object' ? bondDef.gender : null;
-    const status = typeof bondDef === 'object' ? (bondDef.status || 'acquaintance') : 'acquaintance';
-    const b = createBond(role, gender, { status, ...(typeof bondDef === 'object' ? bondDef : {}) });
-    s.bonds.push(b);
-    s.relationships = s.bonds.length;
-    const roleLabel = BOND_ROLE_LABELS[b.role] || '知人';
-    recordExperience('meeting', b.name + '（' + roleLabel + '）と知り合った', b.id);
-    log(`${b.name}（${roleLabel}）との新たな出会いがあり、人間関係に加わった。`);
+    const spec = typeof bondDef === 'object' ? bondDef : { role: typeof meetingDef === 'string' ? meetingDef : null, status: 'acquaintance' };
+    upsertEventBond(spec, e);
     return;
   }
 
-  let bond = s.bonds.find(b => b.status === 'spouse') || s.bonds.find(b => b.status === 'partner') || s.bonds.find(b => b.status === 'close') || s.bonds.find(b => b.status === 'acquaintance');
+  let bond = s.bonds.find(b => b.status === 'spouse')
+    || s.bonds.find(b => b.status === 'partner')
+    || s.bonds.find(b => b.status === 'close' && isRomanticallyCompatible(b, s))
+    || s.bonds.find(b => b.status === 'acquaintance' && isRomanticallyCompatible(b, s))
+    || s.bonds.find(b => b.status === 'close')
+    || s.bonds.find(b => b.status === 'acquaintance');
   if ((e.id === 'first_date_milestone' || e.id === 'adult_first_date') && (index === 0 || index === 1)) {
     s.flags.firstDate = true;
     s.flags.had_first_date_with_partner = true;
-    if (bond) {
-      bond.affection = clamp((bond.affection || 30) + 6);
-      recordExperience('first_date', '初めて二人でデートした', bond.id);
+    const p = getPrimaryPartner(s) || bond;
+    if (p) {
+      p.affection = clamp((p.affection || 40) + 8);
+      p.trust = clamp((p.trust || 40) + 5);
+      recordExperience('first_date', p.name + 'と初めて二人でデートした', p.id);
     }
   }
 
-  // 告白・出会いイベントでの交際承諾処理
+  // 告白されるイベント (confessed_to)：断る／友達として／保留／交際承諾／交際＋初キス
   if (e.id === 'confessed_to') {
-    if (index === 0) return; // 断る
-    if (index === 1 || index === 2) {
-      if (!bond && s.bonds.length < 30) {
-        const b = createBond('friend', null, { status: 'close' });
-        s.bonds.push(b);
-        s.relationships = s.bonds.length;
+    const defaultRole = isStudent(s) ? 'classmate' : (isEmployed(s) ? 'colleague' : 'friend');
+    const targetGender = getRomanticTargetGender(s);
+    if (index === 0) {
+      recordExperience('rejection', '思いがけない相手からの告白を丁寧に断った');
+      return;
+    }
+    if (index === 1) {
+      // 「まずは友達として仲良くしよう」 -> 必ず親しい友人 (close) として人間関係に記録
+      let confessor = s.bonds.find(b => b.status === 'acquaintance' && isRomanticallyCompatible(b, s) && (b.romanticInterest || 0) >= 65);
+      if (confessor) {
+        confessor.status = 'close';
+        confessor.affection = clamp(Math.max(confessor.affection || 50, 58));
+        confessor.trust = clamp(Math.max(confessor.trust || 40, 48));
+        confessor.romanticInterest = clamp(Math.max(confessor.romanticInterest || 75, 78));
+        confessor.metContext = '告白を機に友人へ';
+      } else if (s.bonds.length < 30) {
+        confessor = createBond(defaultRole, targetGender, {
+          status: 'close',
+          affection: 58,
+          trust: 48,
+          romanticInterest: 78,
+          metContext: '告白を機に友人へ'
+        });
+        s.bonds.push(confessor);
+      }
+      s.relationships = s.bonds.length;
+      if (confessor) {
+        const roleLabel = BOND_ROLE_LABELS[confessor.role] || '友人';
+        recordExperience('friendship', `${confessor.name}（${roleLabel}）の告白に「まずは友達として」と答え、親しい友人になった`, confessor.id);
+        log(`${confessor.name}（${roleLabel}）とまずは友達として仲良くすることになり、人間関係に記録された。`);
+      }
+      return;
+    }
+    if (index === 2) {
+      // 「少し考える時間をちょうだい」 -> 気になる知人 (acquaintance, 高好感度・高恋愛関心) として人間関係に記録
+      let confessor = s.bonds.find(b => b.status === 'acquaintance' && isRomanticallyCompatible(b, s) && (b.romanticInterest || 0) >= 65);
+      if (confessor) {
+        confessor.affection = clamp(Math.max(confessor.affection || 45, 52));
+        confessor.romanticInterest = clamp(Math.max(confessor.romanticInterest || 75, 82));
+        confessor.metContext = '告白の返事を保留中';
+      } else if (s.bonds.length < 30) {
+        confessor = createBond(defaultRole, targetGender, {
+          status: 'acquaintance',
+          affection: 52,
+          trust: 42,
+          romanticInterest: 82,
+          metContext: '告白の返事を保留中'
+        });
+        s.bonds.push(confessor);
+      }
+      s.relationships = s.bonds.length;
+      if (confessor) {
+        const roleLabel = BOND_ROLE_LABELS[confessor.role] || '知人';
+        recordExperience('meeting', `${confessor.name}（${roleLabel}）から告白され、返事を保留した`, confessor.id);
+        log(`${confessor.name}（${roleLabel}）からの告白に考える時間をもらい、人間関係に記録された。`);
       }
       return;
     }
     if (index === 3 || index === 4) {
-      let target = s.bonds.find(b => b.status === 'close' || b.status === 'acquaintance');
+      let target = s.bonds.find(b => (b.status === 'close' || b.status === 'acquaintance') && isRomanticallyCompatible(b, s) && (b.romanticInterest || 0) >= 60)
+        || s.bonds.find(b => (b.status === 'close' || b.status === 'acquaintance') && isRomanticallyCompatible(b, s));
       if (!target) {
-        target = createBond();
+        target = createBond(defaultRole, targetGender, {
+          status: 'close',
+          affection: 62,
+          trust: 50,
+          romanticInterest: 85,
+          metContext: '告白を受けて交際'
+        });
         s.bonds.push(target);
         s.relationships = s.bonds.length;
+      } else {
+        target.metContext = '告白を受けて交際';
+        target.affection = clamp(Math.max(target.affection || 50, 62));
       }
-      if (!hasPartner(s)) startRelationship(target);
+      if (!hasPartner(s)) {
+        startRelationship(target);
+      } else {
+        proposeRelationship(target);
+      }
       if (index === 4) {
         target.kissed = true;
         s.flags.firstKiss = true;
-        s.flags.had_first_kiss_with_partner = true;
+        if (target.status === 'partner' || target.status === 'spouse') {
+          s.flags.had_first_kiss_with_partner = true;
+        }
         recordExperience('first_kiss', target.name + 'と告白の直後に唇を重ねた', target.id, { consent: true, mutual: true });
       }
       return;
     }
   }
-  if (e.id === 'adult_romantic_encounter' && index === 0 && !hasPartner(s)) {
-    const b = createBond();
-    s.bonds.push(b);
-    s.relationships = s.bonds.length;
-    startRelationship(b);
+
+  if (e.id === 'adult_romantic_encounter' && index === 0) {
+    const b = createBond(null, getRomanticTargetGender(s), {
+      status: 'close',
+      affection: 58,
+      trust: 45,
+      romanticInterest: 82,
+      metContext: '街角の偶然の出会い'
+    });
+    if (s.bonds.length < 30) {
+      s.bonds.push(b);
+      s.relationships = s.bonds.length;
+      proposeRelationship(b);
+    }
     return;
   }
+
+  if (e.id === 'same_sex_awakening' && index === 0) {
+    s.flags.same_sex_awakened = true;
+    upsertEventBond({
+      role: 'classmate',
+      gender: 'female',
+      status: 'close',
+      affection: 56,
+      trust: 48,
+      romanticInterest: 78,
+      metContext: '放課後の更衣室で意識した同級生'
+    }, e);
+    return;
+  }
+
   if (e.id === 'same_sex_first_kiss' && index === 0) {
     let fPartner = s.bonds.find(b => (b.status === 'partner' || b.status === 'spouse') && b.gender === 'female')
       || s.bonds.find(b => b.gender === 'female' && (b.status === 'close' || b.status === 'acquaintance'));
     if (!fPartner) {
-      fPartner = createBond('friend', 'female', { status: 'close' });
+      fPartner = createBond('classmate', 'female', { status: 'close', affection: 62, trust: 52, romanticInterest: 85, metContext: '放課後の図書室で初キスを交わした相手' });
       s.bonds.push(fPartner);
       s.relationships = s.bonds.length;
+    } else {
+      fPartner.metContext = '放課後の図書室で初キスを交わした相手';
     }
     if (!hasPartner(s)) startRelationship(fPartner);
+    else if (fPartner.status !== 'partner' && fPartner.status !== 'spouse') proposeRelationship(fPartner);
     fPartner.kissed = true;
     s.flags.firstKiss = true;
     s.flags.had_first_kiss_with_partner = true;
@@ -2673,18 +2930,123 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
     return;
   }
 
+  if (e.id === 'same_sex_society_bond' && index === 0) {
+    const fp = s.bonds.find(b => (b.status === 'partner' || b.status === 'spouse') && b.gender === 'female') || getPrimaryPartner(s);
+    if (fp) {
+      fp.cohabiting = true;
+      fp.trust = clamp((fp.trust || 50) + 12);
+      fp.affection = clamp((fp.affection || 50) + 12);
+      fp.metContext = 'パートナーシップを誓い合った伴侶';
+      s.flags.cohabiting = true;
+      recordExperience('relationship', fp.name + 'とパートナーシップの誓いを交わした', fp.id, { mutual: true });
+    }
+    return;
+  }
+
   if (!outcome || outcome === 'none') return;
+
+  if (outcome === 'reconcile_friend') {
+    let friendBond = s.bonds.find(b => b.status === 'close' || b.status === 'acquaintance');
+    if (!friendBond && s.bonds.length < 30) {
+      friendBond = createBond('classmate', null, { status: 'close', affection: 60, trust: 58, metContext: '本音で話し合い仲直りした親友' });
+      s.bonds.push(friendBond);
+      s.relationships = s.bonds.length;
+    } else if (friendBond) {
+      friendBond.status = 'close';
+      friendBond.affection = clamp((friendBond.affection || 45) + 12);
+      friendBond.trust = clamp((friendBond.trust || 45) + 12);
+      friendBond.metContext = '本音で話し合い仲直りした親友';
+    }
+    if (friendBond) {
+      recordExperience('friendship', friendBond.name + 'と本音で向き合い、友情を取り戻した', friendBond.id);
+      log(`${friendBond.name}と本音で話し合って仲直りし、以前よりも絆が深まった。`);
+    }
+    return;
+  }
+
+  if (outcome === 'closer_stranger') {
+    upsertEventBond({
+      role: 'stranger',
+      status: 'close',
+      mode: 'create',
+      affection: 52,
+      trust: 40,
+      romanticInterest: 74,
+      metContext: '街角で声をかけられカフェで意気投合'
+    }, e);
+    return;
+  }
+
+  if (outcome === 'intimate_stranger') {
+    const b = upsertEventBond({
+      role: 'stranger',
+      status: 'close',
+      mode: 'create',
+      affection: 48,
+      trust: 35,
+      intimate: true,
+      private: true,
+      metContext: '街角で誘われホテルで一夜を共にした相手'
+    }, e);
+    s.flags.firstSexualExperience = true;
+    s.flags.taboo_awakened = true;
+    if (b) {
+      b.intimate = true;
+      b.intimateSinceAge ??= s.age;
+      recordExperience('intimacy', `${b.name}（街で出会った人）に誘われるままホテルへ入り、一夜を共にした`, b.id, {
+        consent: true,
+        mutual: true,
+        satisfaction: 72,
+        private: true,
+        title: e.title,
+        partnerName: b.name
+      });
+    }
+    return;
+  }
+
   if (outcome.startsWith('meeting')) {
     if (s.bonds.length >= 30) return;
     const role = outcome.startsWith('meeting_') ? outcome.replace('meeting_', '') : null;
-    const b = createBond(role);
-    s.bonds.push(b);
-    s.relationships = s.bonds.length;
-    const roleLabel = BOND_ROLE_LABELS[b.role] || '知人';
-    recordExperience('meeting', b.name + '（' + roleLabel + '）と知り合った', b.id);
-    log(`${b.name}（${roleLabel}）との新たな出会いがあり、人間関係に加わった。`);
-    if (e.id.startsWith('encounter_') && e.id !== 'encounter_teacher' && isIntimacyChoiceSelected(e, index, choice, outcome)) {
+    const isIntimateEncounter = e.id.startsWith('encounter_') && (e.id !== 'encounter_teacher' || index >= 2) && isIntimacyChoiceSelected(e, index, choice, outcome);
+    const contextMap = {
+      adult_meeting: index === 0 ? '自分から声をかけた出会い' : '視線が交差した出会い',
+      street_encounter_allure: '街角での立ち話',
+      encounter_teacher: index >= 2 ? '準備室で秘密を共有した先生' : '放課後の個別指導の先生',
+      encounter_stranger_adult: '夜の路地裏で出会った大人',
+      encounter_friends_sibling: '友達の家で出会ったきょうだい',
+      encounter_colleague: '深夜の休憩室で急接近した同僚',
+      encounter_partner_sibling: '留守中に接近したパートナーのきょうだい',
+      encounter_parent_friend: '送迎の車内で接近した子供の友達の親',
+      encounter_childs_teacher: '夕暮れの面談室で接近した担任教師',
+      encounter_bar_stranger: 'バーのカウンターで隣り合った人',
+      encounter_neighbor: '深夜に訪れた隣人'
+    };
+    let b = role ? s.bonds.find(x => x.role === role && (x.status === 'acquaintance' || x.status === 'close')) : null;
+    if (!b || !e.id.startsWith('encounter_')) {
+      b = createBond(role, null, {
+        status: isIntimateEncounter ? 'close' : 'acquaintance',
+        affection: e.id === 'adult_meeting' && index === 0 ? 46 : (isIntimateEncounter ? 52 : 35),
+        romanticInterest: e.id === 'adult_meeting' ? 72 : undefined,
+        private: isIntimateEncounter,
+        intimate: isIntimateEncounter && e.id !== 'encounter_teacher',
+        metContext: contextMap[e.id] || e.title
+      });
+      s.bonds.push(b);
+      s.relationships = s.bonds.length;
+      const roleLabel = BOND_ROLE_LABELS[b.role] || '知人';
+      recordExperience('meeting', b.name + '（' + roleLabel + '）と知り合った', b.id);
+      log(`${b.name}（${roleLabel}）との新たな出会いがあり、人間関係に加わった。`);
+    } else {
+      if (isIntimateEncounter) {
+        b.status = 'close';
+        b.private = true;
+      }
+      if (contextMap[e.id]) b.metContext = contextMap[e.id];
+    }
+    if (isIntimateEncounter) {
       const encounterIntimacyDescs = {
+        encounter_teacher: '施錠された準備室で、' + b.name + '（先生）の熱い吐息と愛撫を受け入れた',
         encounter_stranger_adult: b.name + '（知らない大人）の車内で、手慣れた指と肉欲に翻弄され素肌を奪われた',
         encounter_friends_sibling: '友達の家の隣室で、' + b.name + 'に口を塞がれ下着の中に手を差し入れられた',
         encounter_colleague: '深夜のオフィス休憩室で、' + b.name + '（同僚）に抱きすくめられ激しく身体を重ねた',
@@ -2696,68 +3058,154 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
       };
       if (encounterIntimacyDescs[e.id]) {
         s.flags.taboo_awakened = true;
-        recordExperience('intimacy', encounterIntimacyDescs[e.id], b.id, { consent: true, mutual: true, satisfaction: 65, private: true });
+        b.intimate = true;
+        b.intimateSinceAge ??= s.age;
+        if (e.id !== 'encounter_teacher' || index === 4) {
+          s.flags.firstSexualExperience = true;
+        }
+        recordExperience('intimacy', encounterIntimacyDescs[e.id], b.id, {
+          consent: true,
+          mutual: true,
+          satisfaction: 68,
+          private: true,
+          title: e.title,
+          partnerName: b.name
+        });
       }
     }
     return;
   }
   if (outcome === 'marry') {
-    const p = s.bonds.find(b => b.status === 'partner') || bond;
+    const p = s.bonds.find(b => b.status === 'partner') || s.bonds.find(b => b.status === 'spouse');
     if (p) {
+      const alreadySpouse = p.status === 'spouse';
       p.status = 'spouse';
       p.kissed = true;
       p.intimate = true;
       p.cohabiting = true;
       p.trust = clamp(p.trust + 10);
       p.affection = clamp(p.affection + 10);
+      p.metContext = '生涯を誓い合った配偶者';
       s.flags.married = true;
       s.flags.cohabiting = true;
       s.flags.had_first_kiss_with_partner = true;
       s.flags.had_first_intimacy_with_partner = true;
-      recordExperience('relationship', p.name + 'と生涯を誓い合い、婚姻関係を結んだ', p.id, { mutual: true });
-      log(p.name + 'と結婚した。新しい家庭を築き、夫婦としての人生が始まる。', ageDiary(p.name + 'と婚姻の誓いを交わした。左手の薬指に輝く指輪の重みと温もりに、生涯を共にする実感が胸に満ちた。'));
+      if (!alreadySpouse) {
+        recordExperience('relationship', p.name + 'と生涯を誓い合い、婚姻関係を結んだ', p.id, { mutual: true });
+        log(p.name + 'と結婚した。新しい家庭を築き、夫婦としての人生が始まる。', ageDiary(p.name + 'と婚姻の誓いを交わした。左手の薬指に輝く指輪の重みと温もりに、生涯を共にする実感が胸に満ちた。'));
+      }
     }
     return;
   }
   if (outcome === 'infidelity') {
-    let target = s.bonds.find(b => b.status === 'close' || (b.status === 'partner' && b.private));
-    if (!target) { target = createBond(); s.bonds.push(target); }
-    target.status = 'partner'; target.private = true; target.affection = clamp(target.affection + 15); target.trust = clamp(target.trust + 5);
-    s.secrecy = clamp(s.secrecy + 15); s.stress = bounded('stress', s.stress + 5);
+    let target = s.bonds.find(b => (b.status === 'close' || (b.status === 'partner' && b.private)) && b.status !== 'spouse' && isRomanticallyCompatible(b, s));
+    if (!target) {
+      target = createBond(null, 'male', { status: 'partner', private: true, intimate: true, metContext: '配偶者に隠れた秘密の不倫相手' });
+      s.bonds.push(target);
+      s.relationships = s.bonds.length;
+    }
+    target.status = 'partner';
+    target.private = true;
+    target.intimate = true;
+    target.intimateSinceAge ??= s.age;
+    target.metContext = '配偶者に隠れた秘密の不倫相手';
+    target.affection = clamp(target.affection + 15);
+    target.trust = clamp(target.trust + 5);
+    s.secrecy = clamp(s.secrecy + 15);
+    s.stress = bounded('stress', s.stress + 5);
     s.flags.taboo_awakened = true;
+    s.flags.firstSexualExperience = true;
     recordExperience('secret_relationship', target.name + 'と配偶者に隠れて禁断の不倫関係を結んだ', target.id, { private: true });
+    recordExperience('intimacy', target.name + 'と密室で禁断の不倫の情交に溺れた', target.id, { consent: true, mutual: true, satisfaction: 78, private: true, title: e.title, partnerName: target.name });
     log(target.name + 'との秘密の不倫関係が始まった。背徳と罪悪感が交錯する。');
     return;
   }
   if (outcome === 'divorce') {
-    const sp = s.bonds.find(b => b.status === 'spouse') || bond;
+    const sp = s.bonds.find(b => b.status === 'spouse');
     if (sp) {
-      sp.status = 'former'; sp.consent = false; s.flags.married = false; s.flags.divorced = true; s.flags.cohabiting = false;
+      sp.status = 'former'; sp.consent = false; sp.metContext = '離婚した元配偶者';
+      s.flags.married = false; s.flags.divorced = true; s.flags.cohabiting = false;
       recordExperience('breakup', sp.name + 'と離婚届を提出し、婚姻関係を解消した', sp.id);
       log(sp.name + 'と離婚した。夫婦としての生活に終止符を打った。');
     }
     return;
   }
   if (outcome === 'bereavement') {
-    const sp = s.bonds.find(b => b.status === 'spouse') || bond;
+    const sp = s.bonds.find(b => b.status === 'spouse') || s.bonds.find(b => b.status === 'partner');
     if (sp) {
-      sp.status = 'widowed'; sp.consent = false; s.flags.married = false; s.flags.widowed = true; s.flags.cohabiting = false;
+      sp.status = 'widowed'; sp.consent = false; sp.metContext = '死別した最愛の伴侶';
+      s.flags.married = false; s.flags.widowed = true; s.flags.cohabiting = false;
       recordExperience('bereavement', '最愛の伴侶 ' + sp.name + ' と永遠の死別を迎えた', sp.id);
       log(sp.name + 'が静かに息を引き取った。最愛の伴侶を見送り、深い悲しみに暮れた。');
     }
     return;
   }
-  if (!bond) return;
-  if (outcome === 'reunion') { const old = s.bonds.find(b => b.status === 'former'); if (old) { old.trust = clamp(old.trust + 3); recordExperience('reunion', old.name + 'と近況を話した', old.id) } return }
-  if (outcome === 'shared_activity') { bond.affection = clamp(bond.affection + 5); recordExperience('communication', bond.name + 'と新しい時間の過ごし方を試した', bond.id); return }
-  if (outcome === 'approach' || outcome === 'closer') { const willingness = approachProbability(bond); if (chance(willingness)) { bond.affection = clamp(bond.affection + 15); bond.trust = clamp(bond.trust + 7); if (bond.affection >= 52 && chance(Math.max(.05, Math.min(.9, bond.romanticInterest / 125)))) { proposeRelationship(bond) } else { bond.status = 'close'; log('交流が深まり、少し親しくなった。') } } else { recordExperience('rejection', '相手の希望を尊重した', bond.id); log('相手は今の距離感を望んでいた。気持ちを尊重した。') } return }
-  if (outcome === 'first_kiss') {
-    let p = bond;
-    if (!p || (p.status !== 'partner' && p.status !== 'spouse' && p.status !== 'close')) {
-      p = s.bonds.find(b => b.status === 'partner' || b.status === 'spouse' || b.status === 'close');
+  if (outcome === 'reunion') {
+    const old = s.bonds.find(b => b.status === 'former');
+    if (old) {
+      old.trust = clamp(old.trust + 6);
+      old.affection = clamp(old.affection + 8);
+      old.metContext = '再会して言葉を交わした元恋人';
+      recordExperience('reunion', old.name + 'と再会し、懐かしい時間を分かち合った', old.id);
+      log(`${old.name}（元恋人）と再会し、穏やかに近況を語り合った。`);
     }
+    return;
+  }
+  if (outcome === 'approach' || outcome === 'closer') {
+    let target = s.bonds.find(b => (b.status === 'close' || b.status === 'acquaintance') && isRomanticallyCompatible(b, s));
+    if (!target && s.bonds.length < 30) {
+      target = createBond(null, getRomanticTargetGender(s), { status: 'close', affection: 52, trust: 45, romanticInterest: 78, metContext: '想いを寄せた相手' });
+      s.bonds.push(target);
+      s.relationships = s.bonds.length;
+    }
+    if (!target) return;
+    if (outcome === 'closer') {
+      target.status = 'close';
+      target.affection = clamp((target.affection || 40) + 15);
+      target.trust = clamp((target.trust || 35) + 8);
+      target.romanticInterest = clamp(Math.max(target.romanticInterest || 60, 72));
+      target.metContext ||= '距離を縮めた大切な人';
+      recordExperience('friendship', target.name + 'との距離が縮まり、親しい関係になった', target.id);
+      log(`${target.name}との距離が少しずつ縮まり、人間関係が「親しい友人」へ深まった。`);
+      return;
+    }
+    // outcome === 'approach' (熱い想いを打ち明ける)
+    target.affection = clamp((target.affection || 45) + 18);
+    target.trust = clamp((target.trust || 40) + 10);
+    const willingness = Math.max(0.55, approachProbability(target));
+    if (chance(willingness)) {
+      target.metContext = '自分から想いを伝えて結ばれた相手';
+      proposeRelationship(target);
+    } else {
+      target.status = 'close';
+      target.metContext = '想いを伝えた大切な友人';
+      recordExperience('rejection', target.name + 'に想いを伝えたが、まずは友人として関係を続けることになった', target.id);
+      log(`${target.name}に想いを伝えた。すぐには交際に至らなかったが、大切な友人として関係を続けることになった。`);
+    }
+    return;
+  }
+
+  // 特定ロールの遭遇イベント (encounter_teacher_deep_bond, encounter_colleague_after_hours, encounter_parent_friend_secret_hotel) のターゲット解決
+  const roleSpecificBond = resolveRoleSpecificBond(e.id);
+  if (roleSpecificBond) bond = roleSpecificBond;
+
+  if (!bond) return;
+
+  if (e.id === 'encounter_colleague_after_hours' && index === 1) {
+    // 「本当の恋人同士になりたいと耳元で甘く囁く」
+    bond.affection = clamp((bond.affection || 50) + 15);
+    bond.trust = clamp((bond.trust || 45) + 10);
+    bond.metContext = '深夜残業から恋人へと進んだ同僚';
+    proposeRelationship(bond);
+    return;
+  }
+
+  if (outcome === 'shared_activity') { bond.affection = clamp(bond.affection + 5); recordExperience('communication', bond.name + 'と新しい時間の過ごし方を試した', bond.id); return }
+  if (outcome === 'first_kiss') {
+    let p = s.bonds.find(b => b.status === 'partner' || b.status === 'spouse')
+      || s.bonds.find(b => b.status === 'close' && isRomanticallyCompatible(b, s));
     if (!p) return;
-    if (p.status === 'close') p.status = 'partner';
+    if (p.status === 'close' && !hasPartner(s) && isRomanticallyCompatible(p, s)) startRelationship(p);
     p.kissed = true;
     s.flags.firstKiss = true;
     s.flags.had_first_kiss_with_partner = true;
@@ -2768,22 +3216,29 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
   }
   if (outcome === 'shared_intimacy') {
     if (!isIntimacyChoiceSelected(e, index, choice, null)) return;
-    let p = bond;
-    if (!p || (p.status !== 'partner' && p.status !== 'spouse')) {
-      p = s.bonds.find(b => b.status === 'partner' || b.status === 'spouse') || s.bonds.find(b => b.status === 'close');
-    }
+    let p = roleSpecificBond
+      || s.bonds.find(b => b.status === 'partner' || b.status === 'spouse')
+      || s.bonds.find(b => b.status === 'close' && isRomanticallyCompatible(b, s));
     if (p) {
-      if (p.status === 'close') p.status = 'partner';
+      if (!roleSpecificBond && p.status === 'close' && !hasPartner(s) && isRomanticallyCompatible(p, s)) {
+        startRelationship(p);
+      } else if (roleSpecificBond) {
+        p.status = p.status === 'acquaintance' ? 'close' : p.status;
+        p.private = true;
+        s.flags.taboo_awakened = true;
+      }
       p.kissed = true;
       p.intimate = true;
       p.intimateSinceAge ??= s.age;
       p.trust = clamp(p.trust + 4);
       p.affection = clamp(p.affection + 5);
       s.flags.firstKiss = true;
-      s.flags.had_first_kiss_with_partner = true;
       s.flags.firstSexualExperience = true;
-      s.flags.had_first_intimacy_with_partner = true;
-      // settle() 側で個別記録されないイベント（first_intimacy_milestone, adult_shared_intimacy 等）のみここで記録（ランダム拒絶は行わない）
+      if (!roleSpecificBond) {
+        s.flags.had_first_kiss_with_partner = true;
+        s.flags.had_first_intimacy_with_partner = true;
+      }
+      // settle() 側で個別記録されないイベント（first_intimacy_milestone, adult_shared_intimacy, encounter_*_deep_bond 等）のみここで記録
       if (!isHandledBySettleIntimacy(e.id)) {
         const diarySnippet = diaryForEvent(e, index) || '';
         recordExperience('intimacy', e.title + '：' + getChoiceLabel(choice), p.id, {
@@ -2800,10 +3255,10 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
     return;
   }
   if (outcome === 'disclose_relationship' || outcome === 'private_relationship') { const disclose = outcome === 'disclose_relationship'; bond.private = !disclose; recordExperience('disclosure', disclose ? '二人の合意で関係を周囲に伝えた' : '二人の合意で関係を非公開にした', bond.id, { mutual: true, private: !disclose }); log(disclose ? '二人で話し合い、関係を周囲に伝えた。' : '二人で話し合い、関係は非公開にすると決めた。'); return }
-  if (outcome === 'mutual_talk') { bond.trust = clamp(bond.trust + 4); recordExperience('communication', '希望や境界線について対話した', bond.id); log('互いの希望を話し合い、理解が少し深まった。'); return }
+  if (outcome === 'mutual_talk') { bond.trust = clamp(bond.trust + 4); bond.affection = clamp((bond.affection || 35) + 3); recordExperience('communication', bond.name + 'と希望や境界線について対話した', bond.id); log('互いの希望を話し合い、理解が少し深まった。'); return }
   if (outcome === 'boundary') { recordExperience('boundary', '望まないことを伝えた', bond.id); log('自分の境界線を伝えた。'); return }
-  if (outcome === 'distance') { bond.affection = clamp(bond.affection - 8); log('相手との距離を少し置いた。'); return }
-  if (outcome === 'breakup') { bond.status = 'former'; bond.consent = false; s.flags.cohabiting = false; recordExperience('breakup', '関係を終える選択をした', bond.id); log('話し合いの末、交際関係を終えた。'); return }
+  if (outcome === 'distance') { bond.affection = clamp(bond.affection - 8); log(bond.name + 'との距離を少し置いた。'); return }
+  if (outcome === 'breakup') { bond.status = 'former'; bond.consent = false; bond.metContext = '話し合いで別れた元恋人'; s.flags.cohabiting = false; recordExperience('breakup', bond.name + 'との関係を終える選択をした', bond.id); log(bond.name + 'と話し合いの末、交際関係を終えた。'); return }
   if (outcome === 'reflection' || outcome === 'privacy') recordExperience(outcome, '自分の価値観について考えた');
 }
 function eventProbability(e) {
@@ -2972,7 +3427,17 @@ function settle(event, index, continueYear = true) {
     else if (['学生', '無職', '専業主婦', '風俗'].includes(choiceEff.occupation)) s.flags.employed = false;
     if (choiceEff.occupation === '学生') s.flags.university = s.age >= 18;
   }
-  if (choiceEff.chain) { s.chains ??= []; s.chains.push({ eventId: choiceEff.chain.eventId, targetAge: s.age + (choiceEff.chain.delay || 1), prob: choiceEff.chain.prob ?? 1 }); }
+  if (choiceEff.chain) {
+    s.chains ??= [];
+    const delayYears = choiceEff.chain.delay || 1;
+    const delayMonths = choiceEff.chain.delayMonths ?? (delayYears <= 1 ? (3 + Math.floor(rng.next() * 4)) : delayYears * 12);
+    s.chains.push({
+      eventId: choiceEff.chain.eventId,
+      targetAge: s.age + (delayYears > 1 ? delayYears : 0),
+      targetAgeMonths: (s.age_months || 0) + delayMonths,
+      prob: choiceEff.chain.prob ?? 1
+    });
+  }
   apply(balancedChoiceEffect(active, choiceEff));
   const choiceSexEff = choiceEff.sexualEffects || {};
   const directSexEff = {};
@@ -3077,7 +3542,14 @@ function settleNarrative(rawEvent, continueYear = true) {
       for (const eff of rawEvent.effects) {
         if (eff.path === 'chain') {
           s.chains ??= [];
-          s.chains.push({ eventId: eff.value.eventId, targetAge: s.age + (eff.value.delay || 1), prob: eff.value.prob ?? 1.0 });
+          const delayYears = eff.value.delay || 1;
+          const delayMonths = eff.value.delayMonths ?? (delayYears <= 1 ? (3 + Math.floor(rng.next() * 4)) : delayYears * 12);
+          s.chains.push({
+            eventId: eff.value.eventId,
+            targetAge: s.age + (delayYears > 1 ? delayYears : 0),
+            targetAgeMonths: (s.age_months || 0) + delayMonths,
+            prob: eff.value.prob ?? 1.0
+          });
         } else if (eff.path?.startsWith('history.flags.')) {
           s.flags[eff.path.replace('history.flags.', '')] = eff.value;
         } else if (eff.path === 'state.mood') {
@@ -3162,27 +3634,48 @@ function applyAnnualLocationEffects() {
 }
 function step() {
   if (s.finished || s.pending) return false;
-  // 同じ年の未処理イベントがあれば、年齢を増やさず続きから再開。
-  if (s.yearEvents?.length) return processYearEvents();
-  s.age++; updateSexualityForAge();
-  s.current_month = s.birth_month || 1;
-  s.age_months = s.age * 12 + (s.current_month - 1);
-  lifeMilestones();
-  // 仕様書 8章 経時回復・欲求回帰
-  s.states.fatigue = clamp(Math.round(s.states.fatigue * 0.45), 0, 100);
-  s.states.stress = clamp(Math.round(s.states.stress * 0.55), 0, 100);
-  s.states.mood = clamp(Math.round(s.states.mood * 0.40), -100, 100);
+  // 同じ月の未処理イベントがあれば、月を進めず続きから再開
+  if (s.monthEvents?.length || s.yearEvents?.length) return processMonthEvents();
+
+  // 内部時間を1ヶ月進める
+  const bm = s.birth_month || 4;
+  s.current_month = ((s.current_month || bm) % 12) + 1;
+  s.age_months = (s.age_months || 0) + 1;
+
+  // 誕生月に達したときのみ年齢を +1 し、年次カウンタをリセット
+  const isBirthMonth = s.current_month === bm;
+  if (isBirthMonth) {
+    s.age++;
+    s.eventsThisYear = 0;
+    s.sweetThisYear = false;
+    s.crisisThisYear = false;
+    s.tabooCountThisYear = 0;
+    updateSexualityForAge();
+  }
+
+  // 月次・誕生月・3月（卒業）・4月（入学・進学・就職）のライフマイルストーン判定
+  lifeMilestones(isBirthMonth);
+
+  // 仕様書 8章 経時回復・欲求回帰（月次減衰：12ヶ月で年次減衰率と同等になるよう調整）
+  s.states.fatigue = clamp(Math.round(s.states.fatigue * 0.935), 0, 100);
+  if (s.states.fatigue > 0 && rng.next() < 0.25) s.states.fatigue = Math.max(0, s.states.fatigue - 1);
+  s.states.stress = clamp(Math.round(s.states.stress * 0.95), 0, 100);
+  if (s.states.stress > 0 && rng.next() < 0.25) s.states.stress = Math.max(0, s.states.stress - 1);
+  s.states.mood = clamp(Math.round(s.states.mood * 0.925), -100, 100);
   const baseLib = s.traits.baseline_libido.current;
-  s.states.current_libido = clamp(Math.round(0.35 * s.states.current_libido + 0.65 * baseLib), -100, 100);
+  s.states.current_libido = clamp(Math.round(0.916 * s.states.current_libido + 0.084 * baseLib), -100, 100);
 
   if (s.age < 18) {
-    s.abilities.knowledge = clamp((s.abilities.knowledge || 0) + 3, -100, 100);
-    s.states.self_efficacy = clamp((s.states.self_efficacy || 0) + 2, -100, 100);
-    // 幼少期・就学期は生活費0を維持
+    if (isBirthMonth) {
+      s.abilities.knowledge = clamp((s.abilities.knowledge || 0) + 3, -100, 100);
+      s.states.self_efficacy = clamp((s.states.self_efficacy || 0) + 2, -100, 100);
+    }
+    // 幼少期・就学期は生活費0を維持、高校生バイト中は月収を加算
     s.economy.monthly_expenses = 0;
     s.economy.monthly_income = (s.occupation === '学生' && s.age >= 15 && s.flags.employed_part_time) ? 30000 : 0;
+    if (s.economy.monthly_income > 0) applyCashDelta(s, s.economy.monthly_income);
   } else {
-    // 仕様書 6.4 & 8章 経済収支の年次反映
+    // 仕様書 6.4 & 8章 経済収支の月次反映（毎月1ヶ月分の収支を反映）
     const mult = getDistrictExpenseMultiplier(s.location?.district);
     let monthlyInc = 0;
     let monthlyExp = roundHalfAwayFromZero(160000 * mult);
@@ -3198,28 +3691,32 @@ function step() {
     }
     s.economy.monthly_income = monthlyInc;
     s.economy.monthly_expenses = monthlyExp;
-    const annualSurplus = (monthlyInc - monthlyExp) * 12;
-    applyCashDelta(s, annualSurplus);
-    applyAnnualLocationEffects();
+    const monthlySurplus = monthlyInc - monthlyExp;
+    applyCashDelta(s, monthlySurplus);
+    if (isBirthMonth) applyAnnualLocationEffects();
   }
   syncDisplay(s);
-  if (s.age > 45) s.health = bounded('health', s.health - (rng.next() < .65 ? 1 : 0));
-  if (s.age > 70) s.health = bounded('health', s.health - 1);
-  const deathChance = s.age < 60 ? .0002 : s.age < 80 ? .002 + (s.age - 60) * .001 : s.age < 100 ? .025 + (s.age - 80) * .012 : .35;
-  if (s.age >= 120 || rng.next() < deathChance * (s.health < 30 ? 2 : 1)) {
+  if (isBirthMonth) {
+    if (s.age > 45) s.health = bounded('health', s.health - (rng.next() < .65 ? 1 : 0));
+    if (s.age > 70) s.health = bounded('health', s.health - 1);
+  }
+  const annualDeathChance = s.age < 60 ? .0002 : s.age < 80 ? .002 + (s.age - 60) * .001 : s.age < 100 ? .025 + (s.age - 80) * .012 : .35;
+  const monthlyDeathChance = (annualDeathChance / 12) * (s.health < 30 ? 2 : 1);
+  if ((isBirthMonth && s.age >= 120) || rng.next() < monthlyDeathChance) {
     s.finished = true; log(`人生を終えた。${s.age}年間を生きた。`, 'たくさんの出来事があった。どれも私が生きた時間だった。');
     s.rngState = rng.state(); return false;
   }
   advanceBonds();
-  // 人間関係の重要な選択が先に発生しても、その年の通常イベントを失わない。
-  s.yearEvents = pickYearEvents();
+  // 月ごとのイベント抽選
+  s.monthEvents = pickMonthEvents();
+  s.yearEvents = s.monthEvents;
   if (s.pending) {
     if (document.getElementById('mode').value === 'auto') {
       settleMultiple(chance(.14) ? 2 : chance(.30) ? 1 : 0, false);
     } else { s.rngState = rng.state(); return false }
   }
-  if (!s.yearEvents.length && s.age % 5 === 0) log('日々の暮らしを重ねた。');
-  return processYearEvents();
+  if (!s.monthEvents.length && isBirthMonth && s.age > 0 && s.age % 5 === 0) log('日々の暮らしを重ねた。');
+  return processMonthEvents();
 }
 const actions = [{ patterns: /セックス|エッチ|身体を重ね|交わり|抱かれたい|肉体関係/, label: '相手と素肌を重ね、身体の奥深くまで交わった', effects: { happiness: 3, stress: -3 }, sexualEffects: { desire: 4, intimacyNeed: 3, selfKnowledge: 2 }, partnerOnly: true, adultOnly: true }, { patterns: /自慰|オナニー|一人で慰め|秘所を弄|身体を慰め/, label: '一人きりの夜、指先で濡れた秘所を弄り身体を慰めた', effects: { stress: -3, happiness: 2 }, sexualEffects: { desire: -2, selfKnowledge: 3, shyness: 2 }, adultOnly: true }, { patterns: /性について話|性的な希望を伝|境界線を伝|嫌なことを断/, label: '親密さに関する希望や境界線を言葉にした', effects: { selfUnderstanding: 2 }, sexualEffects: { boundaryVoice: 5, selfAcceptance: 2, shyness: -1 }, adultOnly: true }, { patterns: /自分の性的指向|性的指向を考|自分の好みを知/, label: '自分の指向や希望を振り返った', effects: { selfUnderstanding: 3 }, sexualEffects: { selfKnowledge: 5, selfAcceptance: 2 }, adultOnly: false }, { patterns: /親密な関係を求め|親密さについて相談/, label: '親密さについて考え、相手との対話を試みた', effects: { stress: -1 }, sexualEffects: { initiative: 2, boundaryVoice: 3 }, adultOnly: true }, { patterns: /勉強|学習|資格|受験/, label: '学習を始めた', effects: { knowledge: 6, stress: 2 } }, { patterns: /就職|一般職|会社員|正社員/, label: '会社員（一般職）として就職した', effects: { money: 4, stress: 3 }, occupation: '一般職' }, { patterns: /専門職|クリエイター|作家|デザイナー/, label: '専門職・クリエイターとして活動を始めた', effects: { knowledge: 4, independence: 4 }, occupation: '専門職・クリエイター' }, { patterns: /自営業|起業|開業|店を開|カフェ/, label: '自営業として開業・独立した', effects: { money: -3, independence: 5 }, occupation: '自営業' }, { patterns: /パート|アルバイト/, label: 'パート・アルバイトとして働き始めた', effects: { money: 2, stress: 1 }, occupation: 'パート・アルバイト' }, { patterns: /風俗|ソープ|デリヘル/, label: '風俗の仕事に就いた', effects: { money: 12, morality: -4 }, occupation: '風俗' }, { patterns: /主婦|専業主婦/, label: '家庭に入り専業主婦となった', effects: { stress: -2, happiness: 2 }, occupation: '専業主婦' }, { patterns: /転職|仕事を探|働き/, label: '仕事について行動した', effects: { money: 4, stress: 4 } }, { patterns: /退職|仕事を辞め|会社を辞め/, label: '仕事を辞める決断をした', effects: { money: -9, independence: 5, stress: -4 } }, { patterns: /貯金|貯蓄|節約/, label: '貯蓄を心がけた', effects: { money: 6, happiness: -1 } }, { patterns: /旅行|旅に出/, label: '旅に出た', effects: { money: -6, happiness: 7 } }, { patterns: /引っ越|移住/, label: '住む場所を変える準備をした', effects: { money: -5, independence: 5 }, relocate: true }, { patterns: /起業|開業|店を開|カフェ/, label: '開業に向けて準備を始めた', effects: { money: -4, knowledge: 3, stress: 3 } }, { patterns: /恋人|交際|付き合|告白|デート/, label: '誰かとの親密な関係を模索した', effects: { social: 4, stress: 2 } }, { patterns: /女性が好き|女性と交際|同性/, label: '自分の惹かれ方について考え、出会いを探した', effects: { selfUnderstanding: 5, social: 2 } }, { patterns: /秘密を打ち明け|告白する|正直に話/, label: '大切なことを打ち明けた', effects: { secrecy: -5, trust: 4, stress: -3 } }, { patterns: /秘密にする|隠す/, label: '秘密を抱えることにした', effects: { secrecy: 6, stress: 3 } }, { patterns: /不倫|浮気/, label: '現在の関係と新たな気持ちの間で行動を考えた', effects: { stress: 6, secrecy: 4, trust: -3 } }, { patterns: /運動|散歩|筋トレ/, label: '身体を動かした', effects: { health: 5, stress: -3 } }, { patterns: /休む|休養|眠る/, label: '休息をとった', effects: { health: 3, stress: -6 } }, { patterns: /友達|友人|相談/, label: '誰かと交流した', effects: { social: 4, stress: -3 } }];
 function act(text) { const matches = actions.filter(a => a.patterns.test(text)); if (!matches.length) return '解釈できませんでした。例：勉強する、貯金する、旅行する、恋人を探す、身体を重ねる'; if (matches.length > 1) return `複数の意図を認識しました（${matches.map(x => x.label).join('／')}）。まず一つの行動に分けて入力してください。`; if (matches[0].adultOnly && s.age < 18) return '成人後に利用できる行動です。'; if (matches[0].partnerOnly && !hasPartner(s)) return '現在交際・婚姻中のパートナーがいません。'; if (s.age < 12 && /恋人|交際|不倫|浮気/.test(text)) return 'この年齢では、この行動は実行できません。'; if (/セックス|エッチ|身体を重ね|交わり|抱かれたい|肉体関係/.test(text) && hasPartner(s)) { const partner = s.bonds.find(b => b.status === 'spouse') || s.bonds.find(b => b.status === 'partner'); resolveSharedIntimacy(partner); return `実行：${partner.name}と身体を重ね、濃密な情交を交わした` } if (/自慰|オナニー|一人で慰め|秘所を弄|身体を慰め/.test(text)) { recordExperience('masturbation', '夜の静寂の中、指先で愛液に濡れた秘所を解し、震える絶頂を迎えた', null, { satisfaction: 70, private: true }); log('静かな夜、一人で身体の疼きを慰め、甘い痺れに息を漏らした。', ageDiary('シーツの中で指先を這わせ、濡れた奥を弄るたびに漏れる湿った水音。恥ずかしさに顔を埋めながらも、下腹から突き上げる快感に身体が震えて止まらなかった。')); apply(matches[0].effects); if (matches[0].sexualEffects) changeSexuality(matches[0].sexualEffects); return '実行：自慰により身体の疼きを慰めた' } apply(matches[0].effects); if (matches[0].sexualEffects) changeSexuality(matches[0].sexualEffects); if (matches[0].relocate) { const destTerrain = TERRAINS.find(x => text.includes(x)); const destDistrict = DISTRICTS.find(x => text.includes(x)); const next = newLocation(rng); if (destTerrain) next.terrain = destTerrain; if (destDistrict) next.district = destDistrict; setLocation(next, '自由介入による転居') } log(`介入：${matches[0].label}。`); return `実行：${matches[0].label}` }
@@ -3423,7 +3920,7 @@ function render() {
   // Sexual records integrated into experiencePanel
   const internalParamsWasOpen = !!document.getElementById('internalParamsDetails')?.open;
   document.getElementById('internalParams').innerHTML = getInternalParamsHtml(s);
-  if (document.getElementById('internalParamsDetails')) document.getElementById('internalParamsDetails').open = internalParamsWasOpen; document.getElementById('bonds').innerHTML = `<div class="bonds-box"><details id="bondDetails" open><summary>人間関係：知人 ${s.bonds.filter(b => b.status === 'acquaintance').length} / 親しい友人 ${s.bonds.filter(b => b.status === 'close').length} / 交際中 ${s.bonds.filter(b => b.status === 'partner').length} / 配偶者 ${s.bonds.filter(b => b.status === 'spouse').length} / 合計 ${s.bonds.length}人</summary><div style="padding:6px 0;margin-bottom:8px;border-bottom:1px solid #e2e8f0;font-size:0.9em;"><strong>性経験人数</strong>：${getSexualPartnerCount(s)}人（交際・婚姻関係：${getSexualPartnerList(s).filter(p => p.type === 'bond').length}人 / 逢瀬・風俗・見知らぬ人等：${getSexualPartnerList(s).filter(p => p.type !== 'bond').length}人）</div><div class="exp-list" style="display:flex;flex-direction:column;gap:6px;">${s.bonds.map(b => `<div style="padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;display:flex;justify-content:space-between;align-items:center;"><div><strong style="color:#1e293b;font-size:0.95em;">${escapeBond(b.name)}</strong>${getSexualPartnerList(s).some(p => p.id === b.id) ? '<span title="性行為の相手" style="color:#e11d48;margin-left:4px;">❤</span>' : ''}<span style="color:#64748b;font-size:0.85em;margin-left:6px;">（${b.gender === 'female' ? '女性' : '男性'}・${BOND_ROLE_LABELS[b.role] || '知人'}）</span>${b.metAge != null ? `<span style="color:#94a3b8;font-size:0.8em;margin-left:5px;">${b.metAge}歳で出会い</span>` : ''}</div><div><span class="badge" style="background:${b.status === 'spouse' ? '#fdf2f8;color:#be185d;border:1px solid #fbcfe8' : b.status === 'partner' ? '#fef2f2;color:#b91c1c;border:1px solid #fecaca' : b.status === 'close' ? '#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe' : '#f1f5f9;color:#475569;border:1px solid #e2e8f0'};padding:2px 8px;border-radius:10px;font-size:0.8em;font-weight:600;">${({ acquaintance: '知人', close: '親しい友人', partner: '交際中', spouse: '配偶者', former: '元交際', widowed: '死別' })[b.status] || b.status}</span></div></div>`).join('') || '<p class="muted" style="padding:6px 0;">まだ出会いはありません。</p>'}</div></details></div>`;
+  if (document.getElementById('internalParamsDetails')) document.getElementById('internalParamsDetails').open = internalParamsWasOpen; document.getElementById('bonds').innerHTML = `<div class="bonds-box"><details id="bondDetails" open><summary>人間関係：知人 ${s.bonds.filter(b => b.status === 'acquaintance').length} / 親しい友人 ${s.bonds.filter(b => b.status === 'close').length} / 交際中 ${s.bonds.filter(b => b.status === 'partner').length} / 配偶者 ${s.bonds.filter(b => b.status === 'spouse').length} / 合計 ${s.bonds.length}人</summary><div style="padding:6px 0;margin-bottom:8px;border-bottom:1px solid #e2e8f0;font-size:0.9em;"><strong>性経験人数</strong>：${getSexualPartnerCount(s)}人（交際・婚姻関係：${getSexualPartnerList(s).filter(p => p.type === 'bond').length}人 / 逢瀬・風俗・見知らぬ人等：${getSexualPartnerList(s).filter(p => p.type !== 'bond').length}人）</div><div class="exp-list" style="display:flex;flex-direction:column;gap:6px;">${s.bonds.map(b => `<div style="padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;display:flex;justify-content:space-between;align-items:center;gap:6px;"><div style="min-width:0;"><strong style="color:#1e293b;font-size:0.95em;">${escapeBond(b.name)}</strong>${getSexualPartnerList(s).some(p => p.id === b.id) || b.intimate ? '<span title="肉体関係あり" style="color:#e11d48;margin-left:4px;">❤</span>' : (b.kissed ? '<span title="キス済み" style="color:#ec4899;margin-left:4px;font-size:0.85em;">💋</span>' : '')}<span style="color:#64748b;font-size:0.85em;margin-left:6px;">（${b.gender === 'female' ? '女性' : '男性'}・${BOND_ROLE_LABELS[b.role] || '知人'}）</span>${b.metAge != null ? `<span style="color:#94a3b8;font-size:0.8em;margin-left:5px;">${b.metAge}歳で出会い</span>` : ''}${b.metContext ? `<div style="color:#475569;font-size:0.78em;margin-top:2px;">きっかけ・関係：${escapeHtml(b.metContext)}${b.private ? ' <span style="color:#7c3aed;font-weight:600;">[秘密]</span>' : ''}（好感 ${Math.round(b.affection || 0)} / 信頼 ${Math.round(b.trust || 0)}）</div>` : ''}</div><div style="flex-shrink:0;"><span class="badge" style="background:${b.status === 'spouse' ? '#fdf2f8;color:#be185d;border:1px solid #fbcfe8' : b.status === 'partner' ? '#fef2f2;color:#b91c1c;border:1px solid #fecaca' : b.status === 'close' ? '#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe' : '#f1f5f9;color:#475569;border:1px solid #e2e8f0'};padding:2px 8px;border-radius:10px;font-size:0.8em;font-weight:600;">${({ acquaintance: '知人', close: '親しい友人', partner: '交際中', spouse: '配偶者', former: '元交際', widowed: '死別' })[b.status] || b.status}</span></div></div>`).join('') || '<p class="muted" style="padding:6px 0;">まだ出会いはありません。</p>'}</div></details></div>`;
   const exp = s.sexuality.experience;
   const expLabels = { multiple_relationship: '合意のある複数交際', secret_relationship: '秘密の交際', friendship: '親交', rejection: '意思の尊重', reunion: '再会', reflection: '振り返り', privacy: '非公開', intimacy: '身体的な親密さ', masturbation: '自慰', relationship: '交際・婚姻', boundary: '境界線', communication: '対話', meeting: '出会い', disclosure: '公開・秘密', breakup: '別れ・破局', bereavement: '死別' };
   const expCounts = {}; for (const e of exp) { const label = expLabels[e.kind] || 'その他'; expCounts[label] = (expCounts[label] || 0) + 1; }
@@ -3431,7 +3928,7 @@ function render() {
   const sexualRecordsHtml = `<details class="sexual-records-box" id="sexualRecordsDetails" ${sexualRecordsWasOpen ? 'open' : ''} style="margin:7px 0 9px;background:#faf4f8;border:1px solid #ebdbe5;border-radius:8px;padding:8px;"><summary style="cursor:pointer;font-size:11.5px;font-weight:700;color:#6a4a70;outline:none;">心に刻まれた性行為の記憶 ▾</summary><div style="margin-top:6px;">${formatSexCard(sh.firstSex, '🌸 初めての性行為（初体験）', 'first')}${formatSexCard(sh.mostMemorable, '🔥 最も心に残った性行為', 'memorable')}${formatSexCard(sh.latestSex, s.finished ? '🌙 人生最後の性行為' : '🌙 最も直近の性行為', 'latest')}</div></details>`;
   document.getElementById('experiencePanel').innerHTML = `<div class="experience-panel"><details id="experienceDetails"><summary>性的・親密な経験　${exp.length}件 ▾</summary>${sexualRecordsHtml}<div class="exp-counts">${Object.entries(expCounts).map(([k, v]) => `${escapeHtml(k)} ${v}件`).join(' / ') || '記録なし'}</div><div class="exp-list">${exp.length ? exp.slice().reverse().map(e => `<div class="exp-entry"><div class="exp-meta">${escapeHtml(e.age)}歳 ・ ${escapeHtml(expLabels[e.kind] || 'その他')}${e.private ? ' ・ 非公開' : ''}</div><div>${escapeHtml(e.description)}</div>${e.partnerId ? `<div class="exp-meta">相手：${escapeHtml(s.bonds.find(b => b.id === e.partnerId)?.name || '不明')}（${escapeHtml(e.partnerId)}）</div>` : ''}${e.satisfaction != null ? `<div class="exp-meta">満足感 ${escapeHtml(e.satisfaction)}</div>` : ''}</div>`).join('') : '<div class="exp-empty">まだ経験の記録はありません。出会い・交際・親密さに関する出来事が起きると、ここに追加されます。</div>'}</div></details></div>`;
   document.getElementById('experienceDetails').open = experienceWasOpen;
-  document.getElementById('identity').innerHTML = `<h2>${s.name} · ${s.age}歳 ${s.finished ? '（終了）' : ''} <span class="badge" style="background:#e0e7ff;color:#3730a3;padding:2px 10px;border-radius:12px;font-size:0.65em;font-weight:600;vertical-align:middle;">${escapeHtml(s.occupation || '学生')}</span></h2><div style="margin:4px 0 6px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;height:5px;overflow:hidden;width:100%;" title="${s.age}歳 / 人生の歩み（目安85歳）"><div style="width:${Math.min(100, Math.round((s.age / 85) * 100))}%;height:100%;background:linear-gradient(90deg, #3b82f6, #ec4899);border-radius:4px;transition:width 0.3s ease;"></div></div><p class="muted">${s.age < 6 ? '幼少期' : s.age < 18 ? '学生時代' : s.age < 65 ? '成人期' : 'シニア期'} / 人間関係 ${s.relationships}件</p>`;
+  document.getElementById('identity').innerHTML = `<h2>${s.name} · ${s.age}歳 ${s.current_month || s.birth_month || 4}月 <span style="font-size:0.62em;color:#64748b;font-weight:normal;">（${s.birth_month || 4}月生まれ）</span> ${s.finished ? '（終了）' : ''} <span class="badge" style="background:#e0e7ff;color:#3730a3;padding:2px 10px;border-radius:12px;font-size:0.65em;font-weight:600;vertical-align:middle;">${escapeHtml(s.occupation || '学生')}</span></h2><div style="margin:4px 0 6px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;height:5px;overflow:hidden;width:100%;" title="${s.age}歳 / 人生の歩み（目安85歳）"><div style="width:${Math.min(100, Math.round(((s.age + ((s.current_month - (s.birth_month || 4) + 12) % 12) / 12) / 85) * 100))}%;height:100%;background:linear-gradient(90deg, #3b82f6, #ec4899);border-radius:4px;transition:width 0.3s ease;"></div></div><p class="muted">${s.age < 6 ? '幼少期' : s.age < 18 ? '学生時代' : s.age < 65 ? '成人期' : 'シニア期'} / 人間関係 ${s.relationships}件</p>`;
   document.getElementById('partnerStatus').innerHTML = getPartnerSummary(s);
   document.getElementById('location').innerHTML = `<div class="location-box"><strong>居住地</strong>：${s.location.terrain} / ${s.location.district}<div class="muted">${s.location.sinceAge}歳から居住・転居 ${s.location.history.length}回</div></div>`; document.getElementById('locApply').onclick = () => { if (s.pending || s.finished) { alert('選択待ち・人生終了時は変更できません'); return } const next = { terrain: document.getElementById('locTerrain').value, district: document.getElementById('locDistrict').value }; if (setLocation(next, '居住地変更')) { apply({ money: -5, stress: 2 }); s.rngState = rng.state() } render() }; document.getElementById('jobApply').onclick = () => { if (s.pending || s.finished) { alert('選択待ち・人生終了時は変更できません'); return } const nextJob = document.getElementById('jobSelect').value; if (nextJob && nextJob !== s.occupation) { const old = s.occupation; s.occupation = nextJob; if (nextJob === '学生') s.flags.university = s.age >= 18; if (nextJob === '一般職') s.flags.employed = true; log(`職業を「${old}」から「${nextJob}」に変更した。`); s.rngState = rng.state(); render() } };
   const libidoApplyBtn = document.getElementById('libidoTierApply');
@@ -3581,9 +4078,9 @@ function render() {
   if (document.getElementById('act')) document.getElementById('act').disabled = s.finished || !!s.pending;
   updateAutoPlayUI();
 }
-// === 自動進行エンジン (Auto-Play) ===
+// === 自動進行エンジン (Auto-Play：月次ステップ) ===
 let autoPlayTimer = null;
-let autoPlaySpeed = 1200;
+let autoPlaySpeed = 280;
 let isAutoPlaying = true;
 
 function updateAutoPlayUI() {
@@ -3594,16 +4091,20 @@ function updateAutoPlayUI() {
   const label = document.getElementById('timeProgressLabel');
   const ageLabel = document.getElementById('timeProgressAge');
 
-  const curM = s?.current_month || 1;
+  const bm = s?.birth_month || 4;
+  const curM = s?.current_month || bm;
   const seasonName = getSeasonName(curM);
+  const monthsSinceBirthday = (curM - bm + 12) % 12;
+  const monthsUntilBirthday = 12 - monthsSinceBirthday;
+  const curYearPct = Math.round(((monthsSinceBirthday + 1) / 12) * 100);
 
   if (ageLabel && s) {
     if (s.finished) {
       ageLabel.textContent = `${s.age}歳（生涯完走）`;
     } else if (s.pending) {
-      ageLabel.textContent = `${s.age}歳 ${curM}月（${seasonName}）`;
+      ageLabel.textContent = `${s.age}歳 ${curM}月（${seasonName}・${bm}月生まれ）`;
     } else {
-      ageLabel.textContent = `${s.age}歳 ${curM}月 → ${s.age + 1}歳`;
+      ageLabel.textContent = `誕生月（${bm}月）で ${s.age + 1}歳（あと${monthsUntilBirthday}ヶ月）`;
     }
   }
   if (!btn) return;
@@ -3620,13 +4121,12 @@ function updateAutoPlayUI() {
     if (text) text.textContent = '選択待ち';
     if (icon) icon.textContent = '⏳';
     if (label) {
-      label.textContent = `⏸ ${curM}月（${seasonName}）の出来事で停止中`;
+      label.textContent = `⏸ ${s.age}歳 ${curM}月（${seasonName}）の出来事で停止中`;
       label.style.color = '#a87182';
     }
     if (bar) {
       bar.style.transition = 'none';
-      // 年の途中の月に対応する幅で停止（例: 6月なら50%）
-      bar.style.width = Math.min(95, Math.max(15, Math.round((curM / 12) * 100))) + '%';
+      bar.style.width = Math.min(98, Math.max(8, curYearPct)) + '%';
       bar.style.background = '#a87182';
     }
   } else if (isAutoPlaying) {
@@ -3636,7 +4136,7 @@ function updateAutoPlayUI() {
     if (text) text.textContent = '一時停止';
     if (icon) icon.textContent = '⏸';
     if (label) {
-      label.textContent = `⏳ 時間の経過：${s.age}歳 ${seasonName}（${curM}月）へ`;
+      label.textContent = `⏳ 月次進行中：${s.age}歳 ${curM}月（${seasonName}）`;
       label.style.color = '#4338ca';
     }
     if (bar) { bar.style.background = 'linear-gradient(90deg, #6366f1, #a855f7)'; }
@@ -3646,8 +4146,8 @@ function updateAutoPlayUI() {
     btn.className = 'secondary';
     if (text) text.textContent = '自動進行';
     if (icon) icon.textContent = '▶';
-    if (label) { label.textContent = '⏸ 一時停止中'; label.style.color = '#64748b'; }
-    if (bar) { bar.style.transition = 'none'; bar.style.width = '0%'; bar.style.background = '#cbd5e1'; }
+    if (label) { label.textContent = `⏸ 一時停止中（${s.age}歳 ${curM}月・${seasonName}）`; label.style.color = '#64748b'; }
+    if (bar) { bar.style.transition = 'none'; bar.style.width = curYearPct + '%'; bar.style.background = '#cbd5e1'; }
   }
 }
 
@@ -3660,18 +4160,23 @@ function scheduleNextAutoStep(delay = null) {
   const duration = delay ?? autoPlaySpeed;
   updateAutoPlayUI();
 
-  // プログレスバーのチャージアニメーション
+  // 誕生月から次の誕生月までの12ヶ月プログレスバー表示
   const bar = document.getElementById('timeProgressBar');
-  if (bar) {
+  if (bar && s) {
+    const bm = s.birth_month || 4;
+    const curM = s.current_month || bm;
+    const monthsSinceBirthday = (curM - bm + 12) % 12;
+    const startPct = Math.round((monthsSinceBirthday / 12) * 100);
+    const endPct = Math.round(((monthsSinceBirthday + 1) / 12) * 100);
     bar.style.transition = 'none';
-    bar.style.width = '0%';
+    bar.style.width = startPct + '%';
     bar.style.background = 'linear-gradient(90deg, #6366f1, #a855f7)';
     if (typeof requestAnimationFrame !== 'undefined') {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           if (isAutoPlaying && !s.pending && !s.finished) {
             bar.style.transition = `width ${duration}ms linear`;
-            bar.style.width = '100%';
+            bar.style.width = endPct + '%';
           }
         });
       });
@@ -3720,10 +4225,10 @@ function start(seed = (Date.now() >>> 0)) {
   s = makeState(seed);
   rng = random(s.rngState);
 
-  // 本人の誕生月から人生が始まる
+  // 本人の誕生月から人生が始まる（0歳0ヶ月）
   const bm = s.birth_month || 4;
   s.current_month = bm;
-  s.age_months = bm - 1;
+  s.age_months = 0;
 
   const f = s.originFamily;
   const bSeason = getSeasonName(bm);

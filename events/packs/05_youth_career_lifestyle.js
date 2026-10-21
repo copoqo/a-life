@@ -106,6 +106,15 @@ window.defineEvent({
               "path": "skill.communication_skill",
               "op": "add",
               "value": 2
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "club_mate",
+                "status": "acquaintance",
+                "metContext": "新しい趣味を通じて出会った仲間"
+              }
             }
           ]
         }
@@ -362,6 +371,15 @@ window.defineEvent({
               "path": "state.mood",
               "op": "add",
               "value": 3
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "neighbor",
+                "status": "acquaintance",
+                "metContext": "地域活動で知り合ったご近所さん"
+              }
             }
           ]
         }
@@ -1010,7 +1028,8 @@ window.defineEvent({
             "passion": 3,
             "bond": {
               "role": "club_mate",
-              "status": "acquaintance"
+              "status": "acquaintance",
+              "metContext": "ライブ会場で意気投合したファン仲間"
             }
           },
           "narrative": "暗転したアリーナに響く重低音、一斉に灯る数万の光の海。大好きな曲のイントロが流れた瞬間に鳥肌が立ち、全力で腕を突き上げた。天井から舞い散るキラキラ光る銀テープを掴み取り、生きている歓喜に満たされた。",
@@ -1394,6 +1413,16 @@ window.defineEvent({
               "path": "skill.communication_skill",
               "op": "add",
               "value": 3
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "mentor",
+                "status": "close",
+                "trust": 60,
+                "metContext": "親身に導いてくれた職場の先輩"
+              }
             }
           ]
         }
@@ -1573,7 +1602,8 @@ window.defineEvent({
             "stress": 3,
             "bond": {
               "role": "colleague",
-              "status": "close"
+              "status": "acquaintance",
+              "metContext": "就活の選考で出会った同期"
             }
           },
           "narrative": "黒のリクルートスーツに身を包み、パンプスで何社ものオフィスビルへ足を運んだ。エントリーシートの推敲を重ね、緊張で喉がカラカラになりながらも、面接官の目を見て自分の言葉で堂々とビジョンを語った。",
@@ -1591,7 +1621,12 @@ window.defineEvent({
             "communication": 4,
             "happiness": 2,
             "morality": 1,
-            "stress": -1
+            "stress": -1,
+            "bond": {
+              "role": "colleague",
+              "status": "close",
+              "metContext": "就活を共に励まし合った仲間"
+            }
           },
           "narrative": "お祈りメールに落ち込む日もあったけれど、カフェで就活仲間と模擬面接を重ね、愚痴を言い合って励まし合った。一人じゃないと思えたからこそ、前を向き続けることができた。",
           "id": "outcome_1"
@@ -1778,6 +1813,15 @@ window.defineEvent({
               "path": "state.stress",
               "op": "add",
               "value": 2
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "colleague",
+                "status": "close",
+                "metContext": "社員旅行で親睦を深めた同僚"
+              }
             }
           ]
         }
@@ -1833,6 +1877,15 @@ window.defineEvent({
               "path": "state.stress",
               "op": "add",
               "value": -3
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "colleague",
+                "status": "close",
+                "metContext": "社員旅行で本音を語り合った同僚"
+              }
             }
           ]
         }
@@ -2004,6 +2057,16 @@ window.defineEvent({
               "path": "skill.communication_skill",
               "op": "add",
               "value": 4
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "friend",
+                "status": "close",
+                "gender": "female",
+                "metContext": "温泉旅行で本音を語り明かした女友達"
+              }
             }
           ]
         }
@@ -2032,6 +2095,16 @@ window.defineEvent({
               "path": "economy.cash",
               "op": "add",
               "value": -20000
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "friend",
+                "status": "close",
+                "gender": "female",
+                "metContext": "温泉街を一緒に散策した女友達"
+              }
             }
           ]
         }
@@ -2437,6 +2510,16 @@ window.defineEvent({
                 "delay": 1,
                 "prob": 1
               }
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "colleague",
+                "status": "close",
+                "trust": 58,
+                "metContext": "退職時に相談に乗ってくれた先輩・同僚"
+              }
             }
           ]
         }
@@ -2566,6 +2649,15 @@ window.defineEvent({
               "path": "state.mood",
               "op": "add",
               "value": 3
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "colleague",
+                "status": "close",
+                "metContext": "仕事以外でも親しくなった職場の同僚"
+              }
             }
           ]
         }
@@ -2584,6 +2676,15 @@ window.defineEvent({
               "path": "state.stress",
               "op": "add",
               "value": -2
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "colleague",
+                "status": "acquaintance",
+                "metContext": "職場の信頼できる同僚"
+              }
             }
           ]
         }
@@ -2697,7 +2798,8 @@ window.defineEvent({
             "aesthetics": 2,
             "bond": {
               "role": "club_mate",
-              "status": "acquaintance"
+              "status": "acquaintance",
+              "metContext": "週末の料理教室の仲間"
             }
           },
           "narrative": "油でクミンやカルダモンをじっくり炒め、香りを立たせる手際を教わる。玉ねぎが飴色になるまで根気よく炒め、出来上がった奥深い味わいのカレー。自宅でも再現して友人を招いて振る舞い、「お店の味みたい！」と大絶賛された。",
@@ -2756,7 +2858,8 @@ window.defineEvent({
             "stress": -3,
             "bond": {
               "role": "club_mate",
-              "status": "close"
+              "status": "acquaintance",
+              "metContext": "市民マラソンのランナー仲間"
             }
           },
           "narrative": "毎朝コツコツと走り込みを重ねて迎えたフルマラソン当日。30キロ過ぎ、足が鉛のように重くなり挫けそうになった時、沿道からの「頑張れ！」という見知らぬ人たちの温かい声援に背中を押された。ゴールゲートをくぐり抜けた瞬間、首に完走メダルをかけられ、やり抜いた達成感で大粒の涙が溢れた。",
@@ -2773,7 +2876,12 @@ window.defineEvent({
           "effects": {
             "health": 4,
             "communication": 3,
-            "happiness": 4
+            "happiness": 4,
+            "bond": {
+              "role": "club_mate",
+              "status": "close",
+              "metContext": "市民マラソンを共に完走した仲間"
+            }
           },
           "narrative": "ランニング仲間と励まし合いながら走ったハーフマラソン。地元の人たちが振る舞ってくれるイチゴや給水に元気をもらい、笑顔でハイタッチしてゴールテープを切った。",
           "id": "outcome_1"
@@ -2815,7 +2923,8 @@ window.defineEvent({
             "money": -2,
             "bond": {
               "role": "friend",
-              "status": "close"
+              "status": "close",
+              "metContext": "保護猫の譲渡会で知り合った友人"
             }
           },
           "narrative": "動物愛護センターの譲渡会。ケージの隅からじっとこちらを見つめてきたトラ猫。家に迎えた最初の日は警戒していたけれど、数日後、膝の上に乗ってゴロゴロと喉を鳴らしてくれた瞬間、愛おしさが胸に溢れた。帰宅するたびに玄関で待ってくれる小さな温もりが、日々の生活を何倍も温かくしてくれた。",
@@ -2953,7 +3062,13 @@ window.defineEvent({
             "leadership": 4,
             "communication": 3,
             "money": 6,
-            "stress": 2
+            "stress": 2,
+            "bond": {
+              "role": "junior",
+              "status": "close",
+              "trust": 58,
+              "metContext": "リーダーとして指導した信頼できる後輩"
+            }
           },
           "narrative": "重要な新プロジェクトのリーダーを任された。指示を出すだけでなく、悩む後輩の話に耳を傾け、チーム一丸となって納期を達成。上司からの高い評価とともに役職手当がつき、キャリアの確かな前進を実感した。",
           "id": "outcome_0"
@@ -3117,7 +3232,12 @@ window.defineEvent({
           "effects": {
             "communication": 3,
             "happiness": 4,
-            "selfKnowledge": 3
+            "selfKnowledge": 3,
+            "bond": {
+              "role": "classmate",
+              "status": "close",
+              "metContext": "三十歳の同窓会で再会した旧友"
+            }
           },
           "narrative": "ホテルの宴会場に集まった同級生たち。結婚した人、バリバリ働いている人、子育てに奮闘する人。十代の頃の面影を残しながらも、それぞれが大人の顔つきで自分の人生を歩んでいる。飾らない昔話に花を咲かせ、旧友たちとの変わらない絆に心が温まった。",
           "id": "outcome_0"
@@ -3133,7 +3253,13 @@ window.defineEvent({
           "effects": {
             "selfKnowledge": 3,
             "happiness": 3,
-            "intimacyNeed": 1
+            "intimacyNeed": 1,
+            "bond": {
+              "role": "classmate",
+              "status": "close",
+              "romanticInterest": 72,
+              "metContext": "同窓会で語り合った昔の想い人"
+            }
           },
           "narrative": "二次会の落ち着いたバーで、昔の淡い恋心や部活の思い出を懐かしく語り合った。大人になった今だからこそ話せる笑い話に、青春時代のすべてが愛おしく感じられた。",
           "id": "outcome_1"

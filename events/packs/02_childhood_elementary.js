@@ -77,6 +77,15 @@ window.defineEvent({
                 "delay": 1,
                 "prob": 1
               }
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "childhood_friend",
+                "status": "close",
+                "metContext": "自転車練習で励ましてくれた友達"
+              }
             }
           ]
         }
@@ -567,6 +576,15 @@ window.defineEvent({
               "path": "skill.communication_skill",
               "op": "add",
               "value": 3
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "friend",
+                "status": "acquaintance",
+                "metContext": "夕暮れ公園のブランコで出会った子"
+              }
             }
           ]
         }
@@ -700,6 +718,18 @@ window.defineEvent({
               "path": "history.flags.first_friend_accepted",
               "op": "record_flag",
               "value": true
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "childhood_friend",
+                "status": "close",
+                "gender": "female",
+                "affection": 65,
+                "trust": 60,
+                "metContext": "放課後の秘密を分け合った親友"
+              }
             }
           ]
         }
@@ -723,6 +753,16 @@ window.defineEvent({
               "path": "skill.communication_skill",
               "op": "add",
               "value": 2
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "classmate",
+                "status": "acquaintance",
+                "gender": "female",
+                "metContext": "放課後に話したクラスメイト"
+              }
             }
           ]
         }
@@ -1722,6 +1762,15 @@ window.defineEvent({
               "path": "state.stress",
               "op": "add",
               "value": -2
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "childhood_friend",
+                "status": "close",
+                "metContext": "秘密基地の仲間"
+              }
             }
           ]
         }
@@ -1749,6 +1798,15 @@ window.defineEvent({
               "path": "skill.morality",
               "op": "add",
               "value": 2
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "childhood_friend",
+                "status": "close",
+                "metContext": "秘密基地の掟を交わした仲間"
+              }
             }
           ]
         }
@@ -1906,6 +1964,16 @@ window.defineEvent({
               "path": "skill.healthy_habits",
               "op": "add",
               "value": 2
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "classmate",
+                "status": "acquaintance",
+                "gender": "male",
+                "metContext": "ドッジボールで競い合った男子"
+              }
             }
           ]
         }
@@ -1933,6 +2001,16 @@ window.defineEvent({
               "path": "skill.knowledge",
               "op": "add",
               "value": 1
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "classmate",
+                "status": "acquaintance",
+                "gender": "male",
+                "metContext": "ドッジボールのライバル男子"
+              }
             }
           ]
         }
@@ -2403,6 +2481,16 @@ window.defineEvent({
               "path": "skill.communication_skill",
               "op": "add",
               "value": 3
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "cram_school_friend",
+                "status": "acquaintance",
+                "gender": "female",
+                "metContext": "進学塾で隣の席になった他校の子"
+              }
             }
           ]
         }
@@ -2565,6 +2653,16 @@ window.defineEvent({
               "path": "skill.communication_skill",
               "op": "add",
               "value": 3
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "friend",
+                "status": "close",
+                "gender": "female",
+                "metContext": "お泊まり会で夜更かしした友達"
+              }
             }
           ]
         }
@@ -2592,6 +2690,16 @@ window.defineEvent({
               "path": "skill.communication_skill",
               "op": "add",
               "value": 4
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "friend",
+                "status": "close",
+                "gender": "female",
+                "metContext": "お泊まり会で本音を話した親友"
+              }
             }
           ]
         }
@@ -2851,6 +2959,16 @@ window.defineEvent({
               "path": "skill.communication_skill",
               "op": "add",
               "value": 3
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "cram_school_friend",
+                "status": "close",
+                "gender": "female",
+                "metContext": "塾帰りに肉まんを分け合った親友"
+              }
             }
           ]
         }
@@ -2878,6 +2996,16 @@ window.defineEvent({
               "path": "skill.knowledge",
               "op": "add",
               "value": 3
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "cram_school_friend",
+                "status": "close",
+                "gender": "female",
+                "metContext": "模試のクラスアップを誓った塾仲間"
+              }
             }
           ]
         }
@@ -3110,6 +3238,17 @@ window.defineEvent({
               "path": "skill.morality",
               "op": "add",
               "value": 2
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "classmate",
+                "status": "close",
+                "gender": "male",
+                "romanticInterest": 65,
+                "metContext": "卒業式で寄せ書きをくれた男子"
+              }
             }
           ]
         }
@@ -3142,6 +3281,17 @@ window.defineEvent({
               "path": "skill.communication_skill",
               "op": "add",
               "value": 5
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "childhood_friend",
+                "status": "close",
+                "gender": "female",
+                "affection": 70,
+                "metContext": "小学校卒業時に誓い合った親友"
+              }
             }
           ]
         }
@@ -3694,6 +3844,15 @@ window.defineEvent({
               "path": "state.stress",
               "op": "add",
               "value": 2
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "club_mate",
+                "status": "close",
+                "metContext": "部活で共に汗を流した仲間"
+              }
             }
           ]
         }
@@ -3717,6 +3876,15 @@ window.defineEvent({
               "path": "state.self_efficacy",
               "op": "add",
               "value": 2
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "club_mate",
+                "status": "acquaintance",
+                "metContext": "部活の仲間"
+              }
             }
           ]
         }

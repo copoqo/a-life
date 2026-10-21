@@ -248,6 +248,9 @@ window.defineEvent({
   ],
   "outcomes": [
     "meeting_teacher",
+    "meeting_teacher",
+    "meeting_teacher",
+    "meeting_teacher",
     "meeting_teacher"
   ],
   "diary": [

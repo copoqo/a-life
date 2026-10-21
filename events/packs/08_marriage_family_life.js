@@ -373,6 +373,15 @@ window.defineEvent({
               "path": "state.mood",
               "op": "add",
               "value": 4
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "friend",
+                "status": "close",
+                "metContext": "結婚式で幸せを分かち合った親友"
+              }
             }
           ]
         }
@@ -556,6 +565,11 @@ window.defineEvent({
         }
       ]
     }
+  ],
+  "outcomes": [
+    "marry",
+    "mutual_talk",
+    "mutual_talk"
   ],
   "variants": [
     {
@@ -759,6 +773,10 @@ window.defineEvent({
         }
       ]
     }
+  ],
+  "outcomes": [
+    "marry",
+    "marry"
   ],
   "variants": [
     {
@@ -1443,6 +1461,11 @@ window.defineEvent({
       ]
     }
   ],
+  "outcomes": [
+    "infidelity",
+    "boundary",
+    "infidelity"
+  ],
   "variants": [
     {
       "subTitle": "職場の年下男性からの熱い吐息",
@@ -1582,6 +1605,15 @@ window.defineEvent({
               "path": "state.mood",
               "op": "add",
               "value": 3
+            },
+            {
+              "path": "bond",
+              "op": "set",
+              "value": {
+                "role": "friend",
+                "status": "close",
+                "metContext": "久しぶりに連絡を取り合って絆が戻った友人"
+              }
             }
           ]
         }
