@@ -457,6 +457,7 @@ const REGISTERED_PATHS = {
   'derived.libido_tier': { type: 'string', readonly: true },
   'derived.age_years': { type: 'integer', readonly: true },
   'derived.has_partner': { type: 'boolean', readonly: true },
+  'derived.has_spouse': { type: 'boolean', readonly: true },
   'derived.has_children': { type: 'boolean', readonly: true },
   'derived.partner_gender_relation': { type: 'enum', readonly: true },
   'derived.friend_count': { type: 'integer', readonly: true },
@@ -596,6 +597,7 @@ function makeSnapshot(st = s) {
       libido_tier: getLibidoTier(st),
       age_years: st.age ?? 0,
       has_partner: hasPartnerVal,
+      has_spouse: hasSpouse(st),
       has_children: !!st.flags?.hasChildren,
       partner_gender_relation: partnerGenderRelation,
       friend_count: (st.bonds || []).filter(b => b.status === 'close' || b.status === 'acquaintance').length,
@@ -1141,6 +1143,7 @@ function getChoiceEffect(c) {
   if (!c) return {};
   if (c[1] && typeof c[1] === 'object') return c[1];
   if (c.effects && typeof c.effects === 'object' && !Array.isArray(c.effects)) return c.effects;
+  if (c.stat_effects && typeof c.stat_effects === 'object') return c.stat_effects;
   const eff = {};
   for (const o of (c.outcomes || [])) {
     if (o.effects && typeof o.effects === 'object' && !Array.isArray(o.effects)) {
@@ -1720,94 +1723,113 @@ function encounterEvent(event) {
   return event.context === 'meeting' || /meeting|encounter|confessed_to|street_approach|date|出会い|告白/.test(event.id)
     && !needsPartner(event);
 }
+// =========================================================================
+// 宣言的イベント条件プリセット (CONDITION_PRESETS) と正規化ヘルパー
+// =========================================================================
+const CONDITION_PRESETS = {
+  partnered:              (st) => hasPartner(st),
+  single:                 (st) => !hasPartner(st),
+  unmarried:              (st) => !hasSpouse(st),
+  married:                (st) => hasSpouse(st),
+  multi_partner:          (st) => hasMultiplePartners(st),
+  female_partner:         (st) => hasFemalePartner(st),
+  male_partner:           (st) => hasMalePartner(st),
+  has_children:           (st) => !!(st.flags?.hasChildren || st.family?.children_ids?.length > 0),
+  student:                (st) => isStudent(st),
+  virgin:                 (st) => !hasHadSex(st),
+  sex_experienced:        (st) => hasHadSex(st),
+  first_sex_with_partner: (st) => !st.flags?.had_first_intimacy_with_partner && !hasHadSexWithCurrentPartner(st),
+  first_kiss_unexperienced:(st)=> !st.flags?.firstKiss && !st.flags?.had_first_kiss_with_partner,
+  first_kiss_experienced: (st) => !!(st.flags?.firstKiss || st.flags?.had_first_kiss_with_partner),
+  first_date_experienced: (st) => !!st.flags?.firstDate,
+  low_morality:           (st) => (st.abilities?.morality ?? st.morality ?? 0) <= 0,
+  underground_eligible:   (st) => isEligibleForUndergroundSexWork(st),
+  adult_drinking:         (st) => st.age >= 20,
+  underage_drinking_allowed:(st)=> st.age >= 15 && st.age < 20
+};
+
+function normalizeEventDef(raw) {
+  if (!raw || raw._normalized) return raw;
+  if (Array.isArray(raw.age) && raw.age.length === 2) {
+    raw.min = raw.age[0];
+    raw.max = raw.age[1];
+  } else if (raw.min !== undefined && raw.max !== undefined) {
+    raw.age = [raw.min, raw.max];
+  }
+  if (raw.text && !raw.description) raw.description = raw.text;
+  if (raw.description && !raw.text) raw.text = raw.description;
+  if (raw.weights && !raw.weight) {
+    raw.weight = raw.weights;
+    delete raw.weights;
+  }
+  if (typeof raw.weight === 'number') {
+    raw.p = raw.p ?? (raw.weight / 100);
+    raw.weight = { base: raw.weight, additive: [], multipliers: [] };
+  }
+  raw.presets = Array.isArray(raw.presets) ? raw.presets : [];
+  raw.trigger = raw.trigger || (raw.is_fixed ? 'fixed' : 'normal');
+  raw._normalized = true;
+  return raw;
+}
+
+window.defineEvent = function (def) {
+  const normalized = normalizeEventDef(def);
+  (window.eventDefs = window.eventDefs || []).push(normalized);
+  return normalized;
+};
+if (Array.isArray(window.eventDefs)) {
+  window.eventDefs.forEach(normalizeEventDef);
+}
+
+function evaluatePresets(event, st = s) {
+  if (!Array.isArray(event.presets) || event.presets.length === 0) return true;
+  for (const presetName of event.presets) {
+    const checkFn = CONDITION_PRESETS[presetName];
+    if (checkFn && !checkFn(st)) return false;
+  }
+  return true;
+}
+
 function isEventEligible(e, st = s) {
   if (!e || e.enabled === false) return false;
-  const snap = makeSnapshot(st);
+  normalizeEventDef(e);
 
-  // 仕様書 10章：成人向けイベント(adult)は関係者全員18歳以上(age_months >= 216)
-  if (e.content_rating === 'adult' && snap.person.age_months < 216) {
-    return false;
-  }
-
-  // 仕様書 7.3章：再発制御 (once_per_life, max_occurrences, cooldown_months)
+  // 1. 高速フィルタ：年齢・成人制限・再発制御・プリセット・前提フラグをスナップショット生成前に判定
+  if (e.min !== undefined && st.age < e.min) return false;
+  if (e.max !== undefined && st.age > e.max) return false;
+  if (e.content_rating === 'adult' && (st.age ?? 0) < 18) return false;
+  if (e.once && st.seen?.[e.id]) return false;
   if (e.availability) {
-    if (e.availability.once_per_life && (snap.history.event_counts[e.id] || 0) >= 1) return false;
-    if (e.availability.max_occurrences && (snap.history.event_counts[e.id] || 0) >= e.availability.max_occurrences) return false;
-  } else if (e.once && st.seen[e.id]) {
-    return false;
+    const count = st.seen?.[e.id] || 0;
+    if (e.availability.once_per_life && count >= 1) return false;
+    if (e.availability.max_occurrences && count >= e.availability.max_occurrences) return false;
   }
+  if (!evaluatePresets(e, st)) return false;
+  if (e.requires_flag && !st.flags?.[e.requires_flag]) return false;
+  if (!isEventPhaseAllowed(e, st)) return false;
+  if (!isGenderAllowed(e, st)) return false;
+  if (e.requires && !e.requires(st)) return false;
 
-  // 仕様書 6章：登場人物の束縛（必須ロールが不在なら不適格）
+  // 2. スナップショット生成・登場人物束縛・DSL詳細条件判定
+  const snap = makeSnapshot(st);
   const bindings = resolveActors(e, snap, rng);
   if (bindings === null) return false;
 
-  // 仕様書 5章：条件DSL判定 (conditions)
   if (e.conditions && !evaluateCondition(e.conditions, snap, bindings)) return false;
 
-  // 仕様書 8章：選択肢が0個なら不適格（ナラティブイベントは例外として適格）
+  // 3. 選択肢が0個なら不適格（ナラティブイベントは例外として適格）
   if (!e.is_narrative) {
     const available = listAvailableChoices(e, snap, bindings);
     if (available.length === 0) return false;
   }
 
-  // 既存プロパティ・ルールとの後方互換・一貫性保持
-  if (st.age < e.min || st.age > e.max) return false;
-  if (!isEventPhaseAllowed(e, st)) return false;
-  if (!isGenderAllowed(e, st)) return false;
-  if (e.requires && !e.requires(st)) return false;
-
-  // 複数交際制限（交際相手・配偶者が2人以上いない場合は絶対に発生しない）
-  if (needsMultiplePartners(e) && !hasMultiplePartners(st)) return false;
-
-  // 既婚・配偶者制限（配偶者がいない場合は絶対に発生しない）
-  if (needsSpouse(e) && !hasSpouse(st)) return false;
-
-  // パートナー制限（パートナー・配偶者がいない場合は絶対に発生しない）
-  if (needsPartner(e) && !hasPartner(st)) return false;
-
-  // パートナー性別の制限
-  if (e.id === 'partner_intimacy_female' && !st.bonds?.some(b => (b.status === 'partner' || b.status === 'spouse') && b.gender === 'female')) return false;
-  if (e.id === 'partner_intimacy_male' && !st.bonds?.some(b => (b.status === 'partner' || b.status === 'spouse') && b.gender === 'male')) return false;
-
-  // 既婚・未婚の整合性チェック（結婚後に恋人時代の初夜やプロポーズが発生するのを完全防止）
-  if (hasSpouse(st)) {
-    if (/初夜|初めて身体を重ねる|初めて唇を重ねる|まだ肌を許して|プロポーズ|婚約|告白|合コン|マッチングアプリ/.test((e.title || '') + ' ' + (e.id || '')) &&
-      !/ウェディング|結婚式|新婚|wedding|夫婦|marital/.test((e.title || '') + ' ' + (e.id || ''))) {
-      return false;
-    }
-    if (e.id === 'adult_marriage_proposal' || e.id === 'partner_first_intimacy_experienced' || e.id === 'first_intimacy_milestone' || e.id === 'first_kiss_milestone' || e.id === 'partner_intimacy_hesitation') {
-      return false;
-    }
-  }
-
-  // 初夜・初めて身体を重ねるイベントの厳格制御（既婚者・経験済み・対象パートナーと性交済みの場合は除外）
-  if (e.id === 'partner_first_intimacy_experienced' || e.id === 'first_intimacy_milestone' || (/初夜|初めて身体を重ねる/.test(e.title || '') && !/ウェディング|結婚式|新婚|wedding/.test(e.title || ''))) {
-    if (hasSpouse(st)) return false;
-    if (st.flags?.had_first_intimacy_with_partner) return false;
-    if (hasHadSexWithCurrentPartner(st)) return false;
-    if (e.id === 'first_intimacy_milestone' && hasHadSex(st)) return false;
-    if (e.id === 'partner_first_intimacy_experienced' && !hasHadSex(st)) return false;
-  }
-
-  // 初キスイベントの厳格制御
-  if (e.id === 'first_kiss_milestone') {
-    if (hasSpouse(st)) return false;
-    if (st.flags?.firstKiss || st.flags?.had_first_kiss_with_partner) return false;
-  }
-
-  // 学生時代の秘め事イベントは学生身分（isStudent）でなければ発生しない
-  if (e.id.startsWith('student_partner_') && !isStudent(st)) return false;
-
-  // 重大イベントの前提フラグチェック（前段イベントを経由していない場合は発生しない）
-  if (e.requires_flag && !st.flags?.[e.requires_flag]) return false;
-
-  // 飲酒制限（未成年禁止、allowUnderageのみ例外）
-  if (e.alcohol && st.age < 20 && !e.allowUnderage) return false;
-
-  // 公衆性的行為制限（モラル <= 0 のみ発生）
-  if (e.publicSex) {
-    const currentMorality = st.abilities?.morality ?? st.morality ?? 0;
-    if (currentMorality > 0) return false;
+  // フォールバック安全網（プリセット未指定の外部追加イベント向け）
+  if (!e.presets || e.presets.length === 0) {
+    if (needsMultiplePartners(e) && !hasMultiplePartners(st)) return false;
+    if (needsSpouse(e) && !hasSpouse(st)) return false;
+    if (needsPartner(e) && !hasPartner(st)) return false;
+    if (e.alcohol && st.age < 20 && !e.allowUnderage) return false;
+    if (e.publicSex && (st.abilities?.morality ?? st.morality ?? 0) > 0) return false;
   }
 
   return true;
@@ -1823,6 +1845,7 @@ function getSeasonName(month) {
 
 function assignEventMonth(e, index = 0, total = 1) {
   if (!e) return Math.min(12, Math.max(1, 1 + Math.floor(rng.next() * 12)));
+  if (typeof e.seasonMonth === 'number') return clamp(e.seasonMonth, 1, 12);
   const t = (e.title || '') + ' ' + (e.text || '') + ' ' + (e.id || '');
 
   // 季節キーワードの判定
@@ -1863,16 +1886,23 @@ function pickYearEvents() {
     }
   }
   s.chains = remainingChains;
-  // 固定マイルストーンイベント（is_fixed: true かつ適格な場合、確実に発生）
-  const fixedEvents = eventDefs.filter(e => e.is_fixed && isEventEligible(e, s));
+
+  // 1. 固定マイルストーンイベント（trigger === 'fixed' / is_fixed: true かつ適格な場合、確実に発生）
+  const fixedEvents = eventDefs.filter(e => (e.trigger === 'fixed' || e.is_fixed) && isEventEligible(e, s));
   for (const fe of fixedEvents) {
     if (!triggered.includes(fe.id)) triggered.push(fe.id);
   }
-  // 一年に複数の出来事が起こり得る。抽選は年初に一度だけ行う。
-  // 【ユーザー要望】重大イベント(major)は日常イベントからのチェーン・前段を経由してのみ発生するため、通常抽選候補からは除外！
-  const candidates = eventDefs.filter(e => !e.is_fixed && e.classification !== 'major' && !e.is_major && isEventEligible(e, s) &&
-    !triggered.includes(e.id) &&
-    rng.next() < eventProbability(e) * (s.age < 6 ? .30 : s.age < 10 ? .58 : s.age < 15 ? .82 : s.age <= 35 ? 1.35 : s.age <= 49 ? 1.05 : s.age <= 64 ? .85 : s.age <= 79 ? .7 : .55));
+
+  // 2. 通常抽選イベント（trigger === 'normal' のみ対象。chain_only / precursor / state_narrative は除外）
+  const ageMultiplier = s.age < 6 ? .30 : s.age < 10 ? .58 : s.age < 15 ? .82 : s.age <= 35 ? 1.35 : s.age <= 49 ? 1.05 : s.age <= 64 ? .85 : s.age <= 79 ? .7 : .55;
+  const candidates = eventDefs.filter(e => {
+    const trig = e.trigger || (e.is_fixed ? 'fixed' : 'normal');
+    if (trig !== 'normal') return false;
+    if (triggered.includes(e.id)) return false;
+    if (!isEventEligible(e, s)) return false;
+    return rng.next() < eventProbability(e) * ageMultiplier;
+  });
+
   // 候補をシャッフル
   for (let i = candidates.length - 1; i > 0; i--) {
     const j = Math.floor(rng.next() * (i + 1));
@@ -1891,30 +1921,25 @@ function pickYearEvents() {
   // 月の昇順（春→夏→秋→冬）にソート
   mappedEvents.sort((a, b) => a.month - b.month);
 
-  // 先行伏線イベントの自動挿入（ストーリーの連続性）
-  // 例: 職場の事情で働き方を見直す必要(career_unemployment)の数か月前に人員整理のうわさ(career_downsizing_rumor)
-  const unempIdx = mappedEvents.findIndex(m => m.id === 'career_unemployment');
-  if (unempIdx !== -1 && !s.seen['career_downsizing_rumor']) {
-    const targetM = mappedEvents[unempIdx].month;
-    const rumorMonth = Math.max(1, targetM - 3);
-    mappedEvents.push({ id: 'career_downsizing_rumor', month: rumorMonth });
+  // 3. 宣言的な先行伏線イベント (trigger === 'precursor') の自動挿入
+  const precursors = eventDefs.filter(e => e.trigger === 'precursor' && Array.isArray(e.precursor_for));
+  for (const pre of precursors) {
+    if (!isEventEligible(pre, s)) continue;
+    const targetItem = mappedEvents.find(m => pre.precursor_for.includes(m.id));
+    if (targetItem && !mappedEvents.some(m => m.id === pre.id)) {
+      const preMonth = Math.max(1, targetItem.month - 3);
+      mappedEvents.push({ id: pre.id, month: preMonth });
+    }
   }
 
-  // 月の昇順（春→夏→秋→冬）に再ソート
-  mappedEvents.sort((a, b) => a.month - b.month);
-
-  // ストーリー連鎖ナラティブの自動挿入
-  // 1. パートナーとの情熱的な逢瀬が連続している場合（親密さの深まり・絆）
-  if (s.flags?.partner_intimacy_streak >= 3 && !s.seen['story_partner_deep_bond_aftermath']) {
-    mappedEvents.push({ id: 'story_partner_deep_bond_aftermath', month: Math.min(12, (s.current_month || 6) + 2) });
-  }
-  // 2. 焦らし・寸止めが続き、相手の欲求や背徳感が高まっている場合
-  if (s.flags?.partner_frustrated >= 2 && !s.seen['story_partner_frustration_tease_aftermath']) {
-    mappedEvents.push({ id: 'story_partner_frustration_tease_aftermath', month: Math.min(12, (s.current_month || 6) + 1) });
-  }
-  // 3. 拒絶・すれ違いが続いた場合の心の揺れ
-  if (s.flags?.partner_distance >= 2 && !s.seen['story_partner_distance_reconcile_hint']) {
-    mappedEvents.push({ id: 'story_partner_distance_reconcile_hint', month: Math.min(12, (s.current_month || 6) + 2) });
+  // 4. 宣言的な状態連鎖ナラティブ (trigger === 'state_narrative') の自動挿入
+  const stateNarratives = eventDefs.filter(e => e.trigger === 'state_narrative' && e.auto_trigger);
+  for (const sn of stateNarratives) {
+    if (!isEventEligible(sn, s)) continue;
+    const { flag, minVal = 1, monthOffset = 1 } = sn.auto_trigger;
+    if ((s.flags?.[flag] || 0) >= minVal && !mappedEvents.some(m => m.id === sn.id)) {
+      mappedEvents.push({ id: sn.id, month: Math.min(12, (s.current_month || 6) + monthOffset) });
+    }
   }
 
   // 月の昇順（春→夏→秋→冬）に再ソート
@@ -2350,51 +2375,86 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
   } if (outcome === 'disclose_relationship' || outcome === 'private_relationship') { const disclose = outcome === 'disclose_relationship'; bond.private = !disclose; recordExperience('disclosure', disclose ? '二人の合意で関係を周囲に伝えた' : '二人の合意で関係を非公開にした', bond.id, { mutual: true, private: !disclose }); log(disclose ? '二人で話し合い、関係を周囲に伝えた。' : '二人で話し合い、関係は非公開にすると決めた。'); return } if (outcome === 'mutual_talk') { bond.trust = clamp(bond.trust + 4); recordExperience('communication', '希望や境界線について対話した', bond.id); log('互いの希望を話し合い、理解が少し深まった。'); return } if (outcome === 'boundary') { recordExperience('boundary', '望まないことを伝えた', bond.id); log('自分の境界線を伝えた。'); return } if (outcome === 'distance') { bond.affection = clamp(bond.affection - 8); log('相手との距離を少し置いた。'); return } if (outcome === 'breakup') { bond.status = 'former'; bond.consent = false; recordExperience('breakup', '関係を終える選択をした', bond.id); log('話し合いの末、交際関係を終えた。'); return } if (outcome === 'reflection' || outcome === 'privacy') recordExperience(outcome, '自分の価値観について考えた')
 }
 function eventProbability(e) {
+  normalizeEventDef(e);
   const snap = makeSnapshot(s);
   const bindings = resolveActors(e, snap, rng) || {};
   let p = e.weight ? (computeEventWeight(e, snap, bindings) / 100) : (e.p ?? 0.2);
-  if (s.age >= 15 && s.age <= 49 && !hasPartner(s) && encounterEvent(e)) p *= s.age <= 35 ? 2.1 : 1.6;
+
+  // 1. 独身期の出会いイベント増幅 (15〜49歳)
+  const isEncounter = e.is_encounter ?? encounterEvent(e);
+  if (s.age >= 15 && s.age <= 49 && !hasPartner(s) && isEncounter) {
+    p *= s.age <= 35 ? 2.1 : 1.6;
+  }
+
+  // 2. 地域・街区親和性補正
   if (e.locationKind === 'community' && s.location.district === '農村集落') p *= 1.5;
   if (e.locationKind === 'work' && s.location.terrain === '都市部') p *= 1.5;
-  const x = s.sexuality || {};
-  if (['rare_funeral_cousin_taboo', 'rare_travel_stranger_or_gang', 'rare_outing_secret_quickie'].includes(e.id)) { if (isSexuallyAroused(s)) p *= 2.5; if (s.flags.in_heat) p *= 2.0; }
+
   const districtMap = { residential: '住宅街', downtown: '繁華街', commercial: '商業地域', rural: '農村集落', industrial: '工業地域', wealthy: '高所得地域', deprived: '経済的困難が多い地域' };
-  const key = Object.keys(districtMap).find(k => e.id.includes(k));
-  const targetDistrict = districtMap[key];
-  if (s.location.district === targetDistrict) {
-    p *= 3.5;
-    if (isSexuallyAroused(s)) p *= 1.5;
-    if (key === 'downtown' && ((s.morality ?? 0) <= -5 || (s.social ?? 0) >= 15)) p *= 1.4;
-    if (key === 'commercial' && s.flags.employed) p *= 1.4;
-    if (key === 'wealthy' && ((s.money ?? 0) >= 15 || (s.aesthetics ?? 0) >= 15)) p *= 1.4;
-    if (key === 'deprived' && ((s.money ?? 0) <= 0 || (s.stress ?? 0) >= 15)) p *= 1.4;
-    if (key === 'rural' && s.location.terrain === '山間部') p *= 1.4;
-    if (key === 'industrial' && (s.independence ?? 0) >= 10) p *= 1.3;
-    if (key === 'residential' && s.location.sinceAge <= s.age - 2) p *= 1.3;
-  } else {
-    // 他街区に住んでいても、親和性の高い地域や状況（外出・出張・夜遊び・来訪）で一定確率で発生
-    let visitProb = 0.4;
-    if (key === 'downtown' && s.location.terrain === '都市部') visitProb = 0.8;
-    if (key === 'commercial' && (s.location.terrain === '都市部' || s.flags.employed)) visitProb = 0.8;
-    if (key === 'rural' && ['山間部', '平野部'].includes(s.location.terrain)) visitProb = 0.7;
-    if (key === 'wealthy' && (s.money ?? 0) >= 20) visitProb = 0.7;
-    if (key === 'deprived' && (s.money ?? 0) <= 0) visitProb = 0.8;
-    p *= visitProb;
+  const key = e.district || Object.keys(districtMap).find(k => e.id.includes(k));
+  const targetDistrict = key ? districtMap[key] : null;
+  if (targetDistrict) {
+    if (s.location.district === targetDistrict) {
+      p *= 3.5;
+      if (isSexuallyAroused(s)) p *= 1.5;
+      if (key === 'downtown' && ((s.morality ?? 0) <= -5 || (s.social ?? 0) >= 15)) p *= 1.4;
+      if (key === 'commercial' && s.flags.employed) p *= 1.4;
+      if (key === 'wealthy' && ((s.money ?? 0) >= 15 || (s.aesthetics ?? 0) >= 15)) p *= 1.4;
+      if (key === 'deprived' && ((s.money ?? 0) <= 0 || (s.stress ?? 0) >= 15)) p *= 1.4;
+      if (key === 'rural' && s.location.terrain === '山間部') p *= 1.4;
+      if (key === 'industrial' && (s.independence ?? 0) >= 10) p *= 1.3;
+      if (key === 'residential' && s.location.sinceAge <= s.age - 2) p *= 1.3;
+    } else {
+      let visitProb = 0.4;
+      if (key === 'downtown' && s.location.terrain === '都市部') visitProb = 0.8;
+      if (key === 'commercial' && (s.location.terrain === '都市部' || s.flags.employed)) visitProb = 0.8;
+      if (key === 'rural' && ['山間部', '平野部'].includes(s.location.terrain)) visitProb = 0.7;
+      if (key === 'wealthy' && (s.money ?? 0) >= 20) visitProb = 0.7;
+      if (key === 'deprived' && (s.money ?? 0) <= 0) visitProb = 0.8;
+      p *= visitProb;
+    }
   }
-  if (e.id.startsWith('underground_')) {
+
+  // 3. アングラ適格・職業補正
+  if (e.presets?.includes('underground_eligible') || e.id.startsWith('underground_')) {
     if (!isEligibleForUndergroundSexWork(s)) return 0;
-    if (s.occupation === '風俗') p *= 1.5;
-    else p *= 0.5;
+    p *= s.occupation === '風俗' ? 1.5 : 0.5;
   }
-  // パートナーがいる場合、突発的な他人との行きずり性行為は大幅抑制
+
+  // 4. パートナー有無による背徳抑制／親密ブースト
   const isPartnered = hasPartner(s);
-  if (isPartnered && (e.id.startsWith('rare_') || e.id.startsWith('district_') || e.id.startsWith('underground_'))) {
+  if (isPartnered && e.unfaithful_penalty_when_partnered) {
     p *= 0.15;
   }
-  // パートナーとのラブラブセックス・親密イベントはパートナーがいる時に大幅ブースト
-  if (isPartnered && (e.id.startsWith('partner_sex_') || e.id.startsWith('partner_loving_') || e.id.startsWith('partner_anniversary_') || e.id.startsWith('partner_weekend_') || e.id.startsWith('partner_cohabitation_') || e.id.startsWith('partner_intimacy_') || e.id === 'partner_morning_passion' || e.id === 'partner_bath_passion')) {
+  if (isPartnered && e.partner_intimacy_boost) {
     p *= 2.2;
-  } if (e.id === 'first_date_memory' && s.flags.firstDate) p *= 2.5; if (e.id === 'first_kiss_afterthought' && s.flags.firstKiss) p *= 2.5; if (e.id === 'intimacy_afterthought' && s.flags.firstSexualExperience) p *= 2.5; if (e.id === 'intimacy_awakening' && s.flags.firstSexualExperience) p *= 3.5; if (e.id === 'sexual_satisfaction' && s.flags.firstSexualExperience) p *= 2.0; if (e.id === 'sexual_first_conversation' && s.flags.firstSexualExperience) p *= 2.0; if (e.id === 'first_kiss_milestone' && s.flags.firstDate) p *= 2.5; if (e.id === 'first_intimacy_milestone' && s.flags.firstKiss) p *= 3.0; if (e.id === 'young_campus_life' && s.flags.university) p *= 3.0; if (e.id === 'young_drifting' && s.flags.exploring) p *= 3.0; if (e.id === 'youth_hangover_regret' && s.flags.choice_underage_drinking_2) p *= 4.0; if (e.id === 'trauma_healing' && (s.flags.choice_bullying_1 || s.flags.choice_bullying_0)) p *= 2.5; if (e.id === 'adult_trust_test' && (s.flags.choice_bullying_1 || s.bonds?.some(b => b.status === 'former'))) p *= 2.2; if (e.id === 'adult_meeting') p *= .6 + x.curiosity / 150 + x.initiative / 250; if (e.id === 'adult_feelings') p *= .5 + x.initiative / 125 - x.shyness / 350; if (e.id === 'adult_intimacy') p *= .65 + x.boundaryVoice / 220 + x.intimacyNeed / 300; if (e.id === 'adult_private_values') p *= .7 + x.selfKnowledge / 250 + x.curiosity / 400; if (e.id === 'adult_relationship_conflict') p *= .8 + (100 - x.boundaryVoice) / 450; if (e.id === 'adult_new_chapter') p *= .7 + x.intimacyNeed / 250; if (e.id === 'adult_shared_intimacy') p *= .7 + x.desire / 180 + x.intimacyNeed / 240; if (e.id === 'adult_mismatched_desire') p *= .6 + Math.abs(x.desire - (s.bonds.find(b => b.status === 'partner')?.desire ?? x.desire)) / 70; return Math.max(0, Math.min(1, p))
+  }
+
+  // 5. イベント定義側の宣言的ブースト (e.boosts)
+  if (Array.isArray(e.boosts)) {
+    for (const b of e.boosts) {
+      if (b.whenFlag && s.flags?.[b.whenFlag]) p *= (b.factor ?? 1.0);
+      else if (Array.isArray(b.whenAnyFlag) && b.whenAnyFlag.some(f => s.flags?.[f])) p *= (b.factor ?? 1.0);
+    }
+  }
+
+  // 6. 性的興奮・微細パラメータ補正
+  const x = s.sexuality || {};
+  if (['rare_funeral_cousin_taboo', 'rare_travel_stranger_or_gang', 'rare_outing_secret_quickie'].includes(e.id)) {
+    if (isSexuallyAroused(s)) p *= 2.5;
+    if (s.flags.in_heat) p *= 2.0;
+  }
+  if (e.id === 'adult_trust_test' && (s.flags.choice_bullying_1 || s.bonds?.some(b => b.status === 'former'))) p *= 2.2;
+  if (e.id === 'adult_meeting') p *= .6 + x.curiosity / 150 + x.initiative / 250;
+  if (e.id === 'adult_feelings') p *= .5 + x.initiative / 125 - x.shyness / 350;
+  if (e.id === 'adult_intimacy') p *= .65 + x.boundaryVoice / 220 + x.intimacyNeed / 300;
+  if (e.id === 'adult_private_values') p *= .7 + x.selfKnowledge / 250 + x.curiosity / 400;
+  if (e.id === 'adult_relationship_conflict') p *= .8 + (100 - x.boundaryVoice) / 450;
+  if (e.id === 'adult_new_chapter') p *= .7 + x.intimacyNeed / 250;
+  if (e.id === 'adult_shared_intimacy') p *= .7 + x.desire / 180 + x.intimacyNeed / 240;
+  if (e.id === 'adult_mismatched_desire') p *= .6 + Math.abs(x.desire - (s.bonds.find(b => b.status === 'partner')?.desire ?? x.desire)) / 70;
+
+  return Math.max(0, Math.min(1, p));
 }
 function settle(event, index, continueYear = true) {
   const active = getEventCurrent(event);
@@ -2441,7 +2501,7 @@ function settle(event, index, continueYear = true) {
   }
   if (active.locationKind) apply(locationEffect(active.locationKind));
   handleSocialOutcome(active, index, choiceEff, choice); s.relationships = s.bonds.length;
-  if (['same_sex_tribadism', 'same_sex_toy_play', 'same_sex_mature_passion', 'partner_intimacy_female', 'partner_intimacy_male', 'partner_morning_passion', 'partner_bath_passion', 'rare_funeral_cousin_taboo', 'rare_travel_stranger_or_gang', 'rare_outing_secret_quickie'].includes(event.id) || event.id.startsWith('student_partner_') || event.id.startsWith('underground_') || event.id.startsWith('district_') || event.id.startsWith('partner_sex_') || event.id.startsWith('partner_loving_') || event.id.startsWith('partner_anniversary_') || event.id.startsWith('partner_weekend_') || event.id.startsWith('partner_cohabitation_')) {
+  if (['same_sex_tribadism', 'same_sex_toy_play', 'same_sex_mature_passion', 'partner_intimacy_female', 'partner_intimacy_male', 'partner_passion_lifestyle', 'partner_morning_passion', 'partner_bath_passion', 'rare_funeral_cousin_taboo', 'rare_travel_stranger_or_gang', 'rare_outing_secret_quickie'].includes(event.id) || event.id.startsWith('student_partner_') || event.id.startsWith('underground_') || event.id.startsWith('district_') || event.id.startsWith('partner_sex_') || event.id.startsWith('partner_loving_') || event.id.startsWith('partner_anniversary_') || event.id.startsWith('partner_weekend_') || event.id.startsWith('partner_cohabitation_')) {
     const isPartner = isPartnerEvent(event);
     const partner = isPartner ? (getPrimaryPartner(s) || s.bonds.find(b => b.gender === 'female') || null) : null;
     const diarySnippet = diaryForEvent(active, index) || '';
