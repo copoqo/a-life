@@ -940,7 +940,8 @@ window.defineEvent({
   "classification": "major",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "male_partner"
   ],
   "weight": {
     "base": 16,
@@ -1645,7 +1646,8 @@ window.defineEvent({
   "content_rating": "adult",
   "presets": [
     "partnered",
-    "sex_experienced"
+    "sex_experienced",
+    "rel_stage_intimate"
   ],
   "weight": {
     "base": 16,
@@ -1791,7 +1793,9 @@ window.defineEvent({
   "content_rating": "adult",
   "presets": [
     "partnered",
-    "sex_experienced"
+    "sex_experienced",
+    "male_partner",
+    "rel_stage_intimate"
   ],
   "weight": {
     "base": 13,
@@ -1921,7 +1925,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_intimate"
   ],
   "weight": {
     "base": 12,
@@ -2549,7 +2554,9 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "adult",
-  "presets": [],
+  "presets": [
+    "has_ex_partner"
+  ],
   "weight": {
     "base": 15,
     "additive": [],
@@ -2931,7 +2938,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_intimate"
   ],
   "weight": {
     "base": 15,
@@ -3188,7 +3196,8 @@ window.defineEvent({
   "content_rating": "adult",
   "presets": [
     "partnered",
-    "sex_experienced"
+    "sex_experienced",
+    "rel_stage_intimate"
   ],
   "weight": {
     "base": 17,
@@ -3318,7 +3327,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_intimate"
   ],
   "weight": {
     "base": 13,
@@ -3563,7 +3573,8 @@ window.defineEvent({
   "content_rating": "adult",
   "presets": [
     "partnered",
-    "sex_experienced"
+    "sex_experienced",
+    "rel_stage_intimate"
   ],
   "weight": {
     "base": 13,
@@ -3703,7 +3714,71 @@ window.defineEvent({
     {
       "selfKnowledge": 2
     }
-  ]
+  ],
+  "femaleVariant": {
+    "text": "汗と愛液でシーツを湿らせ、もつれ合っていた手足を解く。執拗な愛撫で痺れた下腹の疼きや、柔らかな肌に残る彼女の甘い匂いを噛み締めながら、今の交わりについて言葉を交わす。",
+    "choices": [
+      {
+        "id": "choice_0",
+        "label": "どれほど気持ちよく満たされたかを素直に伝える",
+        "outcomes": [
+          {
+            "id": "outcome_0",
+            "weight": 1,
+            "description": "どれほど気持ちよく満たされたかを素直に伝える。",
+            "effects": [
+              {
+                "path": "state.mood",
+                "op": "add",
+                "value": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "choice_1",
+        "label": "もっと優しく触れてほしかったと耳元で囁く",
+        "outcomes": [
+          {
+            "id": "outcome_1",
+            "weight": 1,
+            "description": "もっと優しく触れてほしかったと耳元で囁く。",
+            "effects": [
+              {
+                "path": "skill.communication_skill",
+                "op": "add",
+                "value": 3
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "choice_2",
+        "label": "一人で太ももを擦り合わせて余韻を噛み締める",
+        "outcomes": [
+          {
+            "id": "outcome_2",
+            "weight": 1,
+            "description": "一人で太ももを擦り合わせて余韻を噛み締める。",
+            "effects": [
+              {
+                "path": "state.current_libido",
+                "op": "add",
+                "value": 15
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "diary": [
+      "彼女の体温と自分の愛液が混ざり合った匂いに包まれながら、満たされた幸福感を伝えた。肌がまだじんじんと熱い。",
+      "もっと激しく掻き回してほしかった……そんな淫らな欲求を耳元で囁くなんて、自分でも驚くほど身体が火照っていた。",
+      "行為の後も下腹の奥がじわじわと疼いて、甘い余韻の痺れが爪先まで残っていた。"
+    ]
+  }
 });
 
 window.defineEvent({
@@ -4290,7 +4365,9 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "male_partner",
+    "rel_stage_intimate"
   ],
   "weight": {
     "base": 20,
@@ -4799,7 +4876,9 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "adult",
-  "presets": [],
+  "presets": [
+    "has_ex_partner"
+  ],
   "weight": {
     "base": 12,
     "additive": [],
@@ -4920,7 +4999,10 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "adult",
-  "presets": [],
+  "presets": [
+    "taboo_awakened",
+    "low_morality"
+  ],
   "weight": {
     "base": 18,
     "additive": [],
@@ -5122,7 +5204,9 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "male_partner",
+    "rel_stage_intimate"
   ],
   "weight": {
     "base": 18,
@@ -5326,7 +5410,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_established"
   ],
   "weight": {
     "base": 14,
@@ -5449,7 +5534,8 @@ window.defineEvent({
   "classification": "major",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_established"
   ],
   "weight": {
     "base": 18,

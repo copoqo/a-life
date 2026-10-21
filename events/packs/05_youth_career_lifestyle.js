@@ -475,117 +475,6 @@ window.defineEvent({
 });
 
 window.defineEvent({
-  "id": "outing_sports_event",
-  "title": "スタジアムでのスポーツ観戦・歓声の渦",
-  "age": [
-    15,
-    75
-  ],
-  "trigger": "normal",
-  "classification": "random",
-  "content_rating": "general",
-  "presets": [],
-  "weight": 16,
-  "actors": {
-    "stranger": {
-      "source": "random_adult",
-      "required": false
-    }
-  },
-  "text": "満員のスタジアムを揺るがす地鳴りのような歓声とメガホンの音。グラウンドの白熱したプレーに観客席全体が一喜一憂し、隣り合う見知らぬ人とも肩をぶつけ合って興奮を分かち合う。冷たいビールを喉に流し込むたび、身体中の血が熱く沸き立つ……。",
-  "choices": [
-    {
-      "id": "choice_0",
-      "label": "メガホンを打ち鳴らしてスタジアムの一体感に酔いしれる",
-      "outcomes": [
-        {
-          "id": "outcome_0",
-          "weight": 1,
-          "description": "応援歌を熱唱し、メガホンを打ち鳴らしてスタジアムの一体感に酔いしれる。",
-          "effects": [
-            {
-              "path": "state.mood",
-              "op": "add",
-              "value": 4
-            },
-            {
-              "path": "skill.communication_skill",
-              "op": "add",
-              "value": 3
-            },
-            {
-              "path": "state.stress",
-              "op": "add",
-              "value": -4
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "choice_1",
-      "label": "混み合うコンコースのトイレへ席を立つ",
-      "outcomes": [
-        {
-          "id": "outcome_1",
-          "weight": 1,
-          "description": "興奮とアルコールで身体が火照り、混み合うコンコースのトイレへ席を立つ。",
-          "effects": [
-            {
-              "path": "chain",
-              "op": "set",
-              "value": {
-                "eventId": "rare_outing_secret_quickie",
-                "delay": 1,
-                "prob": 0.85
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "choice_2",
-      "label": "じっくりと試合展開を観戦する",
-      "outcomes": [
-        {
-          "id": "outcome_2",
-          "weight": 1,
-          "description": "冷たいビールとスタジアムグルメを堪能しながら、じっくりと試合展開を観戦する。",
-          "effects": [
-            {
-              "path": "state.mood",
-              "op": "add",
-              "value": 3
-            },
-            {
-              "path": "economy.cash",
-              "op": "add",
-              "value": -20000
-            },
-            {
-              "path": "state.stress",
-              "op": "add",
-              "value": -2
-            }
-          ]
-        }
-      ]
-    }
-  ],
-  "outcomes": [
-    "shared_activity",
-    "reflection",
-    "shared_activity"
-  ],
-  "diary": [
-    "何万人もの大歓声に包まれ、声を枯らして応援した。見知らぬファンともハイタッチを交わし、全身が心地よい高揚感で満たされた。",
-    "コンコースの人混みの中を歩きながら、熱狂の熱気に煽られて下腹の奥がじくじくと疼いた。歓声の裏に潜むスリルに胸が高鳴った。",
-    "スタジアムの風を感じながら、ビールを片手に熱戦を見届けた。日常を忘れられる迫力満点の一日だった。"
-  ]
-});
-
-window.defineEvent({
   "id": "outing_shopping",
   "title": "休日のショッピング・試着室の鏡",
   "age": [
@@ -910,7 +799,10 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "not_living_alone",
+    "unmarried"
+  ],
   "weight": 25,
   "once": true,
   "text": "進学や就職を機に決意した初めての一人暮らし。実家を離れ、自分の生活をすべて自分の手で管理する生活への憧れと不安。並べられた間取り図を見つめながら、新しい生活の扉を開く。",
@@ -1021,7 +913,10 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "not_living_alone",
+    "unmarried"
+  ],
   "weight": 10,
   "text": "家族と離れて暮らすことを考える機会があった。",
   "choices": [
@@ -1351,113 +1246,6 @@ window.defineEvent({
 });
 
 window.defineEvent({
-  "id": "travel_friends",
-  "title": "女友達との温泉旅行・湯煙と浴衣",
-  "age": [
-    18,
-    75
-  ],
-  "trigger": "normal",
-  "classification": "daily",
-  "content_rating": "general",
-  "presets": [],
-  "weight": 16,
-  "actors": {
-    "friend": {
-      "source": "friend",
-      "required": false
-    }
-  },
-  "text": "気の置けない女友達と連れ立って訪れた老舗の温泉旅館。湯煙が立ち込める露天風呂で素肌を晒し合い、手足を伸ばして日頃の疲れを洗い流す。夕食後は色浴衣に着替え、地酒のグラスを傾けながら、仕事や恋愛、誰にも言えない秘密の悩みを語り合う。",
-  "choices": [
-    {
-      "id": "choice_0",
-      "label": "夜更けまで本音を語り明かす",
-      "outcomes": [
-        {
-          "id": "outcome_0",
-          "weight": 1,
-          "description": "温泉で温まった素肌を寄せ合い、夜更けまで本音を語り明かす。",
-          "effects": [
-            {
-              "path": "state.mood",
-              "op": "add",
-              "value": 4
-            },
-            {
-              "path": "skill.communication_skill",
-              "op": "add",
-              "value": 4
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "choice_1",
-      "label": "夜の散策を楽しむ",
-      "outcomes": [
-        {
-          "id": "outcome_1",
-          "weight": 1,
-          "description": "浴衣姿で温泉街の射的や土産物屋を冷やかし、夜の散策を楽しむ。",
-          "effects": [
-            {
-              "path": "state.mood",
-              "op": "add",
-              "value": 4
-            },
-            {
-              "path": "skill.communication_skill",
-              "op": "add",
-              "value": 3
-            },
-            {
-              "path": "economy.cash",
-              "op": "add",
-              "value": -20000
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "choice_2",
-      "label": "露天風呂の冷たい夜風で冷ます",
-      "outcomes": [
-        {
-          "id": "outcome_2",
-          "weight": 1,
-          "description": "地酒と温泉の熱で火照った身体を、露天風呂の冷たい夜風で冷ます。",
-          "effects": [
-            {
-              "path": "trait.constitution.current",
-              "op": "add",
-              "value": 4
-            },
-            {
-              "path": "state.stress",
-              "op": "add",
-              "value": -4
-            }
-          ]
-        }
-      ]
-    }
-  ],
-  "outcomes": [
-    "shared_activity",
-    "shared_activity",
-    "reflection"
-  ],
-  "diary": [
-    "湯上がりの浴衣姿で畳の上に車座になり、友達と深夜まで語り合った。素肌を晒し合って打ち明けた本音が、二人の絆を一段と深いものにしてくれた。",
-    "下駄の音をカランコロンと鳴らしながら夜の温泉街を散策した。浴衣の胸元を夜風に撫でられながら、笑い転げた時間が心地よかった。",
-    "深夜の露天風呂に一人浸かり、湯煙の向こうの月を見上げた。温まった身体の芯から力が抜け、深い安らぎに満たされた。"
-  ]
-});
-
-window.defineEvent({
   "id": "travel_partner",
   "title": "パートナーと巡る温泉宿・二人きりの隠れ家",
   "age": [
@@ -1468,7 +1256,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "general",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_kissed"
   ],
   "weight": 18,
   "actors": {
@@ -1580,7 +1369,9 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "employed"
+  ],
   "weight": 9,
   "once": true,
   "text": "仕事や学びの場で、助言をくれる人に出会った。",
@@ -1757,12 +1548,14 @@ window.defineEvent({
   "title": "就職活動の黒髪スーツ・合同説明会と緊張の面接",
   "age": [
     20,
-    23
+    22
   ],
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "university_student"
+  ],
   "weight": 26,
   "once": true,
   "text": "大学生の春から始まる就職活動。同じような黒髪とスーツに身を包んだ学生たちが街を行き交う。将来どんな社会人になりたいのか、自問自答を繰り返しながら内定を目指して奔走する日々。",
@@ -1949,7 +1742,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "general",
   "presets": [
-    "adult_drinking"
+    "adult_drinking",
+    "employed"
   ],
   "weight": 14,
   "alcohol": true,
@@ -2054,6 +1848,228 @@ window.defineEvent({
     "職場の宴会で笑顔を振りまいて立ち回った。普段見られない上司の砕けた姿を見て、仕事上の付き合いが少し滑らかになった気がする。",
     "騒がしい宴会場をこっそり抜け出し、薄暗い廊下で夜風を浴びた。浴衣の胸元から立ち上る酒の匂いと、誰かに見つかりそうなスリルに胸がざわついた。",
     "同期や親しい同僚と浴衣姿で愚痴を言い合い、大笑いした。気兼ねない仲間と過ごす夜は、日頃のストレスを綺麗に吹き飛ばしてくれた。"
+  ]
+});
+
+window.defineEvent({
+  "id": "outing_sports_event",
+  "title": "スタジアムでのスポーツ観戦・歓声の渦",
+  "age": [
+    20,
+    75
+  ],
+  "trigger": "normal",
+  "classification": "random",
+  "content_rating": "general",
+  "presets": [
+    "adult_drinking"
+  ],
+  "weight": 16,
+  "actors": {
+    "stranger": {
+      "source": "random_adult",
+      "required": false
+    }
+  },
+  "text": "満員のスタジアムを揺るがす地鳴りのような歓声とメガホンの音。グラウンドの白熱したプレーに観客席全体が一喜一憂し、隣り合う見知らぬ人とも肩をぶつけ合って興奮を分かち合う。冷たいビールを喉に流し込むたび、身体中の血が熱く沸き立つ……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "メガホンを打ち鳴らしてスタジアムの一体感に酔いしれる",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "応援歌を熱唱し、メガホンを打ち鳴らしてスタジアムの一体感に酔いしれる。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 4
+            },
+            {
+              "path": "skill.communication_skill",
+              "op": "add",
+              "value": 3
+            },
+            {
+              "path": "state.stress",
+              "op": "add",
+              "value": -4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "混み合うコンコースのトイレへ席を立つ",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "興奮とアルコールで身体が火照り、混み合うコンコースのトイレへ席を立つ。",
+          "effects": [
+            {
+              "path": "chain",
+              "op": "set",
+              "value": {
+                "eventId": "rare_outing_secret_quickie",
+                "delay": 1,
+                "prob": 0.85
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_2",
+      "label": "じっくりと試合展開を観戦する",
+      "outcomes": [
+        {
+          "id": "outcome_2",
+          "weight": 1,
+          "description": "冷たいビールとスタジアムグルメを堪能しながら、じっくりと試合展開を観戦する。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 3
+            },
+            {
+              "path": "economy.cash",
+              "op": "add",
+              "value": -20000
+            },
+            {
+              "path": "state.stress",
+              "op": "add",
+              "value": -2
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    "shared_activity",
+    "reflection",
+    "shared_activity"
+  ],
+  "diary": [
+    "何万人もの大歓声に包まれ、声を枯らして応援した。見知らぬファンともハイタッチを交わし、全身が心地よい高揚感で満たされた。",
+    "コンコースの人混みの中を歩きながら、熱狂の熱気に煽られて下腹の奥がじくじくと疼いた。歓声の裏に潜むスリルに胸が高鳴った。",
+    "スタジアムの風を感じながら、ビールを片手に熱戦を見届けた。日常を忘れられる迫力満点の一日だった。"
+  ]
+});
+
+window.defineEvent({
+  "id": "travel_friends",
+  "title": "女友達との温泉旅行・湯煙と浴衣",
+  "age": [
+    20,
+    75
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [
+    "adult_drinking"
+  ],
+  "weight": 16,
+  "actors": {
+    "friend": {
+      "source": "friend",
+      "required": false
+    }
+  },
+  "text": "気の置けない女友達と連れ立って訪れた老舗の温泉旅館。湯煙が立ち込める露天風呂で素肌を晒し合い、手足を伸ばして日頃の疲れを洗い流す。夕食後は色浴衣に着替え、地酒のグラスを傾けながら、仕事や恋愛、誰にも言えない秘密の悩みを語り合う。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "夜更けまで本音を語り明かす",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "温泉で温まった素肌を寄せ合い、夜更けまで本音を語り明かす。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 4
+            },
+            {
+              "path": "skill.communication_skill",
+              "op": "add",
+              "value": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "夜の散策を楽しむ",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "浴衣姿で温泉街の射的や土産物屋を冷やかし、夜の散策を楽しむ。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 4
+            },
+            {
+              "path": "skill.communication_skill",
+              "op": "add",
+              "value": 3
+            },
+            {
+              "path": "economy.cash",
+              "op": "add",
+              "value": -20000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_2",
+      "label": "露天風呂の冷たい夜風で冷ます",
+      "outcomes": [
+        {
+          "id": "outcome_2",
+          "weight": 1,
+          "description": "地酒と温泉の熱で火照った身体を、露天風呂の冷たい夜風で冷ます。",
+          "effects": [
+            {
+              "path": "trait.constitution.current",
+              "op": "add",
+              "value": 4
+            },
+            {
+              "path": "state.stress",
+              "op": "add",
+              "value": -4
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    "shared_activity",
+    "shared_activity",
+    "reflection"
+  ],
+  "diary": [
+    "湯上がりの浴衣姿で畳の上に車座になり、友達と深夜まで語り合った。素肌を晒し合って打ち明けた本音が、二人の絆を一段と深いものにしてくれた。",
+    "下駄の音をカランコロンと鳴らしながら夜の温泉街を散策した。浴衣の胸元を夜風に撫でられながら、笑い転げた時間が心地よかった。",
+    "深夜の露天風呂に一人浸かり、湯煙の向こうの月を見上げた。温まった身体の芯から力が抜け、深い安らぎに満たされた。"
   ]
 });
 
@@ -2169,7 +2185,9 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "employed"
+  ],
   "weight": 24,
   "once": true,
   "text": "社会人になって初めて迎えた給料日。口座に振り込まれた給与を手に、これまで自分を育て、支えてくれた両親への感謝を形にして伝えたいという温かい思いが湧き上がる。",
@@ -2225,7 +2243,9 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "employed"
+  ],
   "weight": 22,
   "once": true,
   "text": "締め切り前の慌ただしい時期。時計の針が午後9時を回り、誰もいなくなったオフィスを最後に出る。冷たい夜風が火照った頬を撫で、街灯が照らす帰り道を歩く。",
@@ -2280,7 +2300,9 @@ window.defineEvent({
   "trigger": "precursor",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "employed"
+  ],
   "weight": 0,
   "once": true,
   "precursor_for": [
@@ -2314,7 +2336,9 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "major",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "employed"
+  ],
   "weight": 5,
   "is_major": true,
   "text": "職場の事情で働き方を見直す必要が生じた。",
@@ -2503,7 +2527,9 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "employed"
+  ],
   "weight": {
     "base": 12,
     "additive": [
@@ -2580,7 +2606,9 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "employed"
+  ],
   "weight": 10,
   "text": "続けてきた仕事が周囲から評価された。",
   "choices": [
@@ -2829,7 +2857,9 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "employed"
+  ],
   "weight": 9,
   "text": "最近、仕事の疲れが抜けにくくなった。",
   "choices": [
@@ -2906,7 +2936,9 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "employed"
+  ],
   "weight": 24,
   "once": true,
   "text": "社内での経験を重ね、後輩も増えてきた中堅社員としての節目。重要なプロジェクトの取りまとめやチーフとしての役職への抜擢。プレイヤーからマネジメントへと求められる視座が変わる。",

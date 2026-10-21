@@ -275,6 +275,7 @@ window.defineEvent({
 
 window.defineEvent({
   "id": "puberty_awakening",
+  "title": "puberty_awakening",
   "title_template": "思春期の秘密 〜{variation_title}〜",
   "age": [
     12,
@@ -866,8 +867,8 @@ window.defineEvent({
 });
 
 window.defineEvent({
-  "id": "teen_sports_day_cheerleader",
-  "title": "青空の体育祭・手作りのメガホンと応援合戦",
+  "id": "teen_friend_fallout",
+  "title": "冷え切った放課後とすれ違う心",
   "age": [
     13,
     18
@@ -875,62 +876,9 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
-  "weight": 22,
-  "once": true,
-  "text": "抜けるような青空の下で開かれる体育祭。クラスカラーのハチマキ、グラウンドに響く応援歌。勝ち負けに一喜一憂し、全員で声をからして応援する青春の熱狂。",
-  "choices": [
-    {
-      "id": "choice_0",
-      "label": "応援団に入り、放課後練習を重ねたダンスとエールを披露する",
-      "outcomes": [
-        {
-          "weight": 1,
-          "effects": {
-            "communication": 3,
-            "health": 2,
-            "happiness": 3,
-            "leadership": 1
-          },
-          "narrative": "お揃いのハチマキを締め、全校生徒の前で息の合った応援パフォーマンスを披露。スタンドから湧き起こる手拍子と歓声に包まれ、チーム全体が一つになった鳥肌の立つような高揚感を味わった。",
-          "id": "outcome_0"
-        }
-      ]
-    },
-    {
-      "id": "choice_1",
-      "label": "シールやモールでデコレーションしたメガホンで、クラスの友達を熱烈に応援する",
-      "outcomes": [
-        {
-          "weight": 1,
-          "effects": {
-            "happiness": 4,
-            "communication": 2,
-            "aesthetics": 1
-          },
-          "narrative": "友達とお揃いで作った可愛いデコメガホン。競技に出ているクラスメイトに向かって夢中で名前を叫び、トラックサイドで写真を撮りまくって青春を満喫した。",
-          "id": "outcome_1"
-        }
-      ]
-    }
+  "presets": [
+    "school_student"
   ],
-  "diary": [
-    "体育祭、最高に盛り上がった！ 声が枯れるまで応援して、最後のリレーでみんなで抱き合って喜んだ。クラスの団結がぐっと深まった一日。",
-    "友達と作ったメガホンを持ってたくさん写真を撮った。日焼けした鼻の頭も、全部ひっくるめていい思い出！"
-  ]
-});
-
-window.defineEvent({
-  "id": "teen_friend_fallout",
-  "title": "冷え切った放課後とすれ違う心",
-  "age": [
-    13,
-    19
-  ],
-  "trigger": "normal",
-  "classification": "daily",
-  "content_rating": "general",
-  "presets": [],
   "weight": {
     "base": 8,
     "additive": [
@@ -999,6 +947,61 @@ window.defineEvent({
   "diary": [
     "夕暮れの教室で涙を流しながら本音をぶつけ合った。雨降って地固まるように、二人の絆がより深いものになった。",
     "無理に歩み寄らず、一人の時間を過ごした。痛みを経験したことで、他人の心に寄り添う優しさを学んだ気がする。"
+  ]
+});
+
+window.defineEvent({
+  "id": "teen_sports_day_cheerleader",
+  "title": "青空の体育祭・手作りのメガホンと応援合戦",
+  "age": [
+    13,
+    18
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [],
+  "weight": 22,
+  "once": true,
+  "text": "抜けるような青空の下で開かれる体育祭。クラスカラーのハチマキ、グラウンドに響く応援歌。勝ち負けに一喜一憂し、全員で声をからして応援する青春の熱狂。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "応援団に入り、放課後練習を重ねたダンスとエールを披露する",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "communication": 3,
+            "health": 2,
+            "happiness": 3,
+            "leadership": 1
+          },
+          "narrative": "お揃いのハチマキを締め、全校生徒の前で息の合った応援パフォーマンスを披露。スタンドから湧き起こる手拍子と歓声に包まれ、チーム全体が一つになった鳥肌の立つような高揚感を味わった。",
+          "id": "outcome_0"
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "シールやモールでデコレーションしたメガホンで、クラスの友達を熱烈に応援する",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 4,
+            "communication": 2,
+            "aesthetics": 1
+          },
+          "narrative": "友達とお揃いで作った可愛いデコメガホン。競技に出ているクラスメイトに向かって夢中で名前を叫び、トラックサイドで写真を撮りまくって青春を満喫した。",
+          "id": "outcome_1"
+        }
+      ]
+    }
+  ],
+  "diary": [
+    "体育祭、最高に盛り上がった！ 声が枯れるまで応援して、最後のリレーでみんなで抱き合って喜んだ。クラスの団結がぐっと深まった一日。",
+    "友達と作ったメガホンを持ってたくさん写真を撮った。日焼けした鼻の頭も、全部ひっくるめていい思い出！"
   ]
 });
 
@@ -1349,6 +1352,65 @@ window.defineEvent({
 });
 
 window.defineEvent({
+  "id": "teen_first_love",
+  "title": "隣り合う肩と制服から香る汗の匂い",
+  "age": [
+    15,
+    18
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [
+    "school_student"
+  ],
+  "weight": 9,
+  "once": true,
+  "text": "放課後の教室や夕暮れの帰り道、ふと隣に立った気になる人の横顔。風に乗って届く男の子特有の石鹸と微かな汗の匂い、偶然肩が触れ合った瞬間の熱さに、心臓が痛いほど早鐘を打ち、太ももの付け根がきゅんと疼く……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "日記に赤裸々な恋心を綴る",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "熱い想いを胸に秘め、日記に赤裸々な恋心を綴る。",
+          "effects": []
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "顔を真っ赤にして恋の悩みを打ち明ける",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "親しい友達にだけ、顔を真っ赤にして恋の悩みを打ち明ける。",
+          "effects": [
+            {
+              "path": "skill.communication_skill",
+              "op": "add",
+              "value": 3
+            },
+            {
+              "path": "state.stress",
+              "op": "add",
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diary": [
+    "肩が触れ合った瞬間、身体中に電気が走った。あの人の匂いと横顔が頭から離れず、夜になっても下腹が甘く疼いて眠れなかった。",
+    "友達に好きな人の名前を打ち明けたときの気恥ずかしさと高揚感。恋する乙女になった自分を、くすぐったく思った。"
+  ]
+});
+
+window.defineEvent({
   "id": "travel_school_trip",
   "title": "修学旅行・旅館の夜",
   "age": [
@@ -1461,63 +1523,6 @@ window.defineEvent({
     "薄暗い部屋で友達と掛け布団を被り、好きな人の話やキスの噂話で盛り上がった。みんなの熱っぽい息遣いに、胸が甘く締めつけられた。",
     "寝静まった旅館の薄暗い廊下へ足を踏み出した。浴衣の裾が擦れる微かな音と、誰かに見つかるかもしれない背徳感に、下腹が小さく震えた。",
     "旅館の柔らかい布団に潜り込み、友達の寝息を聞きながら眠りに落ちた。修学旅行の楽しい思い出が心に刻まれた。"
-  ]
-});
-
-window.defineEvent({
-  "id": "teen_first_love",
-  "title": "隣り合う肩と制服から香る汗の匂い",
-  "age": [
-    15,
-    19
-  ],
-  "trigger": "normal",
-  "classification": "daily",
-  "content_rating": "general",
-  "presets": [],
-  "weight": 9,
-  "once": true,
-  "text": "放課後の教室や夕暮れの帰り道、ふと隣に立った気になる人の横顔。風に乗って届く男の子特有の石鹸と微かな汗の匂い、偶然肩が触れ合った瞬間の熱さに、心臓が痛いほど早鐘を打ち、太ももの付け根がきゅんと疼く……。",
-  "choices": [
-    {
-      "id": "choice_0",
-      "label": "日記に赤裸々な恋心を綴る",
-      "outcomes": [
-        {
-          "id": "outcome_0",
-          "weight": 1,
-          "description": "熱い想いを胸に秘め、日記に赤裸々な恋心を綴る。",
-          "effects": []
-        }
-      ]
-    },
-    {
-      "id": "choice_1",
-      "label": "顔を真っ赤にして恋の悩みを打ち明ける",
-      "outcomes": [
-        {
-          "id": "outcome_1",
-          "weight": 1,
-          "description": "親しい友達にだけ、顔を真っ赤にして恋の悩みを打ち明ける。",
-          "effects": [
-            {
-              "path": "skill.communication_skill",
-              "op": "add",
-              "value": 3
-            },
-            {
-              "path": "state.stress",
-              "op": "add",
-              "value": 1
-            }
-          ]
-        }
-      ]
-    }
-  ],
-  "diary": [
-    "肩が触れ合った瞬間、身体中に電気が走った。あの人の匂いと横顔が頭から離れず、夜になっても下腹が甘く疼いて眠れなかった。",
-    "友達に好きな人の名前を打ち明けたときの気恥ずかしさと高揚感。恋する乙女になった自分を、くすぐったく思った。"
   ]
 });
 
@@ -2032,7 +2037,9 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "school_student"
+  ],
   "weight": 25,
   "once": true,
   "text": "高校生になり、校則や許可を確認して始めた初めてのアルバイト。学校と家以外の新しい居場所。大人たちに混ざって働く緊張感と、自分で稼ぐことの厳しさと誇りを学ぶ。",

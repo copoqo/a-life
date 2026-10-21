@@ -6,15 +6,16 @@ window.defineEvent({
   "title": "学生時代の秘め事・放課後の黄昏教室",
   "age": [
     14,
-    22
+    18
   ],
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
   "presets": [
     "partnered",
-    "student",
-    "low_morality"
+    "low_morality",
+    "school_student",
+    "rel_stage_kissed"
   ],
   "weight": 28,
   "publicSex": true,
@@ -142,15 +143,16 @@ window.defineEvent({
   "title": "学生時代の秘め事・部室の熱気と畳の上の逢瀬",
   "age": [
     14,
-    22
+    18
   ],
   "trigger": "normal",
   "classification": "major",
   "content_rating": "general",
   "presets": [
     "partnered",
-    "student",
-    "low_morality"
+    "low_morality",
+    "school_student",
+    "rel_stage_kissed"
   ],
   "weight": 26,
   "is_major": true,
@@ -277,15 +279,16 @@ window.defineEvent({
   "title": "学生時代の秘め事・文化祭前夜の準備室",
   "age": [
     14,
-    22
+    18
   ],
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
   "presets": [
     "partnered",
-    "student",
-    "low_morality"
+    "low_morality",
+    "school_student",
+    "rel_stage_kissed"
   ],
   "weight": 26,
   "publicSex": true,
@@ -411,15 +414,16 @@ window.defineEvent({
   "title": "学生時代の秘め事・体育館の用具倉庫",
   "age": [
     14,
-    22
+    18
   ],
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
   "presets": [
     "partnered",
-    "student",
-    "low_morality"
+    "low_morality",
+    "school_student",
+    "rel_stage_kissed"
   ],
   "weight": 28,
   "publicSex": true,
@@ -545,15 +549,16 @@ window.defineEvent({
   "title": "学生時代の秘め事・保健室の白いカーテン",
   "age": [
     14,
-    22
+    18
   ],
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
   "presets": [
     "partnered",
-    "student",
-    "low_morality"
+    "low_morality",
+    "school_student",
+    "rel_stage_kissed"
   ],
   "weight": 26,
   "publicSex": true,
@@ -679,15 +684,16 @@ window.defineEvent({
   "title": "学生時代の秘め事・放課後の図書室の奥",
   "age": [
     14,
-    22
+    18
   ],
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
   "presets": [
     "partnered",
-    "student",
-    "low_morality"
+    "low_morality",
+    "school_student",
+    "rel_stage_kissed"
   ],
   "weight": 26,
   "publicSex": true,
@@ -813,14 +819,14 @@ window.defineEvent({
   "title": "学生時代の秘め事・濡れ透ける制服と相手の部屋",
   "age": [
     14,
-    22
+    18
   ],
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
   "presets": [
     "partnered",
-    "student"
+    "school_student"
   ],
   "weight": 28,
   "actors": {
@@ -950,15 +956,16 @@ window.defineEvent({
   "title": "学生時代の秘め事・屋上の踊り場と青空の下",
   "age": [
     15,
-    22
+    18
   ],
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
   "presets": [
     "partnered",
-    "student",
-    "low_morality"
+    "low_morality",
+    "school_student",
+    "rel_stage_kissed"
   ],
   "weight": 26,
   "publicSex": true,
@@ -1092,14 +1099,14 @@ window.defineEvent({
   "title": "学生時代の秘め事・テスト勉強と散らばる教科書",
   "age": [
     15,
-    22
+    18
   ],
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
   "presets": [
     "partnered",
-    "student"
+    "school_student"
   ],
   "weight": 28,
   "actors": {
@@ -1234,14 +1241,15 @@ window.defineEvent({
   "title": "学生時代の秘め事・初めてのお泊まりの夜",
   "age": [
     16,
-    22
+    18
   ],
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
   "presets": [
     "partnered",
-    "student"
+    "school_student",
+    "rel_stage_kissed"
   ],
   "weight": 28,
   "actors": {
@@ -1372,14 +1380,15 @@ window.defineEvent({
   "title": "学生時代の秘め事・卒業の日の最後の制服",
   "age": [
     18,
-    22
+    18
   ],
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
   "presets": [
     "partnered",
-    "student"
+    "school_student",
+    "rel_stage_kissed"
   ],
   "weight": 28,
   "actors": {
@@ -1520,9 +1529,10 @@ window.defineEvent({
   "content_rating": "adult",
   "presets": [
     "partnered",
-    "student",
     "low_morality",
-    "adult_drinking"
+    "adult_drinking",
+    "university_student",
+    "rel_stage_intimate"
   ],
   "weight": {
     "base": 28,

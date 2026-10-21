@@ -12,7 +12,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_intimate"
   ],
   "weight": 40,
   "availability": {
@@ -78,11 +79,57 @@ window.defineEvent({
   "diary": [
     "デートの後の二人きりの部屋。抱きしめられた瞬間から頭が真っ白になって、求められるまま身体を重ねた。相手の肌の匂いと温もりに包まれて、奥まで貫かれるたびに愛されている実感が溢れて止まらなかった。",
     "恥ずかしかったけれど、自分からも相手を求めてしまった。肌と肌が擦れ合う音と荒い吐息……。心も身体も完全に一つになれたような、甘くて濃密な最高の夜だった。"
-  ]
+  ],
+  "femaleVariant": {
+    "text": "夜景の見えるレストランでのロマンチックなデートの帰り道。二人の部屋のドアが閉まり、静寂に包まれた瞬間、抑えきれない熱情とともに彼女に抱き寄せられる。柔らかな唇を重ねるごとに理性が溶け出し、愛し合う女同士の身体が貪り合うようにシーツの上へと倒れ込んだ。",
+    "choices": [
+      {
+        "id": "choice_0",
+        "label": "彼女の首に腕を回して抱きつき、熱い口づけを受け入れながら身体を預ける",
+        "outcomes": [
+          {
+            "id": "outcome_0",
+            "weight": 1,
+            "description": "彼女の首に腕を回して抱きつき、熱い口づけを受け入れながら身体を預ける。",
+            "effects": [
+              {
+                "path": "state.mood",
+                "op": "add",
+                "value": 6
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "choice_1",
+        "label": "恥ずかしがりながらも彼女のブラウスのボタンを外し、自ら求めて柔肌を重ねる",
+        "outcomes": [
+          {
+            "id": "outcome_1",
+            "weight": 1,
+            "description": "恥ずかしがりながらも彼女のブラウスのボタンを外し、自ら求めて柔肌を重ねる。",
+            "effects": [
+              {
+                "path": "state.mood",
+                "op": "add",
+                "value": 6
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "diary": [
+      "デートの余韻のままベッドに倒れ込み、彼女の柔らかな唇と指先に全身を愛撫された。甘い香りと濡れた水音に包まれて、幸せな絶頂に何度も震えた。",
+      "自分から彼女の服を脱がせ、熱い素肌を密着させた。互いの蜜で濡れた肌を擦り合わせ、朝まで愛を囁き合った。"
+    ]
+  }
 });
 
 window.defineEvent({
   "id": "partner_passion_lifestyle",
+  "title": "パートナーとの親密な時間",
   "title_template": "パートナーとの情事 〜{variation_title}〜",
   "age": [
     18,
@@ -93,7 +140,8 @@ window.defineEvent({
   "content_rating": "adult",
   "presets": [
     "partnered",
-    "sex_experienced"
+    "sex_experienced",
+    "rel_stage_intimate"
   ],
   "weight": 85,
   "partner_intimacy_boost": true,
@@ -371,7 +419,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_established"
   ],
   "weight": 40,
   "availability": {
@@ -436,7 +485,52 @@ window.defineEvent({
   "diary": [
     "喧嘩の後、まだ許してなかったのに無理やり抱かれた。最初はすごく怒っていたのに、奥を激しく突かれているうちに身体が言うことを聞かなくなって、激しく感じてしまった自分が情けない。",
     "仲直りのセックス。言葉で謝るのが下手な相手の強引さに負けてしまったけれど、身体を重ねたらわだかまりが消えて、少しホッとした。"
-  ]
+  ],
+  "femaleVariant": {
+    "text": "生活の些細な食い違いから起きた口論。冷え切った空気のまま迎えた夜。言葉では素直に謝れない彼女が、不意に寝室で強引に身体を引き寄せてくる。怒りと悔しさが残る心とは裏腹に、熱を帯びた指先の愛撫と吐息に身体の芯が抗えず疼き始める。",
+    "choices": [
+      {
+        "id": "choice_0",
+        "label": "怒りで肩を押し返しながらも、執拗な指と舌の愛撫に抗えず身体を濡らして屈服する",
+        "outcomes": [
+          {
+            "id": "outcome_0",
+            "weight": 1,
+            "description": "怒りで肩を押し返しながらも、執拗な指と舌の愛撫に抗えず身体を濡らして屈服する。",
+            "effects": [
+              {
+                "path": "state.mood",
+                "op": "add",
+                "value": 3
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "choice_1",
+        "label": "「もう怒ってないから…」と彼女の背中にしがみつき、仲直りのぬくもりを受け入れる",
+        "outcomes": [
+          {
+            "id": "outcome_1",
+            "weight": 1,
+            "description": "「もう怒ってないから…」と彼女の背中にしがみつき、仲直りのぬくもりを受け入れる。",
+            "effects": [
+              {
+                "path": "state.mood",
+                "op": "add",
+                "value": 5
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "diary": [
+      "喧嘩したままだったのに、強引に抱きすくめられて敏感な場所を責められると、悔しいほどすぐに濡れてしまった。最後は涙目で彼女にしがみついて果てた。",
+      "意地を張っていた心が、彼女の熱い体温に触れた瞬間にほどけた。言葉の代わりに何度も唇と肌を重ねて仲直りした。"
+    ]
+  }
 });
 
 window.defineEvent({
@@ -570,7 +664,8 @@ window.defineEvent({
   "content_rating": "adult",
   "presets": [
     "partnered",
-    "female_partner"
+    "female_partner",
+    "rel_stage_intimate"
   ],
   "weight": {
     "base": 16,
@@ -672,7 +767,8 @@ window.defineEvent({
   "content_rating": "adult",
   "presets": [
     "partnered",
-    "male_partner"
+    "male_partner",
+    "rel_stage_intimate"
   ],
   "weight": {
     "base": 16,
@@ -1278,7 +1374,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "general",
   "presets": [
-    "partnered"
+    "partnered",
+    "has_ex_partner"
   ],
   "weight": 10,
   "actors": {
@@ -1580,7 +1677,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "general",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_established"
   ],
   "weight": 0,
   "once": true,
@@ -1618,7 +1716,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "general",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_established"
   ],
   "weight": 0,
   "once": true,
@@ -1656,7 +1755,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_intimate"
   ],
   "weight": 0,
   "once": true,
@@ -1764,7 +1864,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_intimate"
   ],
   "weight": {
     "base": 9,
@@ -1917,7 +2018,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_intimate"
   ],
   "weight": {
     "base": 12,
@@ -2013,7 +2115,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_established"
   ],
   "weight": {
     "base": 9,
@@ -2172,7 +2275,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_established"
   ],
   "weight": {
     "base": 8,
@@ -2279,7 +2383,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "general",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_established"
   ],
   "weight": 12,
   "actors": {
@@ -2372,7 +2477,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "general",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_established"
   ],
   "weight": 14,
   "text": "年月を重ねるにつれ、最初の激しい興奮から、互いの身体の隅々まで知り尽くした深い安心感と濃厚な快楽へと変化していく。阿吽の呼吸で肌を寄せ合う幸福。",
@@ -2521,7 +2627,8 @@ window.defineEvent({
   "classification": "major",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_intimate"
   ],
   "weight": {
     "base": 11,
@@ -2641,7 +2748,71 @@ window.defineEvent({
     {
       "boundaryVoice": 5
     }
-  ]
+  ],
+  "femaleVariant": {
+    "text": "閉じられた寝室、互いに剥き出しの柔肌を擦り合わせ、熱い吐息を絡ませる。愛液に濡れそぼった秘唇と秘唇、そしてしなやかな指先が触れ合い、身体の奥深くまで溶け合いたい欲望が臨界に達する。",
+    "choices": [
+      {
+        "id": "choice_0",
+        "label": "互いの濡れた秘所を押しつけ合い、奥深くまで指で満たしてほしいとねだる",
+        "outcomes": [
+          {
+            "id": "outcome_0",
+            "weight": 1,
+            "description": "互いの濡れた秘所を押しつけ合い、奥深くまで指で満たしてほしいとねだる。",
+            "effects": [
+              {
+                "path": "state.mood",
+                "op": "add",
+                "value": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "choice_1",
+        "label": "敏感な肌を這う舌と指先の感触を焦らしながら楽しむ",
+        "outcomes": [
+          {
+            "id": "outcome_1",
+            "weight": 1,
+            "description": "敏感な肌を這う舌と指先の感触を焦らしながら楽しむ。",
+            "effects": [
+              {
+                "path": "state.mood",
+                "op": "add",
+                "value": 3
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "choice_2",
+        "label": "ただ抱き締め合って眠りたいと伝える",
+        "outcomes": [
+          {
+            "id": "outcome_2",
+            "weight": 1,
+            "description": "ただ抱き締め合って眠りたいと伝える。",
+            "effects": [
+              {
+                "path": "state.stress",
+                "op": "add",
+                "value": -2
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "diary": [
+      "重なり合うふくよかな乳房、ぬちぬちと擦れ合う蜜唇の水音。彼女の熱い吐息と甘い匂いに包まれて、下腹の奥から突き上げる絶頂に二人で同時に果てた。",
+      "じっくりと指先や舌で肌を這われ、身体の芯まで愛液で濡らされた。奥深くまで指で掻き回される快感に、何度も背筋が弓なりになった。",
+      "身体を重ねるだけが答えじゃない。それでも、触れ合いたいと疼く肉体の欲求を抑えるのは少し苦しかった。"
+    ]
+  }
 });
 
 window.defineEvent({
@@ -2712,7 +2883,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_intimate"
   ],
   "weight": {
     "base": 14,
@@ -2980,7 +3152,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_established"
   ],
   "weight": {
     "base": 7,
@@ -3124,7 +3297,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "general",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_established"
   ],
   "weight": 14,
   "actors": {
@@ -3301,7 +3475,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_established"
   ],
   "weight": 40,
   "availability": {
@@ -3379,7 +3554,8 @@ window.defineEvent({
   "classification": "major",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_established"
   ],
   "weight": 40,
   "availability": {
@@ -3446,7 +3622,52 @@ window.defineEvent({
   "diary": [
     "大切な記念日の夜。灯りを落として、お互いの愛を確かめ合うようにゆっくり抱き合った。相手の温もりで心の底まで満たされて、この人と巡り会えて本当に良かったと心から実感した。",
     "記念日の夜、いつもより情熱的になってしまった。お互いを求める気持ちが抑えられなくて、激しく求め合ってベッドの上で何度も果てた。相手の腕の中で迎えた朝は最高に幸せだった。"
-  ]
+  ],
+  "femaleVariant": {
+    "text": "二人が結ばれた記念日。特別なディナーを終え、二人きりの甘い夜が始まる。キャンドルの灯りに照らされたベッドの上で、互いへの尽きない愛情を確かめ合うように、優しく、そして濃厚に女同士の滑らかな肌と肌を重ね合わせる。",
+    "choices": [
+      {
+        "id": "choice_0",
+        "label": "灯りを落としたベッドで、互いの愛を囁きながらゆっくりと柔肌の密着を味わう",
+        "outcomes": [
+          {
+            "id": "outcome_0",
+            "weight": 1,
+            "description": "灯りを落としたベッドで、互いの愛を囁きながらゆっくりと柔肌の密着を味わう。",
+            "effects": [
+              {
+                "path": "state.mood",
+                "op": "add",
+                "value": 7
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "choice_1",
+        "label": "いつもより情熱的に太ももを絡ませ、溢れ出る愛液を散らして果てまで乱れる",
+        "outcomes": [
+          {
+            "id": "outcome_1",
+            "weight": 1,
+            "description": "いつもより情熱的に太ももを絡ませ、溢れ出る愛液を散らして果てまで乱れる。",
+            "effects": [
+              {
+                "path": "state.mood",
+                "op": "add",
+                "value": 7
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "diary": [
+      "記念日の夜、キャンドルの灯りの中で彼女と時間をかけて愛し合った。指先が触れるたびに愛しさが込み上げ、胸がいっぱいになった。",
+      "特別な夜の高揚感に任せて、互いの秘所を熱く擦り合わせて何度も絶頂を迎えた。これからもずっと彼女と歩いていきたい。"
+    ]
+  }
 });
 
 window.defineEvent({
@@ -3460,7 +3681,9 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "male_partner",
+    "rel_stage_established"
   ],
   "weight": 40,
   "availability": {
@@ -3538,7 +3761,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_established"
   ],
   "weight": 40,
   "availability": {
@@ -3616,7 +3840,9 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "has_ex_partner"
+  ],
   "weight": 7,
   "text": "ふとしたきっかけで、かつての交際を思い出した。",
   "choices": [
@@ -3668,7 +3894,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "general",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_established"
   ],
   "weight": 9,
   "actors": {
@@ -3742,7 +3969,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "rel_stage_established"
   ],
   "weight": 40,
   "availability": {

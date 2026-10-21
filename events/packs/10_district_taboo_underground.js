@@ -6,12 +6,15 @@ window.defineEvent({
   "title": "友達の家の隣室、息を殺した背徳の密会",
   "age": [
     15,
-    24
+    18
   ],
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "school_student",
+    "hetero_or_bi"
+  ],
   "weight": {
     "base": 15,
     "additive": [
@@ -88,137 +91,19 @@ window.defineEvent({
 });
 
 window.defineEvent({
-  "id": "encounter_stranger_adult",
-  "title": "夜の路地裏、知らない大人の甘い誘い",
-  "age": [
-    16,
-    24
-  ],
-  "trigger": "normal",
-  "classification": "random",
-  "content_rating": "general",
-  "presets": [],
-  "weight": {
-    "base": 15,
-    "additive": [
-      {
-        "path": "display.sociability",
-        "coefficient": 0.01
-      }
-    ],
-    "multipliers": []
-  },
-  "is_encounter": true,
-  "actors": {
-    "stranger": {
-      "source": "random_adult",
-      "required": false
-    }
-  },
-  "text": "夜の街を歩く帰り道、洗練された身なりの見知らぬ大人に声をかけられた。普段関わることのない年上の落ち着いた雰囲気と大人の香水の匂いに、危険だと知りながらも心臓が早鐘を打ち、下腹の奥がじわりと熱くなる……。",
-  "choices": [
-    {
-      "id": "choice_0",
-      "label": "夜の車内で大人の手ほどきを受ける",
-      "outcomes": [
-        {
-          "id": "outcome_0",
-          "weight": 1,
-          "description": "誘われるまま車に乗り、夜の車内で大人の手ほどきを受ける。",
-          "effects": [
-            {
-              "path": "skill.communication_skill",
-              "op": "add",
-              "value": 2
-            },
-            {
-              "path": "state.stress",
-              "op": "add",
-              "value": 2
-            },
-            {
-              "path": "chain",
-              "op": "set",
-              "value": {
-                "eventId": "sexual_taboo_solitude",
-                "delay": 1,
-                "prob": 0.85
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "choice_1",
-      "label": "秘密のときめきを胸に抱いて立ち去る",
-      "outcomes": [
-        {
-          "id": "outcome_1",
-          "weight": 1,
-          "description": "連絡先だけを交換し、秘密のときめきを胸に抱いて立ち去る。",
-          "effects": [
-            {
-              "path": "skill.communication_skill",
-              "op": "add",
-              "value": 2
-            },
-            {
-              "path": "state.stress",
-              "op": "add",
-              "value": -1
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "choice_2",
-      "label": "足早にその場を離れる",
-      "outcomes": [
-        {
-          "id": "outcome_2",
-          "weight": 1,
-          "description": "危険を察してきっぱりと断り、足早にその場を離れる。",
-          "effects": [
-            {
-              "path": "state.self_efficacy",
-              "op": "add",
-              "value": 3
-            },
-            {
-              "path": "state.stress",
-              "op": "add",
-              "value": -2
-            }
-          ]
-        }
-      ]
-    }
-  ],
-  "outcomes": [
-    "meeting_stranger",
-    "meeting_stranger",
-    "none"
-  ],
-  "diary": [
-    "名前も知らない大人の車内、暗がりで下着の中に手を差し入れられた。同年代にはない強引で手慣れた愛撫に、声も出せず太ももを濡らしてしまった。",
-    "見知らぬ大人との出会いに胸が高鳴った。大人の世界への憧れと、下腹の疼きを覚えた夜だった。",
-    "危ない誘惑を断ち切った。でも、あの人の低い声と香水の匂いが、しばらく頭から離れなかった。"
-  ]
-});
-
-window.defineEvent({
   "id": "encounter_teacher",
   "title": "放課後の個別指導、施錠された準備室の熱気",
   "age": [
     16,
-    25
+    18
   ],
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "school_student",
+    "hetero_or_bi"
+  ],
   "weight": {
     "base": 14,
     "additive": [
@@ -376,12 +261,15 @@ window.defineEvent({
   "title": "放課後の理科準備室、標本棚の陰での密通",
   "age": [
     16,
-    26
+    18
   ],
   "trigger": "chain_only",
   "classification": "major",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "school_student",
+    "hetero_or_bi"
+  ],
   "weight": {
     "base": 15,
     "additive": [
@@ -489,16 +377,142 @@ window.defineEvent({
 });
 
 window.defineEvent({
+  "id": "encounter_stranger_adult",
+  "title": "夜の路地裏、知らない大人の甘い誘い",
+  "age": [
+    16,
+    24
+  ],
+  "trigger": "normal",
+  "classification": "random",
+  "content_rating": "general",
+  "presets": [
+    "hetero_or_bi"
+  ],
+  "weight": {
+    "base": 15,
+    "additive": [
+      {
+        "path": "display.sociability",
+        "coefficient": 0.01
+      }
+    ],
+    "multipliers": []
+  },
+  "is_encounter": true,
+  "actors": {
+    "stranger": {
+      "source": "random_adult",
+      "required": false
+    }
+  },
+  "text": "夜の街を歩く帰り道、洗練された身なりの見知らぬ大人に声をかけられた。普段関わることのない年上の落ち着いた雰囲気と大人の香水の匂いに、危険だと知りながらも心臓が早鐘を打ち、下腹の奥がじわりと熱くなる……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "夜の車内で大人の手ほどきを受ける",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "誘われるまま車に乗り、夜の車内で大人の手ほどきを受ける。",
+          "effects": [
+            {
+              "path": "skill.communication_skill",
+              "op": "add",
+              "value": 2
+            },
+            {
+              "path": "state.stress",
+              "op": "add",
+              "value": 2
+            },
+            {
+              "path": "chain",
+              "op": "set",
+              "value": {
+                "eventId": "sexual_taboo_solitude",
+                "delay": 1,
+                "prob": 0.85
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "秘密のときめきを胸に抱いて立ち去る",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "連絡先だけを交換し、秘密のときめきを胸に抱いて立ち去る。",
+          "effects": [
+            {
+              "path": "skill.communication_skill",
+              "op": "add",
+              "value": 2
+            },
+            {
+              "path": "state.stress",
+              "op": "add",
+              "value": -1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_2",
+      "label": "足早にその場を離れる",
+      "outcomes": [
+        {
+          "id": "outcome_2",
+          "weight": 1,
+          "description": "危険を察してきっぱりと断り、足早にその場を離れる。",
+          "effects": [
+            {
+              "path": "state.self_efficacy",
+              "op": "add",
+              "value": 3
+            },
+            {
+              "path": "state.stress",
+              "op": "add",
+              "value": -2
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    "meeting_stranger",
+    "meeting_stranger",
+    "none"
+  ],
+  "diary": [
+    "名前も知らない大人の車内、暗がりで下着の中に手を差し入れられた。同年代にはない強引で手慣れた愛撫に、声も出せず太ももを濡らしてしまった。",
+    "見知らぬ大人との出会いに胸が高鳴った。大人の世界への憧れと、下腹の疼きを覚えた夜だった。",
+    "危ない誘惑を断ち切った。でも、あの人の低い声と香水の匂いが、しばらく頭から離れなかった。"
+  ]
+});
+
+window.defineEvent({
   "id": "encounter_colleague",
   "title": "バイト上がりの深夜、薄暗い休憩室の逢瀬",
   "age": [
-    17,
+    18,
     30
   ],
   "trigger": "chain_only",
   "classification": "major",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "employed",
+    "hetero_or_bi"
+  ],
   "weight": {
     "base": 16,
     "additive": [
@@ -584,13 +598,16 @@ window.defineEvent({
   "id": "encounter_colleague_after_hours",
   "title": "深夜のタイムカード、狭いアパートの朝帰り",
   "age": [
-    17,
+    18,
     32
   ],
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "employed",
+    "hetero_or_bi"
+  ],
   "weight": 16,
   "is_encounter": true,
   "actors": {
@@ -694,7 +711,8 @@ window.defineEvent({
   "classification": "major",
   "content_rating": "adult",
   "presets": [
-    "underground_eligible"
+    "underground_eligible",
+    "hetero_or_bi"
   ],
   "weight": {
     "base": 20,
@@ -822,7 +840,8 @@ window.defineEvent({
   "classification": "major",
   "content_rating": "adult",
   "presets": [
-    "underground_eligible"
+    "underground_eligible",
+    "hetero_or_bi"
   ],
   "weight": {
     "base": 22,
@@ -970,7 +989,8 @@ window.defineEvent({
   "content_rating": "adult",
   "presets": [
     "low_morality",
-    "underground_eligible"
+    "underground_eligible",
+    "hetero_or_bi"
   ],
   "weight": {
     "base": 22,
@@ -1104,7 +1124,8 @@ window.defineEvent({
   "classification": "major",
   "content_rating": "general",
   "presets": [
-    "underground_eligible"
+    "underground_eligible",
+    "hetero_or_bi"
   ],
   "weight": 24,
   "once": true,
@@ -1215,7 +1236,8 @@ window.defineEvent({
   "classification": "major",
   "content_rating": "adult",
   "presets": [
-    "underground_eligible"
+    "underground_eligible",
+    "hetero_or_bi"
   ],
   "weight": {
     "base": 24,
@@ -1362,7 +1384,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "general",
   "presets": [
-    "underground_eligible"
+    "underground_eligible",
+    "hetero_or_bi"
   ],
   "weight": 22,
   "once": true,
@@ -1484,20 +1507,6 @@ window.defineEvent({
               "path": "state.current_embarrassment",
               "op": "add",
               "value": 5
-            },
-            {
-              "path": "history.flags.trash_gaze_ignored_or_thrill",
-              "op": "set",
-              "value": true
-            },
-            {
-              "path": "chain",
-              "op": "set",
-              "value": {
-                "eventId": "district_residential_morning_trash",
-                "delay": 1,
-                "prob": 0.9
-              }
             }
           ]
         }
@@ -1605,7 +1614,9 @@ window.defineEvent({
   "classification": "major",
   "content_rating": "adult",
   "presets": [
-    "low_morality"
+    "low_morality",
+    "hetero_or_bi",
+    "taboo_awakened"
   ],
   "weight": {
     "base": 22,
@@ -1739,7 +1750,9 @@ window.defineEvent({
   "classification": "major",
   "content_rating": "adult",
   "presets": [
-    "low_morality"
+    "low_morality",
+    "hetero_or_bi",
+    "taboo_awakened"
   ],
   "weight": {
     "base": 22,
@@ -1892,7 +1905,11 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "hetero_or_bi",
+    "taboo_awakened",
+    "low_morality"
+  ],
   "weight": {
     "base": 24,
     "additive": [],
@@ -2025,7 +2042,9 @@ window.defineEvent({
   "classification": "major",
   "content_rating": "adult",
   "presets": [
-    "low_morality"
+    "low_morality",
+    "hetero_or_bi",
+    "taboo_awakened"
   ],
   "weight": {
     "base": 18,
@@ -2135,7 +2154,9 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "low_morality"
+    "low_morality",
+    "hetero_or_bi",
+    "taboo_awakened"
   ],
   "weight": {
     "base": 24,
@@ -2283,7 +2304,9 @@ window.defineEvent({
   "classification": "major",
   "content_rating": "adult",
   "presets": [
-    "low_morality"
+    "low_morality",
+    "hetero_or_bi",
+    "taboo_awakened"
   ],
   "weight": {
     "base": 20,
@@ -2530,7 +2553,8 @@ window.defineEvent({
   "classification": "major",
   "content_rating": "adult",
   "presets": [
-    "underground_eligible"
+    "underground_eligible",
+    "hetero_or_bi"
   ],
   "weight": {
     "base": 22,
@@ -2619,7 +2643,9 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "low_morality"
+    "low_morality",
+    "hetero_or_bi",
+    "taboo_awakened"
   ],
   "weight": {
     "base": 22,
@@ -2752,7 +2778,9 @@ window.defineEvent({
   "classification": "major",
   "content_rating": "adult",
   "presets": [
-    "low_morality"
+    "low_morality",
+    "hetero_or_bi",
+    "taboo_awakened"
   ],
   "weight": {
     "base": 22,
@@ -2892,7 +2920,9 @@ window.defineEvent({
   "content_rating": "adult",
   "presets": [
     "low_morality",
-    "adult_drinking"
+    "adult_drinking",
+    "hetero_or_bi",
+    "taboo_awakened"
   ],
   "weight": {
     "base": 22,
@@ -3032,7 +3062,10 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "general",
   "presets": [
-    "adult_drinking"
+    "adult_drinking",
+    "hetero_or_bi",
+    "taboo_awakened",
+    "low_morality"
   ],
   "weight": {
     "base": 24,
@@ -3172,7 +3205,10 @@ window.defineEvent({
   "classification": "major",
   "content_rating": "adult",
   "presets": [
-    "low_morality"
+    "low_morality",
+    "employed",
+    "hetero_or_bi",
+    "taboo_awakened"
   ],
   "weight": {
     "base": 22,
@@ -3312,7 +3348,9 @@ window.defineEvent({
   "content_rating": "adult",
   "presets": [
     "low_morality",
-    "adult_drinking"
+    "adult_drinking",
+    "hetero_or_bi",
+    "taboo_awakened"
   ],
   "weight": {
     "base": 22,
@@ -3455,7 +3493,11 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "hetero_or_bi",
+    "taboo_awakened",
+    "low_morality"
+  ],
   "weight": {
     "base": 22,
     "additive": [
@@ -3588,7 +3630,8 @@ window.defineEvent({
   "classification": "random",
   "content_rating": "general",
   "presets": [
-    "adult_drinking"
+    "adult_drinking",
+    "hetero_or_bi"
   ],
   "weight": 15,
   "is_encounter": true,
@@ -3683,7 +3726,10 @@ window.defineEvent({
   "classification": "random",
   "content_rating": "general",
   "presets": [
-    "adult_drinking"
+    "adult_drinking",
+    "hetero_or_bi",
+    "taboo_awakened",
+    "low_morality"
   ],
   "weight": {
     "base": 18,
@@ -3803,7 +3849,9 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "hetero_or_bi"
+  ],
   "weight": {
     "base": 15,
     "additive": [
@@ -3889,7 +3937,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "general",
   "presets": [
-    "partnered"
+    "partnered",
+    "hetero_or_bi"
   ],
   "weight": 12,
   "actors": {
@@ -3972,7 +4021,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "general",
   "presets": [
-    "partnered"
+    "partnered",
+    "hetero_or_bi"
   ],
   "weight": 13,
   "actors": {
@@ -4076,7 +4126,10 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "low_morality"
+    "low_morality",
+    "employed",
+    "hetero_or_bi",
+    "taboo_awakened"
   ],
   "weight": {
     "base": 22,
@@ -4229,7 +4282,11 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "hetero_or_bi",
+    "taboo_awakened",
+    "low_morality"
+  ],
   "weight": {
     "base": 22,
     "additive": [
@@ -4382,7 +4439,10 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "general",
   "presets": [
-    "partnered"
+    "partnered",
+    "hetero_or_bi",
+    "taboo_awakened",
+    "low_morality"
   ],
   "weight": {
     "base": 20,
@@ -4522,7 +4582,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "general",
   "presets": [
-    "has_children"
+    "has_children",
+    "hetero_or_bi"
   ],
   "weight": {
     "base": 13,
@@ -4615,7 +4676,8 @@ window.defineEvent({
   "classification": "major",
   "content_rating": "general",
   "presets": [
-    "has_children"
+    "has_children",
+    "hetero_or_bi"
   ],
   "weight": {
     "base": 13,
@@ -4725,7 +4787,8 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "general",
   "presets": [
-    "has_children"
+    "has_children",
+    "hetero_or_bi"
   ],
   "weight": {
     "base": 12,

@@ -178,7 +178,9 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "has_children"
+  ],
   "weight": 24,
   "once": true,
   "text": "夏休み、久しぶりに実家へ遊びにやってきた孫たち。静かだった家の中に響き渡る元気な足音と明るい声。縁側に差し込む夏の光の中で、世代を超えた家族の絆が輝く。",

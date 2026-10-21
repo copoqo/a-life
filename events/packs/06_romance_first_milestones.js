@@ -37,12 +37,14 @@ window.defineEvent({
   "title": "放課後の更衣室、白い素肌と甘い汗の匂い",
   "age": [
     14,
-    19
+    18
   ],
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "school_student"
+  ],
   "weight": {
     "base": 18,
     "additive": [
@@ -113,16 +115,343 @@ window.defineEvent({
 });
 
 window.defineEvent({
-  "id": "same_sex_first_kiss",
-  "title": "放課後の図書室、唇に触れた柔らかな熱",
+  "id": "first_date_milestone",
+  "title": "初めてのデート",
   "age": [
-    15,
-    22
+    14,
+    75
   ],
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "partnered",
+    "unmarried"
+  ],
+  "weight": 30,
+  "once": true,
+  "is_encounter": true,
+  "text": "気になる人と二人で出かける機会が訪れた。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "相手の希望も聞いて出かける",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "相手の希望も聞いて出かける。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 4
+            },
+            {
+              "path": "skill.communication_skill",
+              "op": "add",
+              "value": 3
+            },
+            {
+              "path": "chain",
+              "op": "set",
+              "value": {
+                "eventId": "first_kiss_milestone",
+                "delay": 1,
+                "prob": 0.85
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "緊張するけれど誘ってみる",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "緊張するけれど誘ってみる。",
+          "effects": [
+            {
+              "path": "state.stress",
+              "op": "add",
+              "value": 2
+            },
+            {
+              "path": "state.self_efficacy",
+              "op": "add",
+              "value": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_2",
+      "label": "今回は見送る",
+      "outcomes": [
+        {
+          "id": "outcome_2",
+          "weight": 1,
+          "description": "今回は見送る。",
+          "effects": [
+            {
+              "path": "state.stress",
+              "op": "add",
+              "value": -2
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    "shared_activity",
+    "approach",
+    "reflection"
+  ]
+});
+
+window.defineEvent({
+  "id": "first_kiss_afterthought",
+  "title": "唇に残る熱い余韻",
+  "age": [
+    14,
+    85
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [
+    "first_kiss_experienced",
+    "partnered"
+  ],
+  "weight": {
+    "base": 15,
+    "additive": [],
+    "multipliers": [
+      {
+        "when": {
+          "path": "state.current_libido",
+          "op": "gte",
+          "value": 30
+        },
+        "factor": 1.5
+      }
+    ]
+  },
+  "boosts": [
+    {
+      "whenFlag": "firstKiss",
+      "factor": 2.5
+    }
+  ],
+  "text": "唇に触れた湿り気と、微かに残る相手の唾液の味や息の匂い。ふとした瞬間に唇をなぞり、あの痺れるような感覚を思い出す。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "込み上げる熱い感情を言葉にする",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "込み上げる熱い感情を言葉にする。",
+          "effects": [
+            {
+              "path": "chain",
+              "op": "set",
+              "value": {
+                "eventId": "first_intimacy_milestone",
+                "delay": 1,
+                "prob": 0.85
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "相手の気持ちも確かめる",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "相手の気持ちも確かめる。",
+          "effects": [
+            {
+              "path": "skill.communication_skill",
+              "op": "add",
+              "value": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_2",
+      "label": "静かに痺れる余韻を反芻する",
+      "outcomes": [
+        {
+          "id": "outcome_2",
+          "weight": 1,
+          "description": "静かに痺れる余韻を反芻する。",
+          "effects": [
+            {
+              "path": "state.stress",
+              "op": "add",
+              "value": -1
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    "reflection",
+    "mutual_talk",
+    "reflection"
+  ]
+});
+
+window.defineEvent({
+  "id": "first_kiss_milestone",
+  "title": "初めて唇を重ねる夜",
+  "age": [
+    14,
+    85
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [
+    "partnered",
+    "unmarried",
+    "virgin",
+    "first_kiss_unexperienced"
+  ],
+  "weight": {
+    "base": 25,
+    "additive": [],
+    "multipliers": [
+      {
+        "when": {
+          "path": "state.current_libido",
+          "op": "gte",
+          "value": 30
+        },
+        "factor": 1.5
+      }
+    ]
+  },
+  "once": true,
+  "boosts": [
+    {
+      "whenFlag": "firstDate",
+      "factor": 2.5
+    }
+  ],
+  "phase": "virgin",
+  "actors": {
+    "partner": {
+      "source": "current_partner",
+      "required": true
+    }
+  },
+  "text": "静まり返る部屋、互いの体温と吐息が間近に迫る。触れ合いそうな唇を意識し、胸が早鐘のように高鳴る……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "熱い吐息と唇を受け入れる",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "目を閉じて、熱い吐息と唇を受け入れる。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 2
+            },
+            {
+              "path": "chain",
+              "op": "set",
+              "value": {
+                "eventId": "first_intimacy_milestone",
+                "delay": 1,
+                "prob": 0.95
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "互いの想いを確かめ合う",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "逸る気持ちを抑えて、互いの想いを確かめ合う。",
+          "effects": [
+            {
+              "path": "chain",
+              "op": "set",
+              "value": {
+                "eventId": "first_kiss_afterthought",
+                "delay": 1,
+                "prob": 0.9
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_2",
+      "label": "まだ唇を重ねる覚悟ができないと告げる",
+      "outcomes": [
+        {
+          "id": "outcome_2",
+          "weight": 1,
+          "description": "まだ唇を重ねる覚悟ができないと告げる。",
+          "effects": [
+            {
+              "path": "state.self_efficacy",
+              "op": "add",
+              "value": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    "first_kiss",
+    "mutual_talk",
+    "boundary"
+  ]
+});
+
+window.defineEvent({
+  "id": "same_sex_first_kiss",
+  "title": "放課後の図書室、唇に触れた柔らかな熱",
+  "age": [
+    15,
+    18
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [
+    "school_student",
+    "same_sex_open",
+    "first_kiss_unexperienced"
+  ],
   "weight": 16,
   "text": "夕暮れ時の図書室の奥、本棚に挟まれた静かな死角。二人きりで寄り添い言葉を交わすうち、吐息が重なり合うほどの近さに。不意に見つめ合い、どちらからともなく吸い寄せられるように女同士の柔らかな唇を重ね合わせた。",
   "choices": [
@@ -329,7 +658,10 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "partnered",
+    "female_partner"
+  ],
   "weight": 16,
   "text": "消灯した薄暗い部屋、並べた布団の中で二人。他愛ないおしゃべりの合間、掛け布団の下でそっと手が触れ合う。熱を帯びた指先がパジャマの裾から滑り込み、滑らかな太ももの内側を撫で上げ、下着のレースの奥へと這っていく……。",
   "choices": [
@@ -399,7 +731,8 @@ window.defineEvent({
     "partnered",
     "unmarried",
     "virgin",
-    "first_sex_with_partner"
+    "first_sex_with_partner",
+    "rel_stage_kissed"
   ],
   "weight": {
     "base": 25,
@@ -538,7 +871,8 @@ window.defineEvent({
     "partnered",
     "unmarried",
     "sex_experienced",
-    "first_sex_with_partner"
+    "first_sex_with_partner",
+    "rel_stage_kissed"
   ],
   "weight": {
     "base": 22,
@@ -647,7 +981,11 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "adult",
-  "presets": [],
+  "presets": [
+    "partnered",
+    "female_partner",
+    "rel_stage_kissed"
+  ],
   "weight": {
     "base": 15,
     "additive": [],
@@ -718,6 +1056,7 @@ window.defineEvent({
 
 window.defineEvent({
   "id": "street_encounter_allure",
+  "title": "street_encounter_allure",
   "title_template": "街での出会い 〜{variation_title}〜",
   "age": [
     18,
@@ -825,7 +1164,11 @@ window.defineEvent({
   "trigger": "chain_only",
   "classification": "major",
   "content_rating": "adult",
-  "presets": [],
+  "presets": [
+    "partnered",
+    "female_partner",
+    "rel_stage_intimate"
+  ],
   "weight": {
     "base": 15,
     "additive": [],
@@ -983,7 +1326,10 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "partnered",
+    "unmarried"
+  ],
   "weight": 11,
   "is_encounter": true,
   "text": "親しい相手と、二人で時間を過ごすことになった。",
@@ -1038,103 +1384,6 @@ window.defineEvent({
   "outcomes": [
     "shared_activity",
     "mutual_talk"
-  ]
-});
-
-window.defineEvent({
-  "id": "first_date_milestone",
-  "title": "初めてのデート",
-  "age": [
-    18,
-    75
-  ],
-  "trigger": "normal",
-  "classification": "daily",
-  "content_rating": "general",
-  "presets": [],
-  "weight": 30,
-  "once": true,
-  "is_encounter": true,
-  "text": "気になる人と二人で出かける機会が訪れた。",
-  "choices": [
-    {
-      "id": "choice_0",
-      "label": "相手の希望も聞いて出かける",
-      "outcomes": [
-        {
-          "id": "outcome_0",
-          "weight": 1,
-          "description": "相手の希望も聞いて出かける。",
-          "effects": [
-            {
-              "path": "state.mood",
-              "op": "add",
-              "value": 4
-            },
-            {
-              "path": "skill.communication_skill",
-              "op": "add",
-              "value": 3
-            },
-            {
-              "path": "chain",
-              "op": "set",
-              "value": {
-                "eventId": "first_kiss_milestone",
-                "delay": 1,
-                "prob": 0.85
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "choice_1",
-      "label": "緊張するけれど誘ってみる",
-      "outcomes": [
-        {
-          "id": "outcome_1",
-          "weight": 1,
-          "description": "緊張するけれど誘ってみる。",
-          "effects": [
-            {
-              "path": "state.stress",
-              "op": "add",
-              "value": 2
-            },
-            {
-              "path": "state.self_efficacy",
-              "op": "add",
-              "value": 3
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "choice_2",
-      "label": "今回は見送る",
-      "outcomes": [
-        {
-          "id": "outcome_2",
-          "weight": 1,
-          "description": "今回は見送る。",
-          "effects": [
-            {
-              "path": "state.stress",
-              "op": "add",
-              "value": -2
-            }
-          ]
-        }
-      ]
-    }
-  ],
-  "outcomes": [
-    "shared_activity",
-    "approach",
-    "reflection"
   ]
 });
 
@@ -1341,228 +1590,6 @@ window.defineEvent({
 });
 
 window.defineEvent({
-  "id": "first_kiss_afterthought",
-  "title": "唇に残る熱い余韻",
-  "age": [
-    18,
-    85
-  ],
-  "trigger": "normal",
-  "classification": "daily",
-  "content_rating": "adult",
-  "presets": [
-    "first_kiss_experienced"
-  ],
-  "weight": {
-    "base": 15,
-    "additive": [],
-    "multipliers": [
-      {
-        "when": {
-          "path": "state.current_libido",
-          "op": "gte",
-          "value": 30
-        },
-        "factor": 1.5
-      }
-    ]
-  },
-  "boosts": [
-    {
-      "whenFlag": "firstKiss",
-      "factor": 2.5
-    }
-  ],
-  "text": "唇に触れた湿り気と、微かに残る相手の唾液の味や息の匂い。ふとした瞬間に唇をなぞり、あの痺れるような感覚を思い出す。",
-  "choices": [
-    {
-      "id": "choice_0",
-      "label": "込み上げる熱い感情を言葉にする",
-      "outcomes": [
-        {
-          "id": "outcome_0",
-          "weight": 1,
-          "description": "込み上げる熱い感情を言葉にする。",
-          "effects": [
-            {
-              "path": "chain",
-              "op": "set",
-              "value": {
-                "eventId": "first_intimacy_milestone",
-                "delay": 1,
-                "prob": 0.85
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "choice_1",
-      "label": "相手の気持ちも確かめる",
-      "outcomes": [
-        {
-          "id": "outcome_1",
-          "weight": 1,
-          "description": "相手の気持ちも確かめる。",
-          "effects": [
-            {
-              "path": "skill.communication_skill",
-              "op": "add",
-              "value": 2
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "choice_2",
-      "label": "静かに痺れる余韻を反芻する",
-      "outcomes": [
-        {
-          "id": "outcome_2",
-          "weight": 1,
-          "description": "静かに痺れる余韻を反芻する。",
-          "effects": [
-            {
-              "path": "state.stress",
-              "op": "add",
-              "value": -1
-            }
-          ]
-        }
-      ]
-    }
-  ],
-  "outcomes": [
-    "reflection",
-    "mutual_talk",
-    "reflection"
-  ]
-});
-
-window.defineEvent({
-  "id": "first_kiss_milestone",
-  "title": "初めて唇を重ねる夜",
-  "age": [
-    18,
-    85
-  ],
-  "trigger": "normal",
-  "classification": "daily",
-  "content_rating": "adult",
-  "presets": [
-    "partnered",
-    "unmarried",
-    "virgin",
-    "first_kiss_unexperienced"
-  ],
-  "weight": {
-    "base": 25,
-    "additive": [],
-    "multipliers": [
-      {
-        "when": {
-          "path": "state.current_libido",
-          "op": "gte",
-          "value": 30
-        },
-        "factor": 1.5
-      }
-    ]
-  },
-  "once": true,
-  "boosts": [
-    {
-      "whenFlag": "firstDate",
-      "factor": 2.5
-    }
-  ],
-  "phase": "virgin",
-  "actors": {
-    "partner": {
-      "source": "current_partner",
-      "required": true
-    }
-  },
-  "text": "静まり返る部屋、互いの体温と吐息が間近に迫る。触れ合いそうな唇を意識し、胸が早鐘のように高鳴る……。",
-  "choices": [
-    {
-      "id": "choice_0",
-      "label": "熱い吐息と唇を受け入れる",
-      "outcomes": [
-        {
-          "id": "outcome_0",
-          "weight": 1,
-          "description": "目を閉じて、熱い吐息と唇を受け入れる。",
-          "effects": [
-            {
-              "path": "state.mood",
-              "op": "add",
-              "value": 2
-            },
-            {
-              "path": "chain",
-              "op": "set",
-              "value": {
-                "eventId": "first_intimacy_milestone",
-                "delay": 1,
-                "prob": 0.95
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "choice_1",
-      "label": "互いの想いを確かめ合う",
-      "outcomes": [
-        {
-          "id": "outcome_1",
-          "weight": 1,
-          "description": "逸る気持ちを抑えて、互いの想いを確かめ合う。",
-          "effects": [
-            {
-              "path": "chain",
-              "op": "set",
-              "value": {
-                "eventId": "first_kiss_afterthought",
-                "delay": 1,
-                "prob": 0.9
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "choice_2",
-      "label": "まだ唇を重ねる覚悟ができないと告げる",
-      "outcomes": [
-        {
-          "id": "outcome_2",
-          "weight": 1,
-          "description": "まだ唇を重ねる覚悟ができないと告げる。",
-          "effects": [
-            {
-              "path": "state.self_efficacy",
-              "op": "add",
-              "value": 3
-            }
-          ]
-        }
-      ]
-    }
-  ],
-  "outcomes": [
-    "first_kiss",
-    "mutual_talk",
-    "boundary"
-  ]
-});
-
-window.defineEvent({
   "id": "intimacy_awakening",
   "title": "女としての肉体の目覚め",
   "age": [
@@ -1704,7 +1731,8 @@ window.defineEvent({
   "presets": [
     "partnered",
     "unmarried",
-    "virgin"
+    "virgin",
+    "rel_stage_kissed"
   ],
   "weight": {
     "base": 18,
@@ -1973,7 +2001,11 @@ window.defineEvent({
   "trigger": "chain_only",
   "classification": "major",
   "content_rating": "adult",
-  "presets": [],
+  "presets": [
+    "partnered",
+    "female_partner",
+    "rel_stage_intimate"
+  ],
   "weight": {
     "base": 14,
     "additive": [],
@@ -2054,7 +2086,9 @@ window.defineEvent({
   "classification": "daily",
   "content_rating": "adult",
   "presets": [
-    "partnered"
+    "partnered",
+    "female_partner",
+    "rel_stage_established"
   ],
   "weight": {
     "base": 12,
@@ -2130,7 +2164,11 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "daily",
   "content_rating": "adult",
-  "presets": [],
+  "presets": [
+    "partnered",
+    "female_partner",
+    "rel_stage_established"
+  ],
   "weight": {
     "base": 13,
     "additive": [],

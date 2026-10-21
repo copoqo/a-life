@@ -405,6 +405,7 @@ window.defineEvent({
 
 window.defineEvent({
   "id": "childhood_daily_play",
+  "title": "childhood_daily_play",
   "title_template": "子供時代の日常 〜{variation_title}〜",
   "age": [
     6,

@@ -33,9 +33,14 @@ const eventById = new Map(events.map(e => [e.id, e]));
 const VALID_PRESETS = new Set([
   'partnered', 'single', 'unmarried', 'married', 'multi_partner',
   'female_partner', 'male_partner', 'has_children', 'student',
+  'school_student', 'university_student', 'employed', 'unemployed_or_precarious',
+  'not_living_alone', 'cohabiting', 'has_ex_partner',
+  'hetero_or_bi', 'same_sex_open',
   'virgin', 'sex_experienced', 'first_sex_with_partner',
   'first_kiss_unexperienced', 'first_kiss_experienced', 'first_date_experienced',
-  'low_morality', 'underground_eligible', 'adult_drinking', 'underage_drinking_allowed'
+  'rel_stage_early', 'rel_stage_kissed', 'rel_stage_intimate', 'rel_stage_established',
+  'low_morality', 'underground_eligible', 'taboo_awakened',
+  'adult_drinking', 'underage_drinking_allowed'
 ]);
 
 const VALID_TRIGGERS = new Set(['normal', 'chain_only', 'fixed', 'precursor', 'state_narrative']);
@@ -62,6 +67,9 @@ const VALID_SNAPSHOT_PATHS = new Set([
   'derived.has_spouse',
   'derived.has_children',
   'derived.partner_gender_relation',
+  'derived.partner_stage',
+  'derived.is_employed',
+  'derived.has_ex_partner',
   'derived.friend_count',
   'derived.net_worth',
   'display.health',
@@ -164,6 +172,30 @@ for (const e of events) {
   for (const [p, set] of Object.entries(eqValuesByPath)) {
     if (set.size > 1) {
       errors.push(`[ContradictoryCondition] ${e.id}: "${p}" に対して矛盾する複数の eq 条件 (${[...set].join(', ')}) が設定されています`);
+    }
+  }
+
+  // 5. 状態・文脈の直交性（セマンティック矛盾）検証
+  const pset = new Set(e.presets || []);
+  if (pset.has('partnered') && pset.has('single')) {
+    errors.push(`[PresetConflict] ${e.id}: partnered と single が同時指定されています`);
+  }
+  if (pset.has('married') && pset.has('unmarried')) {
+    errors.push(`[PresetConflict] ${e.id}: married と unmarried が同時指定されています`);
+  }
+  if (pset.has('male_partner') && pset.has('female_partner')) {
+    errors.push(`[PresetConflict] ${e.id}: male_partner と female_partner が同時指定されています`);
+  }
+  if (pset.has('school_student') && e.max > 18) {
+    errors.push(`[SchoolAgeMismatch] ${e.id}: school_student なのに max=${e.max} (>18) です`);
+  }
+  if (pset.has('university_student') && (e.min < 18 || e.max > 22)) {
+    errors.push(`[UniversityAgeMismatch] ${e.id}: university_student なのに年齢範囲が [${e.min}, ${e.max}] です`);
+  }
+  if (pset.has('partnered')) {
+    const fullText = [e.title, e.description, ...(e.choices || []), ...(e.results || [])].join(' ');
+    if (/(妊娠|避妊|ピル|コンドーム|中出し|射精|精液|熱い塊|雄の)/.test(fullText) && !pset.has('male_partner') && !e.femaleVariant) {
+      errors.push(`[GenderContradiction] ${e.id}: 妊娠・避妊・男性器表現を含みますが male_partner または femaleVariant が未設定です`);
     }
   }
 }

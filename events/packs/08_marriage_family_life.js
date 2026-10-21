@@ -241,6 +241,7 @@ window.defineEvent({
 
 window.defineEvent({
   "id": "marital_life_intimacy",
+  "title": "夫婦の日常と語らい",
   "title_template": "夫婦の日常 〜{variation_title}〜",
   "age": [
     20,
@@ -412,7 +413,11 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "major",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "partnered",
+    "male_partner",
+    "rel_stage_established"
+  ],
   "weight": 8,
   "is_major": true,
   "text": "下腹にそっと手を当て、奥深くに眠る子宮の温もりを意識する。自らの身体で新しい命を宿し育むことの神秘と恐れ、あるいは一人の女として生き切ることの選択肢。内臓の奥がずっしりと重く脈打つのを感じる……。",
@@ -471,7 +476,8 @@ window.defineEvent({
   "content_rating": "general",
   "presets": [
     "partnered",
-    "unmarried"
+    "unmarried",
+    "rel_stage_established"
   ],
   "weight": 22,
   "is_major": true,
@@ -1747,7 +1753,9 @@ window.defineEvent({
   "trigger": "normal",
   "classification": "major",
   "content_rating": "general",
-  "presets": [],
+  "presets": [
+    "has_children"
+  ],
   "weight": 22,
   "once": true,
   "is_major": true,
