@@ -3,16 +3,22 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="ある人生">
   <title>ある人生 — Life Simulator</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20261021-1">
 </head>
 
 <body>
   <main>
     <header>
-      <div>
+      <div class="header-title-group">
         <h1>ある人生</h1>
+        <span id="buildVersion" class="build-version">v1.20.0 (b20261021-1)</span>
       </div><button class="secondary" id="restart">新しい人生</button>
     </header>
     <div class="workspace">
@@ -34,12 +40,12 @@
             <span id="autoToggleIcon">⏸</span> <span id="autoToggleText">一時停止</span>
           </button>
           <select id="autoSpeedSelect"
-            style="padding:5px 8px;font-size:12px;border-radius:4px;border:1px solid #cbd5e1;background:#fff;cursor:pointer;">
+            style="padding:5px 8px;font-size:12px;border-radius:4px;border:1px solid #cbd5e1;background:#fff;color:#23333b;cursor:pointer;">
             <option value="1200" selected>速度：普通 (1.2秒)</option>
             <option value="600">速度：速い (0.6秒)</option>
             <option value="2000">速度：ゆっくり (2.0秒)</option>
           </select>
-          <select id="mode" style="margin-left:auto;font-size:11.5px;padding:3px 6px;">
+          <select id="mode" style="margin-left:auto;font-size:11.5px;padding:3px 6px;background:#fff;color:#23333b;">
             <option value="choice">選択介入</option>
             <option value="auto">全自動</option>
             <option value="free">自由入力</option>
@@ -75,9 +81,10 @@
     </div>
     <p class="muted footer-note">完全ローカル動作。データはブラウザ内に保存されます。イベントや確率は試作用の仮定値であり、実際の日本の統計ではありません。</p>
   </main>
-  <script src="events/manifest.js"></script>
-  <script src="events/loader.js"></script>
-  <script src="js/app.js"></script>
+  <script>window.BUILD_CACHE_KEY = '20261021-1';</script>
+  <script src="events/manifest.js?v=20261021-1"></script>
+  <script src="events/loader.js?v=20261021-1"></script>
+  <script src="js/app.js?v=20261021-1"></script>
 </body>
 
 </html>

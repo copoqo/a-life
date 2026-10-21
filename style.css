@@ -1,5 +1,6 @@
     :root {
       font-family: system-ui, -apple-system, sans-serif;
+      color-scheme: light;
       color: #27313c;
       background: #f4f2ed
     }
@@ -100,7 +101,9 @@
     select {
       padding: 10px;
       border-radius: 8px;
-      border: 1px solid #cbd0d2
+      border: 1px solid #cbd0d2;
+      background: #ffffff;
+      color: #23333b
     }
 
     textarea {
@@ -109,7 +112,9 @@
       padding: 12px;
       border: 1px solid #cbd0d2;
       border-radius: 9px;
-      resize: vertical
+      resize: vertical;
+      background: #ffffff;
+      color: #23333b
     }
 
     .choice {
@@ -170,9 +175,27 @@
       padding: 0 3px
     }
 
+    .header-title-group {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      min-width: 0;
+    }
+
     h1 {
       font-size: 21px;
       letter-spacing: .03em
+    }
+
+    .build-version {
+      font-size: 11px;
+      font-weight: 500;
+      color: #64748b;
+      background: #dfe6e9;
+      padding: 2px 7px;
+      border-radius: 999px;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
     }
 
     h2 {
@@ -595,15 +618,22 @@
 
     @media(max-width:600px) {
 
-      html,
+      html {
+        height: auto;
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+
       body {
-        overflow: auto
+        height: auto;
+        min-height: 100%;
+        overflow: visible;
       }
 
       main {
         height: auto;
-        min-height: 100dvh;
-        padding: 8px;
+        min-height: calc(100lvh + 24px);
+        padding: 8px 8px 32px;
         gap: 8px;
         display: flex;
         flex-direction: column
@@ -628,6 +658,11 @@
       h1 {
         font-size: 16px;
         margin: 0;
+      }
+
+      .build-version {
+        font-size: 9.5px;
+        padding: 1px 5px;
       }
 
       header .muted {

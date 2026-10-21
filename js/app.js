@@ -1,4 +1,10 @@
 'use strict';
+const BUILD_VERSION = 'v1.20.0 (b20261021-1)';
+(function initBuildVersion() {
+  const verEl = document.getElementById('buildVersion');
+  if (verEl) verEl.textContent = BUILD_VERSION;
+})();
+
 window.addEventListener('error', function (err) {
   console.error('Runtime error:', err);
   const notice = document.getElementById('playNotice');

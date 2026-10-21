@@ -5,8 +5,9 @@ window.defineEvent = window.defineEvent || function (def) {
   return def;
 };
 (function () {
+  var v = window.BUILD_CACHE_KEY ? ('?v=' + encodeURIComponent(window.BUILD_CACHE_KEY)) : '';
   (window.eventFiles || []).forEach(function (f) {
-    document.write('<script src="events/' + f + '"><\/script>');
+    document.write('<script src="events/' + f + v + '"><\/script>');
   });
 })();
 
