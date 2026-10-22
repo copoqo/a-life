@@ -178,8 +178,8 @@ window.defineEvent({
   "id": "exam_atmosphere_precursor",
   "title": "受験シーズンの足音",
   "age": [
-    11,
-    19
+    17,
+    17
   ],
   "trigger": "precursor",
   "classification": "daily",

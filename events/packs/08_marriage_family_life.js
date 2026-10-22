@@ -6,7 +6,7 @@ window.defineEvent({
   "title": "親族の不幸・通夜と葬儀",
   "age": [
     16,
-    85
+    65
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -176,7 +176,7 @@ window.defineEvent({
   "title": "災害への備え",
   "age": [
     18,
-    90
+    65
   ],
   "trigger": "normal",
   "classification": "daily",

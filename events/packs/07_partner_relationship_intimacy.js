@@ -6,7 +6,7 @@ window.defineEvent({
   "title": "夜景デートの後の二人だけの部屋 〜愛を確かめ合う甘美な交わり〜",
   "age": [
     18,
-    65
+    50
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -133,7 +133,7 @@ window.defineEvent({
   "title_template": "パートナーとの情事 〜{variation_title}〜",
   "age": [
     18,
-    65
+    50
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -413,7 +413,7 @@ window.defineEvent({
   "title": "口論の後の沈黙と強引な抱擁 〜仲直りのための機嫌取りセックス〜",
   "age": [
     18,
-    65
+    50
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -538,7 +538,7 @@ window.defineEvent({
   "title": "好意を伝える楽しさ",
   "age": [
     18,
-    65
+    55
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -654,10 +654,10 @@ window.defineEvent({
 
 window.defineEvent({
   "id": "partner_intimacy_female",
-  "title": "女性パートナーとの親密な夜 〜指と舌が溶け合う蜜月〜",
+  "title": "パートナーとの親密な夜 〜指と舌が溶け合う蜜月〜",
   "age": [
     18,
-    70
+    50
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -682,7 +682,7 @@ window.defineEvent({
     ]
   },
   "partner_intimacy_boost": true,
-  "text": "寝室の明かりを落とし、女性パートナーと素肌を重ねる。ふんわりと柔らかい乳房が押し当たり、互いの太ももが絡み合う。彼女の温かい舌先が首筋から下腹へと滑り落ち、充血した秘唇をそっと吸い上げると、下腹の奥から激しい愛液が溢れ出してシーツを濡らす。",
+  "text": "寝室の明かりを落とし、パートナーと素肌を重ねる。ふんわりと柔らかい乳房が押し当たり、互いの太ももが絡み合う。彼女の温かい舌先が首筋から下腹へと滑り落ち、充血した秘唇をそっと吸い上げると、下腹の奥から激しい愛液が溢れ出してシーツを濡らす。",
   "choices": [
     {
       "id": "choice_0",
@@ -757,10 +757,10 @@ window.defineEvent({
 
 window.defineEvent({
   "id": "partner_intimacy_male",
-  "title": "男性パートナーとの親密な夜 〜太い熱情に貫かれる歓喜〜",
+  "title": "パートナーとの親密な夜 〜太い熱情に貫かれる歓喜〜",
   "age": [
     18,
-    70
+    50
   ],
   "trigger": "normal",
   "classification": "major",
@@ -786,7 +786,7 @@ window.defineEvent({
   },
   "partner_intimacy_boost": true,
   "is_major": true,
-  "text": "薄暗い寝室で、男性パートナーの逞しい腕に抱きすくめられる。男らしい汗と石鹸の匂いが鼻腔をくすぐり、太ももを力強く押し開かれる。硬く熱く充血した肉塊が、濡れそぼった肉腔の入口を押し広げ、一気に最奥の子宮口まで突き入れられた……！",
+  "text": "薄暗い寝室で、パートナーの逞しい腕に抱きすくめられる。男らしい汗と石鹸の匂いが鼻腔をくすぐり、太ももを力強く押し開かれる。硬く熱く充血した肉塊が、濡れそぼった肉腔の入口を押し広げ、一気に最奥の子宮口まで突き入れられた……！",
   "choices": [
     {
       "id": "choice_0",
@@ -864,7 +864,7 @@ window.defineEvent({
   "title": "恋愛観を語り合う",
   "age": [
     18,
-    70
+    50
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -1029,7 +1029,7 @@ window.defineEvent({
   "title": "夜の静寂と自らの愛欲の輪郭",
   "age": [
     18,
-    75
+    50
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -1093,7 +1093,7 @@ window.defineEvent({
   "title": "二人で楽しい時間を計画",
   "age": [
     18,
-    75
+    55
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -1212,7 +1212,7 @@ window.defineEvent({
   "title": "自分らしい魅力を楽しむ",
   "age": [
     18,
-    75
+    65
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -1332,7 +1332,7 @@ window.defineEvent({
   "title": "日常に蘇る肌の記憶",
   "age": [
     18,
-    75
+    45
   ],
   "trigger": "state_narrative",
   "classification": "daily",
@@ -1368,7 +1368,7 @@ window.defineEvent({
   "title": "忘れえぬ肌の記憶・元恋人との再会",
   "age": [
     18,
-    78
+    38
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -1443,7 +1443,7 @@ window.defineEvent({
   "title": "蜜月の秘め事・公言するか否か",
   "age": [
     18,
-    80
+    40
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -1526,7 +1526,7 @@ window.defineEvent({
   "title": "自分の望む親密さを知る",
   "age": [
     18,
-    80
+    40
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -1670,8 +1670,8 @@ window.defineEvent({
   "id": "story_partner_deep_bond_aftermath",
   "title": "二人の深まる絆・将来への静かな予兆",
   "age": [
-    18,
-    80
+    20,
+    30
   ],
   "trigger": "state_narrative",
   "classification": "daily",
@@ -1709,8 +1709,8 @@ window.defineEvent({
   "id": "story_partner_distance_reconcile_hint",
   "title": "少し冷たいシーツと、二人のすれ違いの予兆",
   "age": [
-    18,
-    80
+    20,
+    40
   ],
   "trigger": "state_narrative",
   "classification": "daily",
@@ -1749,7 +1749,7 @@ window.defineEvent({
   "title": "焦らされる熱情と、募る背徳の予兆",
   "age": [
     18,
-    80
+    40
   ],
   "trigger": "state_narrative",
   "classification": "daily",
@@ -1788,7 +1788,7 @@ window.defineEvent({
   "title": "求められる素肌と心のブレーキ",
   "age": [
     18,
-    85
+    45
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -1858,7 +1858,7 @@ window.defineEvent({
   "title": "気持ちは変わるもの",
   "age": [
     18,
-    85
+    35
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -1954,8 +1954,8 @@ window.defineEvent({
   "id": "adult_desire",
   "title": "季節の移ろいと疼く肉体の飢え",
   "age": [
-    18,
-    85
+    22,
+    45
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -2011,8 +2011,8 @@ window.defineEvent({
   "id": "adult_intimacy",
   "title": "シーツの上の本音・夜の対話",
   "age": [
-    18,
-    85
+    22,
+    45
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -2108,8 +2108,8 @@ window.defineEvent({
   "id": "adult_mismatched_desire",
   "title": "性欲の熱量差・求めと拒絶の痛み",
   "age": [
-    18,
-    85
+    22,
+    45
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -2199,8 +2199,8 @@ window.defineEvent({
   "id": "adult_private_values",
   "title": "常識の枠を超えた愛欲の形",
   "age": [
-    18,
-    85
+    22,
+    45
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -2268,8 +2268,8 @@ window.defineEvent({
   "id": "adult_relationship_conflict",
   "title": "夜の営みの不一致と心のすれ違い",
   "age": [
-    18,
-    85
+    22,
+    45
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -2376,8 +2376,8 @@ window.defineEvent({
   "id": "adult_relationship_distance",
   "title": "冷たいシーツと二人のすれ違い",
   "age": [
-    18,
-    85
+    22,
+    45
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -2470,8 +2470,8 @@ window.defineEvent({
   "id": "adult_relationship_growth",
   "title": "深まりゆく絆と熟成する夜",
   "age": [
-    18,
-    85
+    22,
+    45
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -2554,8 +2554,8 @@ window.defineEvent({
   "id": "adult_relationship_privacy",
   "title": "二人だけの秘密の合言葉",
   "age": [
-    18,
-    85
+    22,
+    45
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -2620,8 +2620,8 @@ window.defineEvent({
   "id": "adult_shared_intimacy",
   "title": "夜の逢瀬・求め合う肉体の熱情",
   "age": [
-    18,
-    85
+    22,
+    45
   ],
   "trigger": "chain_only",
   "classification": "major",
@@ -2820,7 +2820,7 @@ window.defineEvent({
   "title": "約束をめぐるすれ違い",
   "age": [
     18,
-    85
+    45
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -2877,7 +2877,7 @@ window.defineEvent({
   "title": "親密さを笑い合える",
   "age": [
     18,
-    85
+    45
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -3019,8 +3019,8 @@ window.defineEvent({
   "id": "adult_intimacy_reflection",
   "title": "肉体に刻まれた快楽の記憶",
   "age": [
-    18,
-    90
+    25,
+    50
   ],
   "trigger": "chain_only",
   "classification": "major",
@@ -3145,8 +3145,8 @@ window.defineEvent({
   "id": "adult_new_chapter",
   "title": "親密な関係の新たな門出",
   "age": [
-    18,
-    90
+    28,
+    50
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -3290,8 +3290,8 @@ window.defineEvent({
   "id": "positive_anniversary",
   "title": "二人の記念日",
   "age": [
-    18,
-    90
+    25,
+    50
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -3411,7 +3411,7 @@ window.defineEvent({
   "title": "周囲からの期待",
   "age": [
     20,
-    65
+    45
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -3468,8 +3468,8 @@ window.defineEvent({
   "id": "partner_sex_tired_reluctance",
   "title": "疲労困憊の夜と断れぬ求め 〜溜め息とともに受け入れる受動セックス〜",
   "age": [
-    20,
-    65
+    25,
+    45
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -3547,8 +3547,8 @@ window.defineEvent({
   "id": "partner_anniversary_deep_love",
   "title": "記念日の夜 〜互いを慈しむ濃厚なラブラブセックス〜",
   "age": [
-    20,
-    70
+    25,
+    45
   ],
   "trigger": "normal",
   "classification": "major",
@@ -3674,8 +3674,8 @@ window.defineEvent({
   "id": "partner_sex_fertility_timing",
   "title": "排卵日の夜と義務の営み 〜冷めた心と裏腹に濡れてしまう肉体〜",
   "age": [
-    22,
-    42
+    25,
+    35
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -3754,8 +3754,8 @@ window.defineEvent({
   "id": "partner_sex_mastered_pleasure",
   "title": "言わずとも伝わる性感帯 〜手の内を知り尽くしたあうんの熟練セックス〜",
   "age": [
-    22,
-    75
+    28,
+    45
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -3834,8 +3834,8 @@ window.defineEvent({
   "id": "adult_ex_anniversary",
   "title": "過去の恋を思い出す",
   "age": [
-    22,
-    85
+    25,
+    45
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -3887,8 +3887,8 @@ window.defineEvent({
   "id": "adult_future_together",
   "title": "一緒に暮らす未来",
   "age": [
-    23,
-    80
+    25,
+    35
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -3963,7 +3963,7 @@ window.defineEvent({
   "title": "言葉を交わさずとも重なる呼吸 〜円熟した二人の阿吽の快楽セックス〜",
   "age": [
     25,
-    80
+    45
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -4042,7 +4042,7 @@ window.defineEvent({
   "title": "伴侶の旅立ち・永遠の別れ",
   "age": [
     58,
-    105
+    75
   ],
   "trigger": "normal",
   "classification": "daily",

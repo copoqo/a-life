@@ -1279,7 +1279,7 @@ window.defineEvent({
   "title": "街角の偶然と芽生える好意・予感の交差点",
   "age": [
     18,
-    50
+    30
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -1351,7 +1351,7 @@ window.defineEvent({
   "title": "二人で出かける約束",
   "age": [
     18,
-    75
+    35
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -1422,7 +1422,7 @@ window.defineEvent({
   "title": "気になる人との視線の交差",
   "age": [
     18,
-    78
+    28
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -1532,7 +1532,7 @@ window.defineEvent({
   "title": "素肌の距離と告白への葛藤",
   "age": [
     18,
-    85
+    30
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -1624,7 +1624,7 @@ window.defineEvent({
   "title": "女としての肉体の目覚め",
   "age": [
     18,
-    85
+    35
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -1753,7 +1753,7 @@ window.defineEvent({
   "title": "まだ肌を許していないもどかしさ",
   "age": [
     18,
-    85
+    25
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -1844,8 +1844,8 @@ window.defineEvent({
   "id": "intimacy_afterthought",
   "title": "初めて知った肉体の奥の疼き",
   "age": [
-    18,
-    90
+    20,
+    28
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -1947,7 +1947,7 @@ window.defineEvent({
   "title": "初デートの記憶",
   "age": [
     19,
-    85
+    26
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -2110,7 +2110,7 @@ window.defineEvent({
   "title": "世間の視線と、二人だけの誓い",
   "age": [
     22,
-    55
+    32
   ],
   "trigger": "normal",
   "classification": "daily",
@@ -2193,7 +2193,7 @@ window.defineEvent({
   "title": "円熟した身体、貪り合う女同士の蜜夜",
   "age": [
     35,
-    65
+    50
   ],
   "trigger": "normal",
   "classification": "daily",
