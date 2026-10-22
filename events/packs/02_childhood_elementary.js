@@ -1,5 +1,5 @@
 // ============================================================================
-// Pack: 02_childhood_elementary — 幼少期・小学生の日常・遊び・友達・身体の不思議 (44 events)
+// Pack: 02_childhood_elementary — 幼少期・小学生の日常・遊び・友達・身体の不思議 (52 events)
 // ============================================================================
 window.defineEvent({
   "id": "elem_bicycle_scraped_knee",
@@ -3968,3 +3968,565 @@ window.defineEvent({
     "不安で涙がこぼれそうになり、温かいお茶を入れてもらって話を聞いてもらった。誰かが支えてくれている安心感に救われた。"
   ]
 });
+
+window.defineEvent({
+  "id": "elem_curiosity_hand_mirror_secret",
+  "title": "お風呂上がりの手鏡・初めて観察する自分の秘所",
+  "age": [
+    10,
+    12
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [],
+  "weight": 25,
+  "text": "家族が寝静まった深夜、自室のベッドの上。お風呂上がりの石鹸の香りと体温が肌に残る中、机の引き出しから小さな手鏡をそっと取り出す。部屋の鍵を確かめ、パジャマのズボンを下ろして両膝を抱え込むように開く。合わせ鏡の要領で股の間に鏡を滑り込ませた瞬間、初めて目にする自分自身の身体の最も奥深い割れ目に、心臓が早鐘のように高鳴り始める……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "息を呑んで鏡を見つめ、震える指先でそっと割れ目に触れてみる",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "未知の自分に出会った衝撃に震えながら、指先でそっと柔らかな粘膜に触れて微熱を確かめる。",
+          "effects": [
+            {
+              "path": "skill.knowledge",
+              "op": "add",
+              "value": 3
+            },
+            {
+              "path": "state.current_embarrassment",
+              "op": "add",
+              "value": 4
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "激しい羞恥心に襲われて鏡を伏せ、布団を頭からかぶる",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "見てはいけないものを見てしまった罪悪感と羞恥に耐えかね、布団に潜り込んで身悶えする。",
+          "effects": [
+            {
+              "path": "state.current_embarrassment",
+              "op": "add",
+              "value": 5
+            },
+            {
+              "path": "state.stress",
+              "op": "add",
+              "value": 2
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diary": [
+    "手鏡を使って、初めて自分の股の間をじっくり見てしまった。ピンク色の柔らかな割れ目があって、指で触れると微かにぬるりと濡れていて、身体中が熱くなって眠れなくなった。",
+    "鏡で自分の身体の秘密を見てしまった。恥ずかしくて心臓が破裂しそうだったけれど、女の人になっていくんだっていう不思議な実感が湧いた。"
+  ]
+});
+
+window.defineEvent({
+  "id": "elem_curiosity_friend_chest_whisper",
+  "title": "林間学校の消灯後・友達と比べ合う胸のふくらみ",
+  "age": [
+    10,
+    12
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [],
+  "weight": 25,
+  "text": "林間学校の夜、見回りの先生の足音が遠ざかった後の大部屋。親友と一つの掛け布団に潜り込み、懐中電灯の小さな明かりの下でヒソヒソ声を交わす。体操服を着た時に擦れて痛む胸の悩み。「〇〇ちゃん、もう膨らんできてる？」「ちょっと触ってみる？」。服の上から互いの胸の先端にそっと手のひらを重ね合うと、小さな固いしこりの感触が伝わってくる……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "互いの胸の痛みを確かめ合い、身体が大人になる不思議を語り合う",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "くすぐったい羞恥に頬を赤らめながら、女友達と秘密の絆を深める。",
+          "effects": [
+            {
+              "path": "skill.communication_skill",
+              "op": "add",
+              "value": 3
+            },
+            {
+              "path": "skill.knowledge",
+              "op": "add",
+              "value": 2
+            },
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "チクチクする敏感さに息を呑み、思わず手を引っ込める",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "先端に触れられた瞬間の下腹の甘い疼きに動揺し、照れ隠しに笑い転げる。",
+          "effects": [
+            {
+              "path": "state.current_embarrassment",
+              "op": "add",
+              "value": 4
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diary": [
+    "林間学校の夜、布団の中で友達とお互いの胸を触りっこした。友達の胸の先にも小さなコリコリがあって、二人で『痛いよね』って笑い合った。大人への階段を一緒に登っている気がした。",
+    "胸の先端を友達に触られた時、ピリッとした痺れが走ってびっくりした。身体がどんどん変わっていくのが少し怖くて、でもすごく気になって仕方がない。"
+  ]
+});
+
+window.defineEvent({
+  "id": "elem_curiosity_dictionary_forbidden_words",
+  "title": "図書室の分厚い国語辞典・指で辿る禁断の語彙",
+  "age": [
+    9,
+    12
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [],
+  "weight": 25,
+  "text": "雨の日の放課後、利用者のいない図書室の窓際。机の上に置かれた分厚い広辞苑。誰にも見られないよう周囲を警戒しながら、震える指先でページをめくる。「せ・い・こ・う」「し・き・ゅ・う」「し・ょ・じょ」――活字で淡々と記された大人の行為の意味。無機質な解説文から立ち上る生々しい情景に、息苦しいほどの熱情が胸に満ちていく……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "解説文を何度も繰り返し読み、頭の中で生々しい妄想を広げる",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "禁断の知識に魅了され、太ももの内側を熱く火照らせながら読み耽る。",
+          "effects": [
+            {
+              "path": "skill.knowledge",
+              "op": "add",
+              "value": 4
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "図書委員の足音に慌てて辞書を閉じ、平静を装う",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "見つかりそうになったスリルに心臓を跳ねさせながら、そっと本棚へ辞書を戻す。",
+          "effects": [
+            {
+              "path": "state.stress",
+              "op": "add",
+              "value": 2
+            },
+            {
+              "path": "state.current_embarrassment",
+              "op": "add",
+              "value": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diary": [
+    "図書室の辞書で、こっそり大人の言葉を調べた。『性交』とか『処女』の意味を読んでいるだけで、顔から火が出るくらい熱くなって、太ももの間がじんと疼いた。",
+    "誰もいない図書室で辞書をめくった。知ってはいけない秘密の世界を覗き見してしまったみたいで、胸がずっとドキドキしていた。"
+  ]
+});
+
+window.defineEvent({
+  "id": "elem_curiosity_parents_drawer_discovery",
+  "title": "親の寝室の隠し場所・見つけてしまった大人の秘密本",
+  "age": [
+    10,
+    12
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [],
+  "weight": 22,
+  "text": "休日の留守番、親の寝室のクローゼットの奥を掃除していた時のこと。紙袋の底に隠されていた、見慣れない雑誌や写真集。表紙には肌を大きく晒した男女の姿。見てはいけないという強い罪悪感を、止められない好奇心が軽々と凌駕する。恐る恐るページを開くと、絡み合う生々しい肉体と濡れた肌が目に飛び込んできた……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "食い入るようにページをめくり、未知の光景に息を呑む",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "大人たちの交わる生々しい姿に強烈な衝撃を受け、下腹の奥を激しく疼かせる。",
+          "effects": [
+            {
+              "path": "skill.knowledge",
+              "op": "add",
+              "value": 5
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 12
+            },
+            {
+              "path": "state.current_embarrassment",
+              "op": "add",
+              "value": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "慌てて本を元の場所に戻し、自分の部屋へ駆け込む",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "あまりの刺激に頭が真っ白になり、自室のベッドで布団を被って震える。",
+          "effects": [
+            {
+              "path": "state.stress",
+              "op": "add",
+              "value": 3
+            },
+            {
+              "path": "state.current_embarrassment",
+              "op": "add",
+              "value": 4
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diary": [
+    "親の部屋の奥から見つけた本をこっそり見てしまった。男の人と女の人が服を脱いで抱き合っている写真が頭から離れない。大人って本当にあんなことをしているんだ……。",
+    "見てはいけない本を見てしまった。心臓がバクバクして手足が震えた。でも、心のどこかで『もっと知りたい』って思ってしまう自分がいて怖い。"
+  ]
+});
+
+window.defineEvent({
+  "id": "elem_curiosity_boys_locker_glimpse",
+  "title": "体育館裏の隙間・男の子たちの着替えの気配と筋肉",
+  "age": [
+    10,
+    12
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [],
+  "weight": 25,
+  "text": "体育の授業の後、用具を片付けるために器具庫の裏を通った瞬間。換気のために開け放たれていた男子更衣室の扉の隙間が目に入った。砂埃と汗の匂い。上半身裸でふざけ合うクラスの男の子たちの、女子とは全く違う平らな胸と引き締まった背中の筋。見てはいけないと分かっているのに、吸い寄せられるように視線が釘付けになる……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "物陰に身を隠しながら、男の子の身体の逞しさをじっと見つめる",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "異性の身体への強烈な意識と好奇心に、胸の奥がきゅんと甘く締めつけられる。",
+          "effects": [
+            {
+              "path": "skill.knowledge",
+              "op": "add",
+              "value": 2
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 6
+            },
+            {
+              "path": "state.current_embarrassment",
+              "op": "add",
+              "value": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "カッと顔を赤らめてその場から早足で立ち去る",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "火照った頬を両手で冷ましながら、教室へと足早に戻る。",
+          "effects": [
+            {
+              "path": "state.current_embarrassment",
+              "op": "add",
+              "value": 4
+            },
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 2
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diary": [
+    "着替え中の男子更衣室を偶然見ちゃった。男の子の背中や肩って、女の子と全然違って固そうだった。汗の匂いまで生々しくて、思い出したら胸がドキドキした。",
+    "男の子たちの裸を見てしまった。いつもおバカなことばかり言っている同級生なのに、急に異性として意識してしまって、教室で目が合わせられなくなった。"
+  ]
+});
+
+window.defineEvent({
+  "id": "elem_curiosity_mothers_lipstick_mirror",
+  "title": "母のドレッサー前・赤い口紅と背伸びした大人の香気",
+  "age": [
+    8,
+    12
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [],
+  "weight": 25,
+  "text": "母親が出かけて留守の午後、薄暗い寝室のドレッサーの前。綺麗に並ぶ香水瓶と化粧品の甘い香り。鏡台の引き出しから、母のお気に入りの深紅のリップスティックをそっと取り出す。金色のケースを回すと現れる滑らかな紅色。恐る恐る自分の乾いた唇に押し当てて引いてみる。鏡の中に映った、いつもと違う艶やかな自分の唇……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "香水を少しだけ手首につけ、大人の女性になった自分を夢見る",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "華やかな香りと赤い唇に陶酔し、美への目覚めと強い憧れを抱く。",
+          "effects": [
+            {
+              "path": "skill.grooming",
+              "op": "add",
+              "value": 4
+            },
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "慌ててティッシュで拭き取り、母に見つからないよう片付ける",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "背伸びした秘密のいたずらに胸を弾ませながら、急いでドレッサーを元通りにする。",
+          "effects": [
+            {
+              "path": "skill.grooming",
+              "op": "add",
+              "value": 2
+            },
+            {
+              "path": "state.current_embarrassment",
+              "op": "add",
+              "value": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diary": [
+    "お母さんの口紅をこっそり塗ってみた。鏡に映った自分の唇が急に大人っぽく見えて、胸がキュンとした。早く大きくなって、綺麗な服を着てお化粧したいな。",
+    "母の香水をつけてみた。甘くて少し切ない大人の匂い。ティッシュで口紅を落とした後も、唇の温もりがずっと残っていた。"
+  ]
+});
+
+window.defineEvent({
+  "id": "elem_curiosity_swimming_wet_chills",
+  "title": "プール学習の帰り道・下着に染み込む塩素と微熱の疼き",
+  "age": [
+    10,
+    12
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [],
+  "weight": 25,
+  "text": "初夏の強い日差しの中、プール学習を終えた下校路。生乾きの髪から首筋へと冷たい水滴が垂れる。濡れたスクール水着を脱いで着替えたものの、塩素のツンとした匂いと湿り気が下着に微かに残っている。歩くたびに太ももの内側が擦れ合い、下腹の奥がきゅうんと微熱を帯びて疼く。理由のわからない身体の火照りに、歩幅をぎこちなく狭めてしまう……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "太ももをすり合わせながら、身体の奥に生まれる奇妙な甘い感覚に意識を集中する",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "プール上がりの気だるい疲労感と、下腹に宿る微熱の疼きを密かに受け止める。",
+          "effects": [
+            {
+              "path": "skill.knowledge",
+              "op": "add",
+              "value": 2
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "友達とアイスを分け合って、火照った身体を冷まそうとする",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "冷たいアイスの甘さに頬を緩ませ、友達と夏の放課後を楽しむ。",
+          "effects": [
+            {
+              "path": "skill.communication_skill",
+              "op": "add",
+              "value": 3
+            },
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diary": [
+    "プールが終わった後の帰り道、なんだか身体の奥がずっと熱くて、歩くたびに変な感じがした。塩素の匂いと夏の暑さの中で、身体が大人に変わろうとしているのかな。",
+    "プール上がりの気だるさと下腹の微熱。友達と笑いながらアイスを食べたけれど、股の間の熱い疼きがずっと気になっていた。"
+  ]
+});
+
+window.defineEvent({
+  "id": "elem_curiosity_night_blanket_exploration",
+  "title": "真夜中のベッド・布団の中で自分の身体を探る指先",
+  "age": [
+    10,
+    12
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [],
+  "weight": 25,
+  "text": "時計の針が真夜中を回る子供部屋。静まり返る家の中で、掛け布団を頭まですっぽりと被る。暗闇の温かい密室の中、パジャマのゴムに指をかけ、そっとズボンの中に手を滑り込ませる。柔らかなお腹をなぞり、やがて指先が秘唇の割れ目の小さな突起に触れた瞬間――ピリッと電気が走るような甘い痺れが腰を突き抜け、思わず息を呑んだ……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "未知の甘美な痺れに抗えず、指先でそっと突起を撫で転がしてみる",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "生まれて初めて知る自分の身体の快感に震え、布団の中で小さく息を漏らしながら絶頂の入り口を垣間見る。",
+          "effects": [
+            {
+              "path": "skill.knowledge",
+              "op": "add",
+              "value": 3
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 10
+            },
+            {
+              "path": "state.current_embarrassment",
+              "op": "add",
+              "value": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "あまりの刺激に怯えて手を離し、心臓の動悸に手を当てる",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "身体に眠る未知の熱情に圧倒され、激しい胸の鼓動を抱きしめながら眠りにつく。",
+          "effects": [
+            {
+              "path": "state.current_embarrassment",
+              "op": "add",
+              "value": 4
+            },
+            {
+              "path": "state.stress",
+              "op": "add",
+              "value": 2
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diary": [
+    "夜、布団の中で自分の身体を触ってみた。小さな突起に指が触れた瞬間、頭が痺れるくらい気持ちいい電気が走って息が止まった。私、こんな感覚を持っていたんだ……。",
+    "暗い布団の中で知ってしまった自分の身体の秘密。心臓が破裂しそうなくらいドキドキしたけれど、もう触る前の自分には戻れない気がした。"
+  ]
+});
+

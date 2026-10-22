@@ -1,5 +1,5 @@
 // ============================================================================
-// Pack: 06_romance_first_milestones — 出会い・告白・初デート・初キス・初体験・同性愛アーク (24 events)
+// Pack: 06_romance_first_milestones — 出会い・告白・初デート・初キス・初体験・同性愛アーク (32 events)
 // ============================================================================
 window.defineEvent({
   "id": "first_romance_holding_hands",
@@ -2261,3 +2261,719 @@ window.defineEvent({
     "大人の女同士だからこそ辿り着ける極上の快楽。お互いの身体を慈しみ合う時間に、心も肉体も満ち足りた。"
   ]
 });
+
+window.defineEvent({
+  "id": "deep_kiss_rain_drenched_car",
+  "title": "窓ガラスを曇らせる豪雨・車内での息継ぎもできない濃厚な口づけ",
+  "age": [
+    18,
+    30
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "adult",
+  "presets": [
+    "partnered",
+    "rel_stage_kissed"
+  ],
+  "weight": {
+    "base": 22,
+    "additive": [],
+    "multipliers": [
+      {
+        "when": {
+          "path": "state.current_libido",
+          "op": "gte",
+          "value": 30
+        },
+        "factor": 1.5
+      }
+    ]
+  },
+  "actors": {
+    "partner": {
+      "source": "current_partner",
+      "required": true
+    }
+  },
+  "text": "土砂降りの雨の夜、展望台の暗がりへと車を滑り込ませる。冷たい雨が激しくフロントガラスを叩く密室。エンジンを切った瞬間、相手の腕が伸びてきてシートごと引き倒される。曇りゆく窓ガラス、狭い空間に満ちる互いの熱い呼気と汗の匂い。唇が合わさった瞬間から、荒れ狂う雨音に負けない激しさで、互いの舌を貪り尽くす狂宴が幕を開ける。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "舌を根元まで絡め合い、じゅるりと鳴る水音を車内に響かせる",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "相手の首にしがみつき、舌を根元まで深く絡め合って、じゅるりと鳴る卑猥な水音を車内に響かせる。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 5
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 20
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "唇を離した瞬間に引く銀の糸を見つめ、再び貪り合う",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "息苦しさに一度唇を離すも、二人の間に引く淫らな唾液の糸に煽られ、再び激しく貪り合う。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 5
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 15
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diary": [
+    "豪雨の車内で、窓ガラスが真っ白に曇るほど激しくディープキスを貪り合った。舌を根元まで絡め合って唾液を啜り合い、息継ぎもできない快感に腰の力が抜け落ちてしまった。",
+    "雨音の響く暗い車内で、狂ったように舌を吸い合ってキスした。唇が離れたときにキラリと伸びる唾液の糸が信じられないくらい淫らで、下腹の奥が熱く疼いて止まらなかった。"
+  ]
+});
+
+window.defineEvent({
+  "id": "deep_kiss_first_drunken_night",
+  "title": "酒気の残る路地裏・壁に押し付けられて溺れる泥濘の接吻",
+  "age": [
+    20,
+    32
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "adult",
+  "presets": [
+    "partnered",
+    "rel_stage_kissed",
+    "adult_drinking"
+  ],
+  "alcohol": true,
+  "weight": {
+    "base": 22,
+    "additive": [],
+    "multipliers": [
+      {
+        "when": {
+          "path": "state.current_libido",
+          "op": "gte",
+          "value": 30
+        },
+        "factor": 1.5
+      }
+    ]
+  },
+  "actors": {
+    "partner": {
+      "source": "current_partner",
+      "required": true
+    }
+  },
+  "text": "飲み会の帰り道、人通りの途絶えたビルの隙間の薄暗い路地。アルコールで全身が心地よく火照り、吐息も甘く熱を帯びている。ふいに引き寄せられ、冷たいコンクリートの壁に背中を押し当てられた瞬間、逃げ場のない熱情で唇を塞がれる。相手の口から広がる酒の苦味と甘い唾液が混ざり合い、強引にこじ開けられた口内へ太い舌が奥深くまでねじ込まれる。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "ほろ酔いの頭で壁に爪を立て、熱く絡みつく舌を受け入れる",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "酒気でクラクラする頭のまま壁に爪を立て、口腔の奥まで掻き回される熱い舌を受け入れる。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 5
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 20
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "相手のシャツの胸元を握り締め、唾液を飲み干しながら吸い返す",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "乱暴な情熱に応えるように相手の胸元を握り締め、溢れる唾液を飲み干しながら狂おしく吸い返す。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 5
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 18
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diary": [
+    "お酒が入った帰り道、薄暗い路地裏の壁に押し付けられて激しいディープキスをされた。酒の味と相手の唾液が混ざり合い、ぬちぬちと舌を絡め合わされて頭が真っ白に溶けてしまった。",
+    "ビルの陰で貪られるようにキスされた。冷たいコンクリートの感触と、口の中に侵入してくる舌の熱さのコントラストに息が詰まり、立っていられないほど感じてしまった。"
+  ]
+});
+
+window.defineEvent({
+  "id": "deep_kiss_hotel_corridor_impatience",
+  "title": "深夜のエレベーターと密室・部屋に着くまで待てない狂おしい貪り合い",
+  "age": [
+    18,
+    35
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "adult",
+  "presets": [
+    "partnered",
+    "rel_stage_intimate"
+  ],
+  "weight": {
+    "base": 24,
+    "additive": [],
+    "multipliers": [
+      {
+        "when": {
+          "path": "state.current_libido",
+          "op": "gte",
+          "value": 30
+        },
+        "factor": 1.5
+      }
+    ]
+  },
+  "actors": {
+    "partner": {
+      "source": "current_partner",
+      "required": true
+    }
+  },
+  "text": "深夜のホテル、二人きりのエレベーター。扉が閉まり上昇を始めた瞬間、募りきった欲望が堰を切ったように爆発する。手首を掴まれて鏡張りの壁へ押し付けられ、激しく唇を奪われる。階数表示のランプが静かに進む中、誰かが乗り込んでくるかもしれない極限の緊張感。相手の舌が口腔の天井をねっとりと這い回り、唾液の混ざり合う湿った音が密室に響き渡る。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "扉が開く恐怖とスリルに震えながら、舌を激しく吸い上げる",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "いつ扉が開くかわからないスリルに下腹を疼かせながら、相手の舌を激しく吸い上げる。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 5
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 20
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "唇が離せないまま互いの腰を抱き寄せ、部屋の扉まで雪崩れ込む",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "唇を重ねたままエレベーターを降り、互いの腰を引き寄せて貪り合いながら部屋へ向かう。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 5
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 22
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diary": [
+    "ホテルのエレベーターの扉が閉まった途端、部屋まで待ちきれずに激しくキスを貪り合った。誰かが乗ってくるかもしれない緊張の中、じゅるりと音を立てて舌を吸い合って、息が止まるかと思った。",
+    "密室の鏡に押し付けられて、狂おしいディープキスに溺れた。唇が腫れ上がるほど求め合い、部屋に入る前から下着が愛液でじっとりと濡れてしまっていた。"
+  ]
+});
+
+window.defineEvent({
+  "id": "deep_kiss_same_sex_bath_steam",
+  "title": "湯気立つ浴室・女同士の舌がねっとりと絡み合う泥濘の接吻",
+  "age": [
+    18,
+    30
+  ],
+  "trigger": "normal",
+  "classification": "adult",
+  "content_rating": "adult",
+  "presets": [
+    "partnered",
+    "female_partner",
+    "rel_stage_kissed"
+  ],
+  "weight": {
+    "base": 24,
+    "additive": [],
+    "multipliers": [
+      {
+        "when": {
+          "path": "state.current_libido",
+          "op": "gte",
+          "value": 30
+        },
+        "factor": 1.5
+      }
+    ]
+  },
+  "actors": {
+    "partner": {
+      "source": "current_partner",
+      "required": true
+    }
+  },
+  "text": "白い湯煙が立ち込める深夜のバスルーム。温かいシャワーが二人の剥き出しの素肌を濡らし、髪から水滴が滴り落ちる。濡れたタイルの上で彼女に強く抱き寄せられ、柔らかい胸と胸がぴったりと重なり合う。湿り気を帯びた熱い吐息とともに唇を重ねられ、女特有の繊細で吸い付くような舌先が、唇を割り開いて滑り込んできた。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "濡れた素肌を密着させ、互いの甘い蜜唾を吸い尽くす",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "シャワーの湯を浴びながら素肌を擦り合わせ、女同士の甘い蜜唾を狂おしく吸い尽くす。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 5
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 20
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "彼女の首筋に腕を回し、舌の根元まで絡め合って啼く",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "彼女の華奢な首筋にしがみつき、舌の根元まで激しく絡め合わせながら甘い吐息を漏らす。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 5
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 18
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diary": [
+    "湯気立つお風呂場で、シャワーを浴びながら彼女と激しく舌を絡め合ってキスした。女同士の柔らかい唇と吸い付く舌の感触に頭がとろけ、ちゅぷちゅぷと鳴る水音に煽られて何度も下腹が震えた。",
+    "濡れた素肌を抱き締め合い、口の中を彼女の舌で隅々まで舐め回された。石鹸の匂いと混ざり合う女の甘い唾液の味に酔いしれて、お風呂から上がれなくなるほど溺れてしまった。"
+  ]
+});
+
+window.defineEvent({
+  "id": "deep_kiss_lovers_quarrel_makeup",
+  "title": "激しい諍いの果て・涙と唾液でドロドロに溶け合う仲直りの口づけ",
+  "age": [
+    18,
+    30
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "adult",
+  "presets": [
+    "partnered",
+    "rel_stage_kissed"
+  ],
+  "weight": {
+    "base": 20,
+    "additive": [],
+    "multipliers": [
+      {
+        "when": {
+          "path": "state.current_libido",
+          "op": "gte",
+          "value": 30
+        },
+        "factor": 1.5
+      }
+    ]
+  },
+  "actors": {
+    "partner": {
+      "source": "current_partner",
+      "required": true
+    }
+  },
+  "text": "部屋に響く言い争いの声。互いの意地と不安が衝突し、張り詰めた空気が限界に達した瞬間、言葉を遮るように乱暴に腕を引かれる。突き飛ばされるように胸板へと抱き寄せられ、力任せに唇を奪われる。拒絶しようともがく唇を強引にこじ開けられ、溢れる涙と荒い吐息、熱く湿った舌が侵入してくる。怒りと切なさが臨界点で混ざり合い、狂おしい激情の接吻へと変わっていく。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "涙を流しながら相手の髪を掴み、狂ったように舌を絡め返す",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "頬を伝う涙もそのままに相手の髪を掴み、怒りと情熱をすべて吐き出すように舌を絡め返す。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 5
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 20
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "唇から顎へと滴る唾液に塗れ、身体の力を抜いて愛撫に屈服する",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "涙と唾液で口元を濡らしながら、抗えない愛おしさと激しい快感に全身の力を抜いて屈する。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 5
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 18
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diary": [
+    "大喧嘩のあと、無理やり唇を塞がれて泣きながら激しくディープキスを交わした。涙と相手の熱い唾液が混ざり合って口元から垂れ、怒っていたはずなのに身体の奥が激しく疼いて腰が砕けてしまった。",
+    "激しい諍いの果てに貪り合ったキス。乱暴に舌を突き入れられて口内を掻き回されるうちに、離れたくないという想いが爆発して、二人でドロドロに溶け合うように求め合った。"
+  ]
+});
+
+window.defineEvent({
+  "id": "deep_kiss_summer_festival_yukata",
+  "title": "祭り囃子の遠のく社殿裏・浴衣の襟を乱して溺れる熱帯夜の接吻",
+  "age": [
+    16,
+    28
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "adult",
+  "presets": [
+    "partnered",
+    "rel_stage_kissed"
+  ],
+  "weight": {
+    "base": 22,
+    "additive": [],
+    "multipliers": [
+      {
+        "when": {
+          "path": "state.current_libido",
+          "op": "gte",
+          "value": 30
+        },
+        "factor": 1.5
+      }
+    ]
+  },
+  "actors": {
+    "partner": {
+      "source": "current_partner",
+      "required": true
+    }
+  },
+  "text": "遠くから聞こえる太鼓の音と夜店の喧騒。神社の境内を抜け出し、木々が生い茂る社殿の最も暗い裏手へと連れ込まれる。夏の熱帯夜の生暖かい夜風、汗ばんだうなじと蚊取り線香の匂い。浴衣の襟元を掴まれて引き寄せられ、石垣に背中を押し当てられる。ほどけそうになる帯の感触も忘れるほど、飢えた獣のように激しく唇を食み合われ、熱い舌が奥底まで侵入してくる。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "浴衣の帯を握りしめ、ぬちぬちと鳴る水音に背徳の快感を覚える",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "乱れる浴衣の帯を握りしめながら、静かな神社の裏でぬちぬちと鳴る水音に背徳の快感を覚える。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 5
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 20
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "相手の首筋に額を擦りつけ、荒い息を吐きながら貪欲に求め返す",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "息苦しさに耐えながら相手の首筋に額を擦りつけ、夏の夜の熱気に浮かされて貪欲に求め返す。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 5
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 18
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diary": [
+    "夏祭りの夜、神社の社殿の裏の暗がりで浴衣の襟を掴まれて激しくキスされた。夏の生ぬるい風の中で、じゅるじゅると音を立てて互いの舌を貪り合い、浴衣の下がぐっしょり濡れるほど感じてしまった。",
+    "太鼓の音が遠く聞こえる中で交わした濃厚なディープキス。汗の匂いと相手の唾液の味が混ざり合って、息が止まりそうになるほど狂おしかった。"
+  ]
+});
+
+window.defineEvent({
+  "id": "deep_kiss_morning_after_tangle",
+  "title": "朝陽の差し込むシーツ・互いの体温と唾液に溺れる目覚めのディープキス",
+  "age": [
+    18,
+    35
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "adult",
+  "presets": [
+    "partnered",
+    "rel_stage_intimate"
+  ],
+  "weight": {
+    "base": 24,
+    "additive": [],
+    "multipliers": [
+      {
+        "when": {
+          "path": "state.current_libido",
+          "op": "gte",
+          "value": 30
+        },
+        "factor": 1.5
+      }
+    ]
+  },
+  "actors": {
+    "partner": {
+      "source": "current_partner",
+      "required": true
+    }
+  },
+  "text": "レースのカーテン越しに柔らかな朝陽が差し込む寝室。昨夜の情事の気配が残る乱れたシーツの中、絡み合った足先と素肌の温もりで目を覚ます。微熱を帯びたまどろみの中、引き寄せられて重なる身体。寝起きの掠れた吐息とともに落とされた唇は、すぐに熱を帯びて下唇を吸い割る。昨夜よりもさらに濃密に、目覚めの乾いた口内を潤すように熱い舌が滑り込んでくる。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "シーツを爪で掻きむしりながら、朝の微熱に溶かされて舌を絡める",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "シーツを爪で掻きむしり、目覚めたばかりの敏感な身体を震わせて相手の舌に絡みつく。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 5
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 20
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "相手の背中に腕を回し、重なる体温と混ざり合う唾液を味わい尽くす",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "相手の温かい背中に腕を回し、肌と肌を擦り合わせながら混ざり合う濃厚な唾液を味わい尽くす。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 5
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 18
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diary": [
+    "朝起きてすぐ、シーツの中で相手に抱きすくめられて激しいディープキスをされた。寝起きの微熱と混ざり合う唾液の生々しい味に頭が痺れ、朝から下腹が疼いてシーツを濡らしてしまった。",
+    "朝陽を浴びながら、昨夜の続きのように舌を絡め合ってキスした。ぬちぬちと粘膜が擦れ合う音が静かな寝室に響き、目覚めの身体がとろけるような快感に包まれた。"
+  ]
+});
+
+window.defineEvent({
+  "id": "deep_kiss_ferris_wheel_sky",
+  "title": "夜景を見下ろす観覧車の頂上・地上の光を忘れて貪り合う濃密な接吻",
+  "age": [
+    17,
+    30
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "adult",
+  "presets": [
+    "partnered",
+    "rel_stage_kissed"
+  ],
+  "weight": {
+    "base": 22,
+    "additive": [],
+    "multipliers": [
+      {
+        "when": {
+          "path": "state.current_libido",
+          "op": "gte",
+          "value": 30
+        },
+        "factor": 1.5
+      }
+    ]
+  },
+  "actors": {
+    "partner": {
+      "source": "current_partner",
+      "required": true
+    }
+  },
+  "text": "夜の遊園地、二人きりの観覧車のゴンドラがゆっくりと最頂点へと差し掛かる。足下に広がる宝石のような街の夜景。逃げ場のない空中の密室で、不意に腰を抱き寄せられて座席へ押し倒される。「ずっとこうしたかった」――掠れた囁きとともに唇を塞がれ、激しい舌の侵入に呼吸を奪われる。夜空の真ん中で、地上のすべてを忘れさせる狂おしいディープキスが始まる。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "空中密室の浮遊感とスリルに腰を浮かせ、激しく唾液を啜り合う",
+      "outcomes": [
+        {
+          "id": "outcome_0",
+          "weight": 1,
+          "description": "地上数十メートルの密室というスリルに背中を震わせ、相手の舌を根元まで吸い上げて唾液を啜り合う。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 5
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 20
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "唇を離した瞬間に引く銀の糸に息を呑み、再び口内を貪り尽くさせる",
+      "outcomes": [
+        {
+          "id": "outcome_1",
+          "weight": 1,
+          "description": "息継ぎで離れた唇の間に引く銀の糸を見つめ、羞恥に染まりながら再び口内を貪り尽くさせる。",
+          "effects": [
+            {
+              "path": "state.mood",
+              "op": "add",
+              "value": 5
+            },
+            {
+              "path": "state.current_libido",
+              "op": "add",
+              "value": 18
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diary": [
+    "観覧車が一番てっぺんに着いた瞬間、押し倒されて激しいディープキスをされた。夜景も見えないくらい無我夢中で舌を絡め合い、じゅるじゅると音を立てて唾液を飲み交わして、頭がクラクラした。",
+    "空中の密室で交わした狂おしいキス。唇が離れたときに伸びる唾液の糸が信じられないくらい淫らで、ゴンドラが地上に降りる頃には足腰が立たなくなっていた。"
+  ]
+});
+
