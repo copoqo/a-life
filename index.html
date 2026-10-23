@@ -10,81 +10,94 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="ある人生">
   <title>ある人生 — Life Simulator</title>
-  <link rel="stylesheet" href="style.css?v=20261021-3">
+  <link rel="stylesheet" href="style.css?v=20261023-5">
 </head>
 
 <body>
   <main>
-    <header>
-      <div class="header-title-group">
-        <h1>ある人生</h1>
-        <span id="buildVersion" class="build-version">v1.22.0 (b20261021-3)</span>
-      </div><button class="secondary" id="restart">新しい人生</button>
-    </header>
     <div class="workspace">
+      <!-- 左カラム（デスクトップ）/ 下部詳細（スマホ）：プロフィール・ステータス・経験等 -->
       <section class="panel profile-panel">
         <div class="profile-summary">
           <div id="identity"></div>
+          <div id="personalityInterest"></div>
           <div id="partnerStatus"></div>
-          <div id="location"></div>
+          <div id="location" style="display:none;"></div>
         </div>
         <div class="stats" id="stats"></div>
-        <div id="bonds"></div>
         <div id="experiencePanel"></div>
         <div id="internalParams"></div>
       </section>
+
+      <!-- 人間関係パネル（操作パネルの上） -->
+      <section class="panel bonds-panel">
+        <div id="bonds"></div>
+      </section>
+
+      <!-- スリム操作パネル（時間の経過：円形プログレスリング） -->
       <section class="panel play-panel">
-        <div class="controls" style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;">
-          <button id="autoToggle" class="primary"
-            style="font-weight:700;min-width:105px;display:inline-flex;align-items:center;justify-content:center;gap:4px;">
+        <div class="play-controls-row">
+          <button id="autoToggle" class="primary play-btn"
+            title="進行 / 一時停止を切り替えます">
             <span id="autoToggleIcon">⏸</span> <span id="autoToggleText">一時停止</span>
           </button>
-          <select id="autoSpeedSelect"
-            style="padding:5px 8px;font-size:12px;border-radius:4px;border:1px solid #cbd5e1;background:#fff;color:#23333b;cursor:pointer;">
-            <option value="280" selected>速度：普通 (0.28秒/月)</option>
-            <option value="120">速度：速い (0.12秒/月)</option>
-            <option value="550">速度：ゆっくり (0.55秒/月)</option>
-          </select>
-          <select id="mode" style="margin-left:auto;font-size:11.5px;padding:3px 6px;background:#fff;color:#23333b;">
-            <option value="choice">選択介入</option>
-            <option value="auto">全自動</option>
-            <option value="free">自由入力</option>
-          </select>
-        </div>
-        <!-- 時間の経過を示すバー -->
-        <div id="timeProgressBarWrapper"
-          style="margin:8px 0 5px;padding:6px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;">
-          <div
-            style="display:flex;justify-content:space-between;align-items:center;font-size:11px;margin-bottom:4px;font-weight:600;">
-            <span id="timeProgressLabel" style="color:#4338ca;display:inline-flex;align-items:center;gap:4px;">⏳
-              時間の経過（自動進行中）</span>
-            <span id="timeProgressAge" style="color:#64748b;font-size:11px;">0歳 → 1歳</span>
+
+          <!-- 時間の経過インジケーター（円形リング＋年齢進行） -->
+          <div id="timeProgressBox" class="time-progress-box" title="1年の経過インジケーター">
+            <div class="time-ring-wrapper">
+              <svg class="time-ring" width="24" height="24" viewBox="0 0 32 32">
+                <circle class="time-ring-bg" cx="16" cy="16" r="13" />
+                <circle id="timeProgressBar" class="time-ring-fg" cx="16" cy="16" r="13" />
+              </svg>
+            </div>
+            <div class="time-text-group">
+              <span id="timeProgressAge" class="time-age-text">0歳 → 1歳</span>
+              <span id="timeProgressLabel" class="time-status-text">自動進行中</span>
+            </div>
           </div>
-          <div style="width:100%;height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;position:relative;">
-            <div id="timeProgressBar"
-              style="width:0%;height:100%;background:linear-gradient(90deg, #6366f1, #a855f7);border-radius:3px;"></div>
+
+          <div class="play-config-group">
+            <select id="autoSpeedSelect" class="compact-select" title="進行速度">
+              <option value="280" selected>速度：普通</option>
+              <option value="120">速度：速い</option>
+              <option value="550">速度：ゆっくり</option>
+            </select>
+            <select id="mode" class="compact-select" title="プレイモード">
+              <option value="choice">選択介入</option>
+              <option value="auto">全自動</option>
+              <option value="free">自由入力</option>
+            </select>
           </div>
         </div>
-        <div id="playNotice" class="muted" style="margin-top:4px;font-size:11px;">
-          重要なイベントでは進行が停止します。選択・結果は「人生の記録」に表示されます。</div>
-        <div id="intervene" style="display:none;">
+
+        <div id="intervene" style="display:none;margin-top:6px;">
           <h2 style="margin:4px 0 2px;font-size:12px;">自由入力</h2><textarea id="command"
             placeholder="例：勉強する／転職したい／貯金する／女性と交際したい／秘密を打ち明ける"></textarea>
           <div class="controls"><button id="act">行動する</button><span class="muted" id="feedback"></span></div>
         </div>
       </section>
+
+      <!-- 人生の記録パネル -->
       <section class="panel history-panel">
         <h2>人生の記録</h2>
         <div id="event"></div>
         <div id="history" class="log"></div>
       </section>
     </div>
-    <p class="muted footer-note">完全ローカル動作。データはブラウザ内に保存されます。イベントや確率は試作用の仮定値であり、実際の日本の統計ではありません。</p>
+
+    <!-- ページ下部：バージョン情報・新しい人生ボタン・フッター注記 -->
+    <footer class="app-footer">
+      <div class="footer-actions">
+        <button class="secondary restart-btn" id="restart">新しい人生</button>
+        <span id="buildVersion" class="build-version">v1.22.0 (b20261021-3)</span>
+      </div>
+      <p class="muted footer-note">完全ローカル動作。データはブラウザ内に保存されます。イベントや確率は試作用の仮定値であり、実際の日本の統計ではありません。</p>
+    </footer>
   </main>
-  <script>window.BUILD_CACHE_KEY = '20261021-3';</script>
-  <script src="events/manifest.js?v=20261021-3"></script>
-  <script src="events/loader.js?v=20261021-3"></script>
-  <script src="js/app.js?v=20261021-3"></script>
+  <script>window.BUILD_CACHE_KEY = '20261023-5';</script>
+  <script src="events/manifest.js?v=20261023-1"></script>
+  <script src="events/loader.js?v=20261023-1"></script>
+  <script src="js/app.js?v=20261023-5"></script>
 </body>
 
 </html>

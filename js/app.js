@@ -1134,7 +1134,7 @@ function makeState(seed) {
 
 function log(message, diary = null, impact = null, meta = null) {
   const m = s.current_month || (s.age === 0 ? 1 : 4);
-  const dateText = `${s.age}歳 ${m}月（${getSeasonName(m)}）`;
+  const dateText = `${s.age}歳`;
   const entry = { age: s.age, month: m, dateText, text: message, diary, impact };
   if (meta) {
     if (meta.choice) entry.choice = meta.choice;
@@ -3721,6 +3721,104 @@ function step() {
 const actions = [{ patterns: /セックス|エッチ|身体を重ね|交わり|抱かれたい|肉体関係/, label: '相手と素肌を重ね、身体の奥深くまで交わった', effects: { happiness: 3, stress: -3 }, sexualEffects: { desire: 4, intimacyNeed: 3, selfKnowledge: 2 }, partnerOnly: true, adultOnly: true }, { patterns: /自慰|オナニー|一人で慰め|秘所を弄|身体を慰め/, label: '一人きりの夜、指先で濡れた秘所を弄り身体を慰めた', effects: { stress: -3, happiness: 2 }, sexualEffects: { desire: -2, selfKnowledge: 3, shyness: 2 }, adultOnly: true }, { patterns: /性について話|性的な希望を伝|境界線を伝|嫌なことを断/, label: '親密さに関する希望や境界線を言葉にした', effects: { selfUnderstanding: 2 }, sexualEffects: { boundaryVoice: 5, selfAcceptance: 2, shyness: -1 }, adultOnly: true }, { patterns: /自分の性的指向|性的指向を考|自分の好みを知/, label: '自分の指向や希望を振り返った', effects: { selfUnderstanding: 3 }, sexualEffects: { selfKnowledge: 5, selfAcceptance: 2 }, adultOnly: false }, { patterns: /親密な関係を求め|親密さについて相談/, label: '親密さについて考え、相手との対話を試みた', effects: { stress: -1 }, sexualEffects: { initiative: 2, boundaryVoice: 3 }, adultOnly: true }, { patterns: /勉強|学習|資格|受験/, label: '学習を始めた', effects: { knowledge: 6, stress: 2 } }, { patterns: /就職|一般職|会社員|正社員/, label: '会社員（一般職）として就職した', effects: { money: 4, stress: 3 }, occupation: '一般職' }, { patterns: /専門職|クリエイター|作家|デザイナー/, label: '専門職・クリエイターとして活動を始めた', effects: { knowledge: 4, independence: 4 }, occupation: '専門職・クリエイター' }, { patterns: /自営業|起業|開業|店を開|カフェ/, label: '自営業として開業・独立した', effects: { money: -3, independence: 5 }, occupation: '自営業' }, { patterns: /パート|アルバイト/, label: 'パート・アルバイトとして働き始めた', effects: { money: 2, stress: 1 }, occupation: 'パート・アルバイト' }, { patterns: /風俗|ソープ|デリヘル/, label: '風俗の仕事に就いた', effects: { money: 12, morality: -4 }, occupation: '風俗' }, { patterns: /主婦|専業主婦/, label: '家庭に入り専業主婦となった', effects: { stress: -2, happiness: 2 }, occupation: '専業主婦' }, { patterns: /転職|仕事を探|働き/, label: '仕事について行動した', effects: { money: 4, stress: 4 } }, { patterns: /退職|仕事を辞め|会社を辞め/, label: '仕事を辞める決断をした', effects: { money: -9, independence: 5, stress: -4 } }, { patterns: /貯金|貯蓄|節約/, label: '貯蓄を心がけた', effects: { money: 6, happiness: -1 } }, { patterns: /旅行|旅に出/, label: '旅に出た', effects: { money: -6, happiness: 7 } }, { patterns: /引っ越|移住/, label: '住む場所を変える準備をした', effects: { money: -5, independence: 5 }, relocate: true }, { patterns: /起業|開業|店を開|カフェ/, label: '開業に向けて準備を始めた', effects: { money: -4, knowledge: 3, stress: 3 } }, { patterns: /恋人|交際|付き合|告白|デート/, label: '誰かとの親密な関係を模索した', effects: { social: 4, stress: 2 } }, { patterns: /女性が好き|女性と交際|同性/, label: '自分の惹かれ方について考え、出会いを探した', effects: { selfUnderstanding: 5, social: 2 } }, { patterns: /秘密を打ち明け|告白する|正直に話/, label: '大切なことを打ち明けた', effects: { secrecy: -5, trust: 4, stress: -3 } }, { patterns: /秘密にする|隠す/, label: '秘密を抱えることにした', effects: { secrecy: 6, stress: 3 } }, { patterns: /不倫|浮気/, label: '現在の関係と新たな気持ちの間で行動を考えた', effects: { stress: 6, secrecy: 4, trust: -3 } }, { patterns: /運動|散歩|筋トレ/, label: '身体を動かした', effects: { health: 5, stress: -3 } }, { patterns: /休む|休養|眠る/, label: '休息をとった', effects: { health: 3, stress: -6 } }, { patterns: /友達|友人|相談/, label: '誰かと交流した', effects: { social: 4, stress: -3 } }];
 function act(text) { const matches = actions.filter(a => a.patterns.test(text)); if (!matches.length) return '解釈できませんでした。例：勉強する、貯金する、旅行する、恋人を探す、身体を重ねる'; if (matches.length > 1) return `複数の意図を認識しました（${matches.map(x => x.label).join('／')}）。まず一つの行動に分けて入力してください。`; if (matches[0].adultOnly && s.age < 18) return '成人後に利用できる行動です。'; if (matches[0].partnerOnly && !hasPartner(s)) return '現在交際・婚姻中のパートナーがいません。'; if (s.age < 12 && /恋人|交際|不倫|浮気/.test(text)) return 'この年齢では、この行動は実行できません。'; if (/セックス|エッチ|身体を重ね|交わり|抱かれたい|肉体関係/.test(text) && hasPartner(s)) { const partner = s.bonds.find(b => b.status === 'spouse') || s.bonds.find(b => b.status === 'partner'); resolveSharedIntimacy(partner); return `実行：${partner.name}と身体を重ね、濃密な情交を交わした` } if (/自慰|オナニー|一人で慰め|秘所を弄|身体を慰め/.test(text)) { recordExperience('masturbation', '夜の静寂の中、指先で愛液に濡れた秘所を解し、震える絶頂を迎えた', null, { satisfaction: 70, private: true }); log('静かな夜、一人で身体の疼きを慰め、甘い痺れに息を漏らした。', ageDiary('シーツの中で指先を這わせ、濡れた奥を弄るたびに漏れる湿った水音。恥ずかしさに顔を埋めながらも、下腹から突き上げる快感に身体が震えて止まらなかった。')); apply(matches[0].effects); if (matches[0].sexualEffects) changeSexuality(matches[0].sexualEffects); return '実行：自慰により身体の疼きを慰めた' } apply(matches[0].effects); if (matches[0].sexualEffects) changeSexuality(matches[0].sexualEffects); if (matches[0].relocate) { const destTerrain = TERRAINS.find(x => text.includes(x)); const destDistrict = DISTRICTS.find(x => text.includes(x)); const next = newLocation(rng); if (destTerrain) next.terrain = destTerrain; if (destDistrict) next.district = destDistrict; setLocation(next, '自由介入による転居') } log(`介入：${matches[0].label}。`); return `実行：${matches[0].label}` }
 function escapeBond(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])) }
+function getPersonality(st) {
+  if (!st) return 'おだやか';
+  const traits = st.traits || {};
+  const abilities = st.abilities || {};
+  const display = st.display || {};
+
+  const candidates = [];
+
+  // モラル
+  const morality = abilities.morality ?? st.morality ?? 10;
+  if (morality >= 18) candidates.push({ text: '誠実で真面目', score: morality - 8 });
+  else if (morality <= 4) candidates.push({ text: '奔放な自由人', score: 10 - morality });
+
+  // 社交・外向性
+  const ext = (traits.extraversion?.current ?? 0) + (display.sociability ?? 0);
+  if (ext >= 16) candidates.push({ text: '社交的で陽気', score: ext });
+  else if (ext <= -16) candidates.push({ text: '物静かで控えめ', score: -ext });
+
+  // 恥じらい・慎ましさ・大胆さ
+  const modesty = traits.baseline_modesty?.current ?? 0;
+  const risk = traits.risk_tolerance?.current ?? 0;
+  if (modesty >= 16) candidates.push({ text: '純情で奥手', score: modesty });
+  else if (modesty <= -16 || risk >= 18) candidates.push({ text: '好奇心旺盛で大胆', score: Math.max(-modesty, risk) });
+  else if (risk <= -16) candidates.push({ text: '慎重派・堅実', score: -risk });
+
+  // 知性
+  const intellect = (traits.learning_drive?.current ?? 0) + (display.intellect ?? 0);
+  if (intellect >= 18) candidates.push({ text: '知的・思慮深い', score: intellect });
+
+  // 自信・繊細さ
+  const conf = display.confidence ?? 0;
+  if (conf >= 20) candidates.push({ text: '堂々とした自信家', score: conf });
+  else if (conf <= -18) candidates.push({ text: '繊細で心優しい', score: -conf });
+
+  // 性的魅力・情熱
+  if (st.age >= 15) {
+    const libido = st.states?.current_libido ?? 0;
+    const desire = st.sexuality?.desire ?? 0;
+    if (libido >= 30 || desire >= 70) candidates.push({ text: '情熱的・艶やか', score: 18 });
+  }
+
+  candidates.sort((a, b) => b.score - a.score);
+  if (candidates.length >= 2) {
+    return `${candidates[0].text}・${candidates[1].text}`;
+  } else if (candidates.length === 1) {
+    return candidates[0].text;
+  }
+
+  if (st.age < 6) return '天真爛漫・無邪気';
+  if (st.age < 12) return '素直でおだやか';
+  return 'おだやかで自然体';
+}
+
+function getInterests(st) {
+  if (!st) return '身の回りのこと';
+  const history = st.history || [];
+  const recentHist = history.slice(-6).reverse();
+
+  for (const h of recentHist) {
+    const text = `${h.text || ''} ${h.choice || ''} ${h.diary || ''}`;
+    if (/恋|告白|付き合|交際|彼氏|彼女|デート|キス|唇|逢瀬|身体|抱か|愛液|絶頂|エッチ|不倫|浮気/.test(text)) {
+      return '恋愛・親密な関係';
+    }
+    if (/勉強|学習|学校|試験|テスト|読書|本|授業|受験|大学|知識|学問/.test(text)) {
+      return '学業・自己研鑽';
+    }
+    if (/友達|友人|クラス|仲間|放課後|おしゃべり|遊ん|幼馴染/.test(text)) {
+      return '友人との交流';
+    }
+    if (/服|ファッション|買い物|街|カフェ|散歩|旅行|旅|遊び|外食/.test(text)) {
+      return '街歩き・買い物';
+    }
+    if (/運動|部活|スポーツ|走|筋トレ|汗|試合/.test(text)) {
+      return '身体づくり・運動';
+    }
+    if (/仕事|アルバイト|バイト|就職|働く|給料|出世|キャリア/.test(text)) {
+      return '仕事・自立';
+    }
+    if (/家族|母|父|親|兄弟|姉|妹|弟|実家|団らん/.test(text)) {
+      return '家族との時間';
+    }
+    if (/自慰|オナニー|秘所|身体を慰め|疼き|秘密/.test(text)) {
+      return '身体の探求・内省';
+    }
+  }
+
+  if (st.age < 6) return '周囲の探索・遊び';
+  if (st.age < 12) return '学校生活・友達';
+  if (st.age < 18) return '友達・日々の関心事';
+  return 'これからの人生設計';
+}
+
+function getPersonalityAndInterestsHtml(st) {
+  const personality = getPersonality(st);
+  const interest = getInterests(st);
+  return `<div class="personality-box"><div class="personality-header"><span>🌱</span><span>性格と興味</span></div><div class="personality-val" title="性格：${personality}">${personality}</div><div class="interest-val" title="興味：${interest}">興味：${interest}</div></div>`;
+}
+
 function getPartnerSummary(st) {
   if (!st.bonds) return '';
   const spouse = st.bonds.find(b => b.status === 'spouse');
@@ -3920,17 +4018,26 @@ function render() {
   // Sexual records integrated into experiencePanel
   const internalParamsWasOpen = !!document.getElementById('internalParamsDetails')?.open;
   document.getElementById('internalParams').innerHTML = getInternalParamsHtml(s);
-  if (document.getElementById('internalParamsDetails')) document.getElementById('internalParamsDetails').open = internalParamsWasOpen; document.getElementById('bonds').innerHTML = `<div class="bonds-box"><details id="bondDetails" open><summary>人間関係：知人 ${s.bonds.filter(b => b.status === 'acquaintance').length} / 親しい友人 ${s.bonds.filter(b => b.status === 'close').length} / 交際中 ${s.bonds.filter(b => b.status === 'partner').length} / 配偶者 ${s.bonds.filter(b => b.status === 'spouse').length} / 合計 ${s.bonds.length}人</summary><div style="padding:6px 0;margin-bottom:8px;border-bottom:1px solid #e2e8f0;font-size:0.9em;"><strong>性経験人数</strong>：${getSexualPartnerCount(s)}人（交際・婚姻関係：${getSexualPartnerList(s).filter(p => p.type === 'bond').length}人 / 逢瀬・風俗・見知らぬ人等：${getSexualPartnerList(s).filter(p => p.type !== 'bond').length}人）</div><div class="exp-list" style="display:flex;flex-direction:column;gap:6px;">${s.bonds.map(b => `<div style="padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;display:flex;justify-content:space-between;align-items:center;gap:6px;"><div style="min-width:0;"><strong style="color:#1e293b;font-size:0.95em;">${escapeBond(b.name)}</strong>${getSexualPartnerList(s).some(p => p.id === b.id) || b.intimate ? '<span title="肉体関係あり" style="color:#e11d48;margin-left:4px;">❤</span>' : (b.kissed ? '<span title="キス済み" style="color:#ec4899;margin-left:4px;font-size:0.85em;">💋</span>' : '')}<span style="color:#64748b;font-size:0.85em;margin-left:6px;">（${b.gender === 'female' ? '女性' : '男性'}・${BOND_ROLE_LABELS[b.role] || '知人'}）</span>${b.metAge != null ? `<span style="color:#94a3b8;font-size:0.8em;margin-left:5px;">${b.metAge}歳で出会い</span>` : ''}${b.metContext ? `<div style="color:#475569;font-size:0.78em;margin-top:2px;">きっかけ・関係：${escapeHtml(b.metContext)}${b.private ? ' <span style="color:#7c3aed;font-weight:600;">[秘密]</span>' : ''}（好感 ${Math.round(b.affection || 0)} / 信頼 ${Math.round(b.trust || 0)}）</div>` : ''}</div><div style="flex-shrink:0;"><span class="badge" style="background:${b.status === 'spouse' ? '#fdf2f8;color:#be185d;border:1px solid #fbcfe8' : b.status === 'partner' ? '#fef2f2;color:#b91c1c;border:1px solid #fecaca' : b.status === 'close' ? '#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe' : '#f1f5f9;color:#475569;border:1px solid #e2e8f0'};padding:2px 8px;border-radius:10px;font-size:0.8em;font-weight:600;">${({ acquaintance: '知人', close: '親しい友人', partner: '交際中', spouse: '配偶者', former: '元交際', widowed: '死別' })[b.status] || b.status}</span></div></div>`).join('') || '<p class="muted" style="padding:6px 0;">まだ出会いはありません。</p>'}</div></details></div>`;
+  if (document.getElementById('internalParamsDetails')) document.getElementById('internalParamsDetails').open = internalParamsWasOpen; document.getElementById('bonds').innerHTML = `<div class="bonds-box"><details id="bondDetails" open><summary>人間関係：知人 ${s.bonds.filter(b => b.status === 'acquaintance').length} / 親しい友人 ${s.bonds.filter(b => b.status === 'close').length} / 交際中 ${s.bonds.filter(b => b.status === 'partner').length} / 配偶者 ${s.bonds.filter(b => b.status === 'spouse').length} / 合計 ${s.bonds.length}人</summary><div style="padding:6px 0;margin-bottom:8px;border-bottom:1px solid #e2e8f0;font-size:0.9em;"><strong>性経験人数</strong>：${getSexualPartnerCount(s)}人（交際・婚姻関係：${getSexualPartnerList(s).filter(p => p.type === 'bond').length}人 / 逢瀬・風俗・見知らぬ人等：${getSexualPartnerList(s).filter(p => p.type !== 'bond').length}人）</div><div class="exp-list" style="display:flex;flex-direction:column;gap:6px;">${s.bonds.map(b => `<div style="padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;display:flex;justify-content:space-between;align-items:center;gap:6px;"><div style="min-width:0;"><strong style="color:${b.gender === 'female' ? '#e11d48' : '#1e293b'};font-size:0.95em;">${escapeBond(b.name)}</strong>${getSexualPartnerList(s).some(p => p.id === b.id) || b.intimate ? '<span title="肉体関係あり" style="color:#e11d48;margin-left:4px;">❤</span>' : (b.kissed ? '<span title="キス済み" style="color:#ec4899;margin-left:4px;font-size:0.85em;">💋</span>' : '')}<span style="color:#64748b;font-size:0.85em;margin-left:6px;">（${b.gender === 'female' ? '<span style="color:#e11d48;font-weight:600;">女性</span>' : '男性'}・${BOND_ROLE_LABELS[b.role] || '知人'}）</span>${b.metAge != null ? `<span style="color:#94a3b8;font-size:0.8em;margin-left:5px;">${b.metAge}歳で出会い</span>` : ''}${b.metContext ? `<div style="color:#475569;font-size:0.78em;margin-top:2px;">きっかけ・関係：${escapeHtml(b.metContext)}${b.private ? ' <span style="color:#7c3aed;font-weight:600;">[秘密]</span>' : ''}</div>` : ''}</div><div style="flex-shrink:0;"><span class="badge" style="background:${b.status === 'spouse' ? '#fdf2f8;color:#be185d;border:1px solid #fbcfe8' : b.status === 'partner' ? '#fef2f2;color:#b91c1c;border:1px solid #fecaca' : b.status === 'close' ? '#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe' : '#f1f5f9;color:#475569;border:1px solid #e2e8f0'};padding:2px 8px;border-radius:10px;font-size:0.8em;font-weight:600;">${({ acquaintance: '知人', close: '親しい友人', partner: '交際中', spouse: '配偶者', former: '元交際', widowed: '死別' })[b.status] || b.status}</span></div></div>`).join('') || '<p class="muted" style="padding:6px 0;">まだ出会いはありません。</p>'}</div></details></div>`;
   const exp = s.sexuality.experience;
   const expLabels = { multiple_relationship: '合意のある複数交際', secret_relationship: '秘密の交際', friendship: '親交', rejection: '意思の尊重', reunion: '再会', reflection: '振り返り', privacy: '非公開', intimacy: '身体的な親密さ', masturbation: '自慰', relationship: '交際・婚姻', boundary: '境界線', communication: '対話', meeting: '出会い', disclosure: '公開・秘密', breakup: '別れ・破局', bereavement: '死別' };
   const expCounts = {}; for (const e of exp) { const label = expLabels[e.kind] || 'その他'; expCounts[label] = (expCounts[label] || 0) + 1; }
   const sexualRecordsWasOpen = document.getElementById('sexualRecordsDetails') ? document.getElementById('sexualRecordsDetails').open : true;
   const sexualRecordsHtml = `<details class="sexual-records-box" id="sexualRecordsDetails" ${sexualRecordsWasOpen ? 'open' : ''} style="margin:7px 0 9px;background:#faf4f8;border:1px solid #ebdbe5;border-radius:8px;padding:8px;"><summary style="cursor:pointer;font-size:11.5px;font-weight:700;color:#6a4a70;outline:none;">心に刻まれた性行為の記憶 ▾</summary><div style="margin-top:6px;">${formatSexCard(sh.firstSex, '🌸 初めての性行為（初体験）', 'first')}${formatSexCard(sh.mostMemorable, '🔥 最も心に残った性行為', 'memorable')}${formatSexCard(sh.latestSex, s.finished ? '🌙 人生最後の性行為' : '🌙 最も直近の性行為', 'latest')}</div></details>`;
   document.getElementById('experiencePanel').innerHTML = `<div class="experience-panel"><details id="experienceDetails"><summary>性的・親密な経験　${exp.length}件 ▾</summary>${sexualRecordsHtml}<div class="exp-counts">${Object.entries(expCounts).map(([k, v]) => `${escapeHtml(k)} ${v}件`).join(' / ') || '記録なし'}</div><div class="exp-list">${exp.length ? exp.slice().reverse().map(e => `<div class="exp-entry"><div class="exp-meta">${escapeHtml(e.age)}歳 ・ ${escapeHtml(expLabels[e.kind] || 'その他')}${e.private ? ' ・ 非公開' : ''}</div><div>${escapeHtml(e.description)}</div>${e.partnerId ? `<div class="exp-meta">相手：${escapeHtml(s.bonds.find(b => b.id === e.partnerId)?.name || '不明')}（${escapeHtml(e.partnerId)}）</div>` : ''}${e.satisfaction != null ? `<div class="exp-meta">満足感 ${escapeHtml(e.satisfaction)}</div>` : ''}</div>`).join('') : '<div class="exp-empty">まだ経験の記録はありません。出会い・交際・親密さに関する出来事が起きると、ここに追加されます。</div>'}</div></details></div>`;
-  document.getElementById('experienceDetails').open = experienceWasOpen;
-  document.getElementById('identity').innerHTML = `<h2>${s.name} · ${s.age}歳 ${s.current_month || s.birth_month || 4}月 <span style="font-size:0.62em;color:#64748b;font-weight:normal;">（${s.birth_month || 4}月生まれ）</span> ${s.finished ? '（終了）' : ''} <span class="badge" style="background:#e0e7ff;color:#3730a3;padding:2px 10px;border-radius:12px;font-size:0.65em;font-weight:600;vertical-align:middle;">${escapeHtml(s.occupation || '学生')}</span></h2><div style="margin:4px 0 6px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;height:5px;overflow:hidden;width:100%;" title="${s.age}歳 / 人生の歩み（目安85歳）"><div style="width:${Math.min(100, Math.round(((s.age + ((s.current_month - (s.birth_month || 4) + 12) % 12) / 12) / 85) * 100))}%;height:100%;background:linear-gradient(90deg, #3b82f6, #ec4899);border-radius:4px;transition:width 0.3s ease;"></div></div><p class="muted">${s.age < 6 ? '幼少期' : s.age < 18 ? '学生時代' : s.age < 65 ? '成人期' : 'シニア期'} / 人間関係 ${s.relationships}件</p>`;
+  if (!s.photo) {
+    const randVal = (rng && typeof rng.next === 'function') ? rng.next() : Math.random();
+    const photoNum = String(Math.floor(randVal * 77) + 1).padStart(4, '0');
+    s.photo = `photo/${photoNum}.png`;
+  }
+  document.getElementById('identity').innerHTML = `<div class="identity-wrapper"><img src="${s.photo}" class="identity-avatar" alt="${escapeHtml(s.name)}" title="タップして拡大" onclick="window.openPhotoModal('${s.photo}')"><div class="identity-text"><h2>${escapeHtml(s.name)} · ${s.age}歳 ${s.finished ? '（終了）' : ''} <span class="badge" style="background:#e0e7ff;color:#3730a3;padding:2px 10px;border-radius:12px;font-size:0.65em;font-weight:600;vertical-align:middle;">${escapeHtml(s.occupation || '学生')}</span></h2><p class="muted" style="margin:2px 0 0;">${s.age < 6 ? '幼少期' : s.age < 18 ? '学生時代' : s.age < 65 ? '成人期' : 'シニア期'} / 人間関係 ${s.relationships}件</p></div></div>`;
+  const persEl = document.getElementById('personalityInterest');
+  if (persEl) persEl.innerHTML = getPersonalityAndInterestsHtml(s);
   document.getElementById('partnerStatus').innerHTML = getPartnerSummary(s);
-  document.getElementById('location').innerHTML = `<div class="location-box"><strong>居住地</strong>：${s.location.terrain} / ${s.location.district}<div class="muted">${s.location.sinceAge}歳から居住・転居 ${s.location.history.length}回</div></div>`; document.getElementById('locApply').onclick = () => { if (s.pending || s.finished) { alert('選択待ち・人生終了時は変更できません'); return } const next = { terrain: document.getElementById('locTerrain').value, district: document.getElementById('locDistrict').value }; if (setLocation(next, '居住地変更')) { apply({ money: -5, stress: 2 }); s.rngState = rng.state() } render() }; document.getElementById('jobApply').onclick = () => { if (s.pending || s.finished) { alert('選択待ち・人生終了時は変更できません'); return } const nextJob = document.getElementById('jobSelect').value; if (nextJob && nextJob !== s.occupation) { const old = s.occupation; s.occupation = nextJob; if (nextJob === '学生') s.flags.university = s.age >= 18; if (nextJob === '一般職') s.flags.employed = true; log(`職業を「${old}」から「${nextJob}」に変更した。`); s.rngState = rng.state(); render() } };
+  const locEl = document.getElementById('location');
+  if (locEl) locEl.innerHTML = `<div class="location-box" style="display:none;"></div>`;
+  if (document.getElementById('locApply')) document.getElementById('locApply').onclick = () => { if (s.pending || s.finished) { alert('選択待ち・人生終了時は変更できません'); return } const next = { terrain: document.getElementById('locTerrain').value, district: document.getElementById('locDistrict').value }; if (setLocation(next, '居住地変更')) { apply({ money: -5, stress: 2 }); s.rngState = rng.state() } render() };
+  if (document.getElementById('jobApply')) document.getElementById('jobApply').onclick = () => { if (s.pending || s.finished) { alert('選択待ち・人生終了時は変更できません'); return } const nextJob = document.getElementById('jobSelect').value; if (nextJob && nextJob !== s.occupation) { const old = s.occupation; s.occupation = nextJob; if (nextJob === '学生') s.flags.university = s.age >= 18; if (nextJob === '一般職') s.flags.employed = true; log(`職業を「${old}」から「${nextJob}」に変更した。`); s.rngState = rng.state(); render() } };
   const libidoApplyBtn = document.getElementById('libidoTierApply');
   if (libidoApplyBtn) {
     libidoApplyBtn.onclick = () => {
@@ -3977,7 +4084,7 @@ function render() {
   if (s.pending === 'multiple_relationship') {
     eventContainer.style.display = 'block';
     eventContainer.innerHTML = `<div class="pending-event-card">
-          <div class="pending-header"><span class="pending-badge">⚠️ 重要な選択</span><span class="pending-age">${s.age}歳 ${s.current_month || 6}月（${getSeasonName(s.current_month || 6)}）</span></div>
+          <div class="pending-header"><span class="pending-badge">⚠️ 重要な選択</span><span class="pending-age">${s.age}歳</span></div>
           <div class="pending-title">新しい交際をどうする？</div>
           <div class="pending-desc">現在の交際相手がいるなかで、${escapeHtml(s.bonds.find(b => b.id === s.pendingBondId)?.name || '新しい相手')}との交際を考えている。関係者の意思をどう扱う？</div>
           <div class="pending-choices">
@@ -4001,7 +4108,7 @@ function render() {
       eventContainer.innerHTML = `<div class="pending-event-card narrative-card">
             <div class="pending-header">
               <span class="pending-badge ${badgeClass}">${badgeText}</span>
-              <span class="pending-age">${s.age}歳 ${s.current_month || 6}月（${getSeasonName(s.current_month || 6)}）</span>
+              <span class="pending-age">${s.age}歳</span>
             </div>
             <div class="pending-title">${escapeHtml(e.title)}</div>
             <div class="pending-desc">${escapeHtml(e.text || e.description)}</div>
@@ -4016,7 +4123,7 @@ function render() {
         ? '<span class="pending-badge badge-major" style="margin-right:6px;">🔥 重大</span>'
         : (e.classification === 'random' ? '<span class="pending-badge badge-random" style="margin-right:6px;">🎲 突発</span>' : '<span class="pending-badge badge-daily" style="margin-right:6px;">☕ 日常</span>');
       eventContainer.innerHTML = `<div class="pending-event-card">
-            <div class="pending-header"><div>${classBadge}<span class="pending-badge">⚠️ 選択が必要です</span></div><span class="pending-age">${s.age}歳 ${s.current_month || 6}月（${getSeasonName(s.current_month || 6)}）</span></div>
+            <div class="pending-header"><div>${classBadge}<span class="pending-badge">⚠️ 選択が必要です</span></div><span class="pending-age">${s.age}歳</span></div>
             <div class="pending-title">${escapeHtml(e.title)}</div>
             <div class="pending-desc">${escapeHtml(e.text || e.description)}</div>
             <div class="pending-choices">
@@ -4077,11 +4184,29 @@ function render() {
   if (document.getElementById('ten')) { document.getElementById('ten').disabled = s.finished || !!s.pending; document.getElementById('ten').title = s.pending ? '先にイベントの選択肢を選んでください' : ''; }
   if (document.getElementById('act')) document.getElementById('act').disabled = s.finished || !!s.pending;
   updateAutoPlayUI();
+  syncProfileSummaryHeight();
 }
 // === 自動進行エンジン (Auto-Play：月次ステップ) ===
 let autoPlayTimer = null;
 let autoPlaySpeed = 280;
 let isAutoPlaying = true;
+
+function setRingProgress(pct, duration = 0, color = null) {
+  const bar = document.getElementById('timeProgressBar');
+  if (!bar) return;
+  const clampedPct = Math.max(0, Math.min(100, pct));
+  const circumference = 81.68;
+  const offset = circumference * (1 - clampedPct / 100);
+  if (duration > 0) {
+    bar.style.transition = `stroke-dashoffset ${duration}ms linear, stroke 0.25s ease`;
+  } else {
+    bar.style.transition = 'none';
+  }
+  bar.style.strokeDashoffset = offset.toFixed(2);
+  if (color) {
+    bar.style.stroke = color;
+  }
+}
 
 function updateAutoPlayUI() {
   const btn = document.getElementById('autoToggle');
@@ -4102,9 +4227,9 @@ function updateAutoPlayUI() {
     if (s.finished) {
       ageLabel.textContent = `${s.age}歳（生涯完走）`;
     } else if (s.pending) {
-      ageLabel.textContent = `${s.age}歳 ${curM}月（${seasonName}・${bm}月生まれ）`;
+      ageLabel.textContent = `${s.age}歳（選択待ち）`;
     } else {
-      ageLabel.textContent = `誕生月（${bm}月）で ${s.age + 1}歳（あと${monthsUntilBirthday}ヶ月）`;
+      ageLabel.textContent = `${s.age}歳 → ${s.age + 1}歳`;
     }
   }
   if (!btn) return;
@@ -4114,21 +4239,17 @@ function updateAutoPlayUI() {
     if (text) text.textContent = '人生終了';
     if (icon) icon.textContent = '⏹';
     if (label) { label.textContent = '⏹ 人生の完走'; label.style.color = '#64748b'; }
-    if (bar) { bar.style.transition = 'none'; bar.style.width = '100%'; bar.style.background = '#94a3b8'; }
+    setRingProgress(100, 0, '#94a3b8');
   } else if (s.pending) {
     btn.disabled = true;
     btn.style.opacity = '0.7';
     if (text) text.textContent = '選択待ち';
     if (icon) icon.textContent = '⏳';
     if (label) {
-      label.textContent = `⏸ ${s.age}歳 ${curM}月（${seasonName}）の出来事で停止中`;
-      label.style.color = '#a87182';
+      label.textContent = `⏸ 選択待ち`;
+      label.style.color = '#e11d48';
     }
-    if (bar) {
-      bar.style.transition = 'none';
-      bar.style.width = Math.min(98, Math.max(8, curYearPct)) + '%';
-      bar.style.background = '#a87182';
-    }
+    setRingProgress(Math.min(98, Math.max(8, curYearPct)), 0, '#e11d48');
   } else if (isAutoPlaying) {
     btn.disabled = false;
     btn.style.opacity = '1';
@@ -4136,18 +4257,18 @@ function updateAutoPlayUI() {
     if (text) text.textContent = '一時停止';
     if (icon) icon.textContent = '⏸';
     if (label) {
-      label.textContent = `⏳ 月次進行中：${s.age}歳 ${curM}月（${seasonName}）`;
+      label.textContent = `⏳ 自動進行中`;
       label.style.color = '#4338ca';
     }
-    if (bar) { bar.style.background = 'linear-gradient(90deg, #6366f1, #a855f7)'; }
+    setRingProgress(curYearPct, 0, '#6366f1');
   } else {
     btn.disabled = false;
     btn.style.opacity = '1';
     btn.className = 'secondary';
     if (text) text.textContent = '自動進行';
     if (icon) icon.textContent = '▶';
-    if (label) { label.textContent = `⏸ 一時停止中（${s.age}歳 ${curM}月・${seasonName}）`; label.style.color = '#64748b'; }
-    if (bar) { bar.style.transition = 'none'; bar.style.width = curYearPct + '%'; bar.style.background = '#cbd5e1'; }
+    if (label) { label.textContent = `⏸ 一時停止中`; label.style.color = '#64748b'; }
+    setRingProgress(curYearPct, 0, '#94a3b8');
   }
 }
 
@@ -4160,7 +4281,7 @@ function scheduleNextAutoStep(delay = null) {
   const duration = delay ?? autoPlaySpeed;
   updateAutoPlayUI();
 
-  // 誕生月から次の誕生月までの12ヶ月プログレスバー表示
+  // 誕生月から次の誕生月までの12ステップ円形リング表示
   const bar = document.getElementById('timeProgressBar');
   if (bar && s) {
     const bm = s.birth_month || 4;
@@ -4168,15 +4289,12 @@ function scheduleNextAutoStep(delay = null) {
     const monthsSinceBirthday = (curM - bm + 12) % 12;
     const startPct = Math.round((monthsSinceBirthday / 12) * 100);
     const endPct = Math.round(((monthsSinceBirthday + 1) / 12) * 100);
-    bar.style.transition = 'none';
-    bar.style.width = startPct + '%';
-    bar.style.background = 'linear-gradient(90deg, #6366f1, #a855f7)';
+    setRingProgress(startPct, 0, '#6366f1');
     if (typeof requestAnimationFrame !== 'undefined') {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           if (isAutoPlaying && !s.pending && !s.finished) {
-            bar.style.transition = `width ${duration}ms linear`;
-            bar.style.width = endPct + '%';
+            setRingProgress(endPct, duration, '#6366f1');
           }
         });
       });
@@ -4224,6 +4342,9 @@ function start(seed = (Date.now() >>> 0)) {
   if (typeof clearTimeout !== "undefined") clearTimeout(autoPlayTimer);
   s = makeState(seed);
   rng = random(s.rngState);
+  const randVal = (rng && typeof rng.next === 'function') ? rng.next() : Math.random();
+  const photoNum = String(Math.floor(randVal * 77) + 1).padStart(4, '0');
+  s.photo = `photo/${photoNum}.png`;
 
   // 本人の誕生月から人生が始まる（0歳0ヶ月）
   const bm = s.birth_month || 4;
@@ -4268,6 +4389,16 @@ document.getElementById('mode').onchange = e => {
   document.getElementById('intervene').style.display = e.target.value === 'free' ? 'block' : 'none';
   render();
 };
+function syncProfileSummaryHeight() {
+  const summary = document.querySelector('.profile-summary');
+  if (summary) {
+    const h = Math.ceil(summary.getBoundingClientRect().height);
+    if (h > 0) {
+      document.documentElement.style.setProperty('--profile-summary-height', `${h}px`);
+    }
+  }
+}
+
 try {
   if (typeof localStorage !== 'undefined') {
     for (const k of Object.keys(localStorage)) {
@@ -4279,3 +4410,40 @@ try {
 }
 start();
 document.getElementById('intervene').style.display = 'none';
+
+if (window.ResizeObserver) {
+  const summaryEl = document.querySelector('.profile-summary');
+  if (summaryEl) {
+    new ResizeObserver(() => syncProfileSummaryHeight()).observe(summaryEl);
+  }
+}
+window.addEventListener('resize', syncProfileSummaryHeight);
+syncProfileSummaryHeight();
+
+// 写真拡大モーダル処理
+window.openPhotoModal = function(src) {
+  let modal = document.getElementById('photoModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'photoModal';
+    modal.className = 'photo-modal';
+    modal.innerHTML = `
+      <div class="photo-modal-content" onclick="event.stopPropagation()">
+        <button class="photo-modal-close" onclick="document.getElementById('photoModal').classList.remove('active')" aria-label="閉じる">✕</button>
+        <img id="photoModalImg" src="" alt="写真拡大" onclick="document.getElementById('photoModal').classList.remove('active')">
+      </div>
+    `;
+    modal.onclick = () => modal.classList.remove('active');
+    document.body.appendChild(modal);
+  }
+  const img = document.getElementById('photoModalImg');
+  if (img) img.src = src;
+  modal.classList.add('active');
+};
+
+window.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const modal = document.getElementById('photoModal');
+    if (modal) modal.classList.remove('active');
+  }
+});

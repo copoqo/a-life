@@ -166,25 +166,12 @@
       margin: 0;
       padding: 12px 16px;
       display: grid;
-      grid-template-rows: auto minmax(0, 1fr) auto;
-      gap: 10px
+      grid-template-rows: minmax(0, 1fr) auto;
+      gap: 10px;
     }
 
     header {
-      min-height: 44px;
-      padding: 0 3px
-    }
-
-    .header-title-group {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      min-width: 0;
-    }
-
-    h1 {
-      font-size: 21px;
-      letter-spacing: .03em
+      display: none;
     }
 
     .build-version {
@@ -210,8 +197,8 @@
     .workspace {
       display: grid;
       grid-template-columns: minmax(280px, 1fr) minmax(380px, 1.55fr);
-      grid-template-rows: auto minmax(0, 1fr);
-      gap: 10px;
+      grid-template-rows: auto auto minmax(0, 1fr);
+      gap: 3px;
       min-height: 0;
       height: 100%;
     }
@@ -219,12 +206,13 @@
     .panel {
       margin: 0;
       border-radius: 11px;
-      padding: 13px;
+      padding: 12px;
       box-shadow: 0 1px 5px #00000007;
       min-height: 0
     }
 
     .profile-panel,
+    .bonds-panel,
     .play-panel,
     .history-panel {
       display: flex;
@@ -234,11 +222,11 @@
 
     .profile-panel {
       grid-column: 1;
-      grid-row: 1 / span 2;
+      grid-row: 1 / span 3;
       overflow: auto;
     }
 
-    .play-panel {
+    .bonds-panel {
       grid-column: 2;
       grid-row: 1;
       overflow: visible;
@@ -247,9 +235,18 @@
       align-self: start;
     }
 
-    .history-panel {
+    .play-panel {
       grid-column: 2;
       grid-row: 2;
+      overflow: visible;
+      min-height: auto;
+      height: auto;
+      align-self: start;
+    }
+
+    .history-panel {
+      grid-column: 2;
+      grid-row: 3;
       overflow: hidden;
     }
 
@@ -585,26 +582,194 @@
       font-weight: 500
     }
 
+    /* スリムな操作パネルスタイル */
+    .play-panel {
+      padding: 8px 10px;
+    }
+
+    .play-controls-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px 8px;
+    }
+
+    .play-btn {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      min-width: 86px;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* 円形プログレスリングによる時間経過 */
+    .time-progress-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 3px 8px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      flex: 1 1 auto;
+      min-width: 110px;
+    }
+
+    .time-ring-wrapper {
+      position: relative;
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .time-ring {
+      transform: rotate(-90deg);
+      display: block;
+    }
+
+    .time-ring-bg {
+      stroke: #e2e8f0;
+      stroke-width: 3.2;
+      fill: none;
+    }
+
+    .time-ring-fg {
+      stroke: #6366f1;
+      stroke-width: 3.2;
+      stroke-linecap: round;
+      fill: none;
+      stroke-dasharray: 81.68;
+      stroke-dashoffset: 81.68;
+      transition: stroke-dashoffset 0.28s linear, stroke 0.25s ease;
+    }
+
+    .time-text-group {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+      min-width: 0;
+    }
+
+    .time-age-text {
+      font-size: 11px;
+      font-weight: 700;
+      color: #1e293b;
+      white-space: nowrap;
+    }
+
+    .time-status-text {
+      font-size: 9.5px;
+      color: #64748b;
+      white-space: nowrap;
+    }
+
+    .play-config-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .compact-select {
+      padding: 4px 6px;
+      font-size: 11px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #334155;
+      cursor: pointer;
+      height: 28px;
+    }
+
+    /* 人間関係パネル */
+    .bonds-panel {
+      padding: 10px 12px;
+    }
+
+    .bonds-panel .bonds-box {
+      margin: 0;
+    }
+
+    .bonds-panel .bonds-box details summary {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12.5px;
+      color: #334155;
+      outline: none;
+    }
+
+    .bonds-panel .exp-list {
+      max-height: 200px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-right: 2px;
+    }
+
+    /* フッター */
+    .app-footer {
+      margin-top: 10px;
+      padding: 8px 0 16px;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .footer-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .restart-btn {
+      padding: 5px 12px;
+      font-size: 11.5px;
+      font-weight: 600;
+      border-radius: 6px;
+      background: #e2e8f0;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+    }
+
+    .restart-btn:hover {
+      background: #cbd5e1;
+    }
+
     @media(max-width:920px) {
       .workspace {
-        grid-template-columns: minmax(250px, 1fr) minmax(300px, 1.35fr);
-        grid-template-rows: auto minmax(0, 1fr);
-        gap: 8px;
+        grid-template-columns: minmax(240px, 1fr) minmax(300px, 1.35fr);
+        grid-template-rows: auto auto minmax(0, 1fr);
+        gap: 3px;
       }
 
       .profile-panel {
         grid-column: 1;
-        grid-row: 1 / span 2;
+        grid-row: 1 / span 3;
       }
 
-      .play-panel {
+      .bonds-panel {
         grid-column: 2;
         grid-row: 1;
       }
 
-      .history-panel {
+      .play-panel {
         grid-column: 2;
         grid-row: 2;
+      }
+
+      .history-panel {
+        grid-column: 2;
+        grid-row: 3;
       }
 
       .stats {
@@ -632,57 +797,44 @@
 
       main {
         height: auto;
-        min-height: calc(100lvh + 24px);
-        padding: 8px 8px 32px;
-        gap: 8px;
+        min-height: 100dvh;
+        padding: 0 8px 24px;
+        gap: 6px;
         display: flex;
-        flex-direction: column
+        flex-direction: column;
       }
 
-      header {
+      /* スマホ上部固定：主人公情報バー（ヘッダー削除に伴い最上部にスッキリ配置） */
+      .profile-summary {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         z-index: 100;
-        background: #e9eef0;
-        padding: 6px 10px;
-        min-height: 38px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        background: #ffffff;
+        border-bottom: 1px solid #dddcd7;
+        border-radius: 0 0 10px 10px;
+        padding: 4px 6px;
+        padding-top: calc(4px + env(safe-area-inset-top, 0px));
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 0.95fr);
+        gap: 5px;
+        align-items: stretch;
+        margin-bottom: 0;
         box-sizing: border-box;
-      }
-
-      h1 {
-        font-size: 16px;
-        margin: 0;
-      }
-
-      .build-version {
-        font-size: 9.5px;
-        padding: 1px 5px;
-      }
-
-      header .muted {
-        font-size: 10px;
-      }
-
-      header #restart {
-        padding: 4px 8px;
-        font-size: 11px;
       }
 
       .workspace {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 3px;
         min-height: 0;
-        margin-top: 86px;
+        margin-top: calc(var(--profile-summary-height, 78px) + 3px);
       }
 
       .profile-panel,
+      .bonds-panel,
       .play-panel,
       .history-panel {
         grid-column: auto !important;
@@ -690,33 +842,49 @@
       }
 
       .panel {
-        padding: 10px
+        padding: 8px 10px !important;
+        border-radius: 10px;
+      }
+
+      /* 表示順序：人間関係（操作パネルの上）→ 操作パネル → 人生の記録 → プロフィール詳細 */
+      .bonds-panel {
+        order: 1 !important;
+        align-self: stretch !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      .play-panel {
+        order: 2 !important;
+        align-self: stretch !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        overflow: visible;
+        padding: 6px 8px !important;
+      }
+
+      .history-panel {
+        order: 3 !important;
+        height: auto !important;
+        min-height: 280px !important;
+        max-height: none !important;
+        overflow: visible !important;
+        display: flex;
+        flex-direction: column;
+        padding: 8px 10px !important;
       }
 
       .profile-panel {
-        order: 3 !important;
+        order: 4 !important;
         margin-top: 0 !important;
         padding: 8px;
         overflow: visible;
       }
 
-      .profile-summary {
-        position: fixed;
-        top: 38px;
-        left: 8px;
-        right: 8px;
-        z-index: 99;
-        background: #ffffff;
-        border: 1px solid #dddcd7;
-        border-radius: 9px;
-        padding: 4px 6px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        display: grid;
-        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 0.95fr);
-        gap: 5px;
-        align-items: stretch;
-        margin-bottom: 0;
-        box-sizing: border-box;
+      .app-footer {
+        order: 5 !important;
+        margin-top: 12px;
+        padding: 10px 0 24px;
       }
 
       .profile-summary #identity {
@@ -752,6 +920,12 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+      }
+
+      .profile-summary .identity-avatar {
+        width: 32px !important;
+        height: 32px !important;
+        border-radius: 6px !important;
       }
 
       .partner-box {
@@ -815,6 +989,54 @@
         text-overflow: ellipsis;
       }
 
+      .personality-box {
+        margin: 0 !important;
+        padding: 5px 6px !important;
+        font-size: 10px !important;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-width: 0;
+        box-sizing: border-box;
+        background: #f0fdf4 !important;
+        border: 1px solid #bbf7d0 !important;
+        border-radius: 8px;
+      }
+
+      .personality-header {
+        font-size: 10px !important;
+        margin-bottom: 2px !important;
+        font-weight: 700;
+        color: #15803d;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .personality-val {
+        font-size: 10px !important;
+        font-weight: 600;
+        color: #166534;
+        line-height: 1.2 !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .interest-val {
+        font-size: 9px !important;
+        color: #475569;
+        margin-top: 1px !important;
+        line-height: 1.2 !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
       .stats {
         grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
         gap: 3px 4px !important;
@@ -849,23 +1071,6 @@
         flex-shrink: 0 !important;
       }
 
-      .play-panel {
-        order: 1 !important;
-        overflow: visible;
-        padding: 8px 10px !important;
-      }
-
-      .history-panel {
-        order: 2 !important;
-        height: auto !important;
-        min-height: 280px !important;
-        max-height: none !important;
-        overflow: visible !important;
-        display: flex;
-        flex-direction: column;
-        padding: 8px 10px !important;
-      }
-
       .history-panel h2 {
         font-size: 13px !important;
         margin: 0 0 4px !important;
@@ -873,9 +1078,13 @@
 
       .history-panel .log {
         display: block !important;
-        max-height: 340px !important;
+        max-height: 360px !important;
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch;
+      }
+
+      .bonds-panel .exp-list {
+        max-height: 160px;
       }
 
       button,
@@ -886,7 +1095,6 @@
       }
 
       .footer-note {
-        order: 4 !important;
         font-size: 9px;
       }
     }
@@ -898,6 +1106,37 @@
       padding: 8px;
       margin: 0 0 9px;
       font-size: 12px
+    }
+
+    .personality-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 8px;
+      margin: 0 0 9px;
+      font-size: 12px;
+    }
+
+    .personality-header {
+      font-size: 11px;
+      font-weight: 700;
+      color: #15803d;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .personality-val {
+      font-weight: 600;
+      color: #166534;
+      font-size: 11.5px;
+    }
+
+    .interest-val {
+      font-size: 11px;
+      color: #475569;
+      margin-top: 3px;
     }
 
     .partner-header {
@@ -1229,4 +1468,101 @@
       padding: 5px 7px;
       margin: 0 0 6px;
       border-radius: 5px
+    }
+
+    /* 主人公アバター写真 & 拡大モーダル */
+    .identity-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      width: 100%;
+    }
+
+    .identity-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      object-fit: cover;
+      cursor: pointer;
+      flex-shrink: 0;
+      border: 1px solid #cbd5e1;
+      background: #f1f5f9;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .identity-avatar:hover {
+      transform: scale(1.06);
+      box-shadow: 0 2px 7px rgba(0, 0, 0, 0.18);
+    }
+
+    .identity-text {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .photo-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1000;
+      background: rgba(15, 23, 42, 0.78);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      touch-action: manipulation;
+    }
+
+    .photo-modal.active {
+      display: flex;
+    }
+
+    .photo-modal-content {
+      position: relative;
+      max-width: 90vw;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .photo-modal img {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+      cursor: pointer;
+      background: #fff;
+    }
+
+    .photo-modal-close {
+      position: absolute;
+      top: -14px;
+      right: -14px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #1e293b;
+      color: #fff;
+      border: 2px solid #fff;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+      z-index: 10;
     }
