@@ -1861,39 +1861,39 @@ function isTabooAwakened(st = s) {
 }
 
 const CONDITION_PRESETS = {
-  partnered:                (st) => hasPartner(st),
-  single:                   (st) => !hasPartner(st),
-  unmarried:                (st) => !hasSpouse(st),
-  married:                  (st) => hasSpouse(st),
-  multi_partner:            (st) => hasMultiplePartners(st),
-  female_partner:           (st) => hasFemalePartner(st),
-  male_partner:             (st) => hasMalePartner(st),
-  has_children:             (st) => !!(st.flags?.hasChildren || st.family?.children_ids?.length > 0),
-  student:                  (st) => isStudent(st),
-  school_student:           (st) => isStudent(st) && (st.age ?? 0) <= 18 && !st.flags?.university,
-  university_student:       (st) => isStudent(st) && ((st.age ?? 0) >= 18 && !!st.flags?.university),
-  employed:                 (st) => isEmployed(st),
+  partnered: (st) => hasPartner(st),
+  single: (st) => !hasPartner(st),
+  unmarried: (st) => !hasSpouse(st),
+  married: (st) => hasSpouse(st),
+  multi_partner: (st) => hasMultiplePartners(st),
+  female_partner: (st) => hasFemalePartner(st),
+  male_partner: (st) => hasMalePartner(st),
+  has_children: (st) => !!(st.flags?.hasChildren || st.family?.children_ids?.length > 0),
+  student: (st) => isStudent(st),
+  school_student: (st) => isStudent(st) && (st.age ?? 0) <= 18 && !st.flags?.university,
+  university_student: (st) => isStudent(st) && ((st.age ?? 0) >= 18 && !!st.flags?.university),
+  employed: (st) => isEmployed(st),
   unemployed_or_precarious: (st) => ['無職', 'パート・アルバイト'].includes(st.occupation),
-  not_living_alone:         (st) => !st.flags?.living_alone && !hasSpouse(st) && !st.flags?.cohabiting,
-  cohabiting:               (st) => !!(st.flags?.cohabiting || hasSpouse(st) || getPrimaryPartner(st)?.cohabiting),
-  has_ex_partner:           (st) => !!(st.bonds?.some(b => b.status === 'former')),
-  hetero_or_bi:             (st) => (st.orientation?.men ?? 0.5) >= 0.25 && !hasFemalePartner(st),
-  same_sex_open:            (st) => prefersWomen(st) || hasFemalePartner(st) || !!st.flags?.same_sex_awakened,
-  virgin:                   (st) => !hasHadSex(st),
-  sex_experienced:          (st) => hasHadSex(st),
-  first_sex_with_partner:   (st) => !getPrimaryPartner(st)?.intimate && !st.flags?.had_first_intimacy_with_partner && !hasHadSexWithCurrentPartner(st),
+  not_living_alone: (st) => !st.flags?.living_alone && !hasSpouse(st) && !st.flags?.cohabiting,
+  cohabiting: (st) => !!(st.flags?.cohabiting || hasSpouse(st) || getPrimaryPartner(st)?.cohabiting),
+  has_ex_partner: (st) => !!(st.bonds?.some(b => b.status === 'former')),
+  hetero_or_bi: (st) => (st.orientation?.men ?? 0.5) >= 0.25 && !hasFemalePartner(st),
+  same_sex_open: (st) => prefersWomen(st) || hasFemalePartner(st) || !!st.flags?.same_sex_awakened,
+  virgin: (st) => !hasHadSex(st),
+  sex_experienced: (st) => hasHadSex(st),
+  first_sex_with_partner: (st) => !getPrimaryPartner(st)?.intimate && !st.flags?.had_first_intimacy_with_partner && !hasHadSexWithCurrentPartner(st),
   first_kiss_unexperienced: (st) => !getPrimaryPartner(st)?.kissed && !st.flags?.had_first_kiss_with_partner,
-  first_kiss_experienced:   (st) => !!(getPrimaryPartner(st)?.kissed || st.flags?.had_first_kiss_with_partner || st.flags?.firstKiss),
-  first_date_experienced:   (st) => !!(st.flags?.firstDate || st.flags?.had_first_date_with_partner),
-  rel_stage_early:          (st) => hasPartner(st) && getPartnerStage(st) === 1,
-  rel_stage_kissed:         (st) => hasPartner(st) && getPartnerStage(st) >= 2,
-  rel_stage_intimate:       (st) => hasPartner(st) && getPartnerStage(st) >= 3,
-  rel_stage_established:    (st) => hasPartner(st) && getPartnerStage(st) >= 4,
-  taboo_awakened:           (st) => isTabooAwakened(st),
-  low_morality:             (st) => (st.abilities?.morality ?? st.morality ?? 0) <= 0,
-  underground_eligible:     (st) => isEligibleForUndergroundSexWork(st),
-  adult_drinking:           (st) => (st.age ?? 0) >= 20,
-  underage_drinking_allowed:(st) => (st.age ?? 0) >= 15 && (st.age ?? 0) < 20
+  first_kiss_experienced: (st) => !!(getPrimaryPartner(st)?.kissed || st.flags?.had_first_kiss_with_partner || st.flags?.firstKiss),
+  first_date_experienced: (st) => !!(st.flags?.firstDate || st.flags?.had_first_date_with_partner),
+  rel_stage_early: (st) => hasPartner(st) && getPartnerStage(st) === 1,
+  rel_stage_kissed: (st) => hasPartner(st) && getPartnerStage(st) >= 2,
+  rel_stage_intimate: (st) => hasPartner(st) && getPartnerStage(st) >= 3,
+  rel_stage_established: (st) => hasPartner(st) && getPartnerStage(st) >= 4,
+  taboo_awakened: (st) => isTabooAwakened(st),
+  low_morality: (st) => (st.abilities?.morality ?? st.morality ?? 0) <= 0,
+  underground_eligible: (st) => isEligibleForUndergroundSexWork(st),
+  adult_drinking: (st) => (st.age ?? 0) >= 20,
+  underage_drinking_allowed: (st) => (st.age ?? 0) >= 15 && (st.age ?? 0) < 20
 };
 
 function normalizeEventDef(raw) {
@@ -3723,54 +3723,167 @@ function act(text) { const matches = actions.filter(a => a.patterns.test(text));
 function escapeBond(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])) }
 function getPersonality(st) {
   if (!st) return 'おだやか';
+  const age = st.age ?? 0;
   const traits = st.traits || {};
   const abilities = st.abilities || {};
   const display = st.display || {};
+  const states = st.states || {};
+  const sexuality = st.sexuality || {};
 
-  const candidates = [];
+  // 年齢ごとの基本制御（幼年期）
+  if (age < 6) {
+    const ext = (traits.extraversion?.current ?? 0) + (display.sociability ?? 0);
+    if (ext >= 12) return '天真爛漫・活発';
+    if (ext <= -12) return '内気でおとなしい';
+    return '無邪気で愛らしい';
+  }
 
-  // モラル
+  // 学童期（6〜11歳：思春期の萌芽・身体のむず痒さ）
+  if (age < 12) {
+    const precocious = (states.current_libido ?? 0) >= 15 || (sexuality.curiosity ?? 0) >= 50;
+    if (precocious) {
+      const modesty = traits.baseline_modesty?.current ?? 0;
+      if (modesty >= 10) return 'お股のむず痒さに戸惑う早熟';
+      return '秘所の疼きに手が伸びるおませ';
+    }
+    const ext = (traits.extraversion?.current ?? 0) + (display.sociability ?? 0);
+    if (ext >= 15) return '明るく元気いっぱい';
+    if (ext <= -15) return '内気で恥ずかしがり屋';
+    return '素直でおだやか';
+  }
+
+  // 思春期前半（12〜14歳：疼きへの戸惑いと目覚め）
+  if (age < 15) {
+    const libido = (states.current_libido ?? 0) + (traits.baseline_libido?.current ?? 0) + (sexuality.desire ?? 0) * 0.4;
+    const modesty = traits.baseline_modesty?.current ?? 0;
+    const maso = traits.masochistic_preference?.current ?? 0;
+    if (libido >= 25) {
+      if (maso >= 12) return 'いじめられて奥を濡らす被虐の芽生え';
+      if (modesty >= 12) return '下腹の疼きを恥じて耐える純情生娘';
+      return '愛液でショーツを濡らす早熟な肉穴';
+    }
+    if (libido >= 12) {
+      if (modesty >= 10) return '恥じらいつつも身体の火照りに戸惑う娘';
+      return '秘所の疼きに指を沈めて息を荒げる早熟';
+    }
+    const ext = (traits.extraversion?.current ?? 0) + (display.sociability ?? 0);
+    if (ext >= 15) return '多感で活発な少女';
+    if (ext <= -15) return '物静かで夢見がちな少女';
+    return '多感でおだやか';
+  }
+
+  // 15歳以上（青年期・成人：下品・猥雑・赤裸々な性的欲望の描写）
   const morality = abilities.morality ?? st.morality ?? 10;
-  if (morality >= 18) candidates.push({ text: '誠実で真面目', score: morality - 8 });
-  else if (morality <= 4) candidates.push({ text: '奔放な自由人', score: 10 - morality });
-
-  // 社交・外向性
-  const ext = (traits.extraversion?.current ?? 0) + (display.sociability ?? 0);
-  if (ext >= 16) candidates.push({ text: '社交的で陽気', score: ext });
-  else if (ext <= -16) candidates.push({ text: '物静かで控えめ', score: -ext });
-
-  // 恥じらい・慎ましさ・大胆さ
+  const libido = (states.current_libido ?? 0) + (traits.baseline_libido?.current ?? 0) + (sexuality.desire ?? 0) * 0.5 + (display.sexual_desire ?? 0) * 0.4;
   const modesty = traits.baseline_modesty?.current ?? 0;
   const risk = traits.risk_tolerance?.current ?? 0;
-  if (modesty >= 16) candidates.push({ text: '純情で奥手', score: modesty });
-  else if (modesty <= -16 || risk >= 18) candidates.push({ text: '好奇心旺盛で大胆', score: Math.max(-modesty, risk) });
-  else if (risk <= -16) candidates.push({ text: '慎重派・堅実', score: -risk });
-
-  // 知性
+  const maso = traits.masochistic_preference?.current ?? 0;
+  const sado = traits.sadistic_preference?.current ?? 0;
+  const ext = (traits.extraversion?.current ?? 0) + (display.sociability ?? 0);
+  const initiative = sexuality.initiative ?? 0;
   const intellect = (traits.learning_drive?.current ?? 0) + (display.intellect ?? 0);
-  if (intellect >= 18) candidates.push({ text: '知的・思慮深い', score: intellect });
-
-  // 自信・繊細さ
   const conf = display.confidence ?? 0;
-  if (conf >= 20) candidates.push({ text: '堂々とした自信家', score: conf });
-  else if (conf <= -18) candidates.push({ text: '繊細で心優しい', score: -conf });
 
-  // 性的魅力・情熱
-  if (st.age >= 15) {
-    const libido = st.states?.current_libido ?? 0;
-    const desire = st.sexuality?.desire ?? 0;
-    if (libido >= 30 || desire >= 70) candidates.push({ text: '情熱的・艶やか', score: 18 });
+  // 性的欲望・性癖の候補
+  const carnalList = [];
+
+  // 1. 被虐・ドM（乱暴に突き上げられたい、犯されて歓喜）
+  if (maso >= 10) {
+    carnalList.push({
+      text: maso >= 20 ? '乱暴に突き上げられて悦ぶドM体質' : '犯されて辱められるほど濡れる被虐気質',
+      score: maso * 2.2 + libido * 0.6
+    });
   }
 
-  candidates.sort((a, b) => b.score - a.score);
-  if (candidates.length >= 2) {
-    return `${candidates[0].text}・${candidates[1].text}`;
-  } else if (candidates.length === 1) {
-    return candidates[0].text;
+  // 2. 加虐・淫虐サド（男を支配・搾り取る）
+  if (sado >= 10) {
+    carnalList.push({
+      text: sado >= 20 ? '男の下半身を支配して弄ぶ淫虐女王' : '男の肉棒を貪り搾り取る肉食系',
+      score: sado * 2.2 + libido * 0.6
+    });
   }
 
-  if (st.age < 6) return '天真爛漫・無邪気';
-  if (st.age < 12) return '素直でおだやか';
+  // 3. 低モラル×高性欲（肉便器・淫売・男喰い・見境なし）
+  if (morality <= 8 && libido >= 15) {
+    let t = '誰にでも股を開く肉便器気質';
+    if (morality <= 5 && libido >= 30) t = '見境なくチンポを咥え込む発情雌豚';
+    else if (morality <= 6) t = '男の精液を欲しがる淫売体質';
+    else t = '貞操観念ゼロの淫乱男喰い';
+    carnalList.push({ text: t, score: (14 - morality) * 3.5 + libido * 1.2 });
+  }
+
+  // 4. 高恥じらい×高性欲（下唇を噛んで耐える・むっつりスケベ・奥をヒクつかせる）
+  if (modesty >= 8 && libido >= 15) {
+    let t = '下唇を噛んで疼きに耐える淫肉';
+    if (modesty >= 18 && libido >= 35) t = '羞恥に震えながら愛液を垂らす雌穴';
+    else if (modesty >= 15) t = '拒みながらも奥をヒクつかせる敏感体質';
+    else t = '恥じらいつつも男の肉棒を欲しがるむっつりスケベ';
+    carnalList.push({ text: t, score: modesty * 2.2 + libido * 1.0 });
+  }
+
+  // 5. 超高リビドー・絶え間ない発情（男の肉棒に飢えた発情牝・淫乱肉穴）
+  if (libido >= 30) {
+    if (libido >= 50) {
+      carnalList.push({ text: '常に愛液で濡れそぼる淫乱肉穴', score: libido * 1.5 });
+      carnalList.push({ text: '男の肉棒に飢えた発情牝', score: libido * 1.35 });
+    } else if (libido >= 40) {
+      carnalList.push({ text: '下腹が疼いて止まらない淫乱体質', score: libido * 1.5 });
+      carnalList.push({ text: '男の肉棒に飢えた発情牝', score: libido * 1.35 });
+    } else {
+      carnalList.push({ text: '男の肉棒に飢えた発情牝', score: libido * 1.4 });
+      carnalList.push({ text: '疼きが収まらない欲求不満の淫肉', score: libido * 1.25 });
+    }
+  }
+
+  // 6. 積極的・痴女・露出・変態的好奇心
+  if (initiative >= 12 || risk >= 16 || modesty <= -12) {
+    let t = '自ら股を開いて男を誘惑する痴女気質';
+    if (risk >= 18 && modesty <= -10) t = '人目につく場所で濡れる露出狂気質';
+    else if (initiative >= 15) t = '未知の快楽に奥を疼かせる変態的好奇心';
+    carnalList.push({ text: t, score: (initiative + risk - modesty) * 1.2 });
+  }
+
+  // 7. 中〜通常のリビドー
+  if (libido >= 12 && libido < 35) {
+    carnalList.push({ text: '男の温もりにすぐ奥を濡らす淫らな身体', score: libido * 0.9 });
+  } else if (libido < 12) {
+    // 低リビドー・処女
+    if (modesty >= 10) carnalList.push({ text: '男の影を恐れつつも微かに疼く生娘', score: 14 });
+    else carnalList.push({ text: 'まだ男を知らない未開の処女穴', score: 12 });
+  }
+
+  carnalList.sort((a, b) => b.score - a.score);
+  const bestCarnal = carnalList[0]?.text;
+
+  // 表向きの性格・社会的気質
+  const surfaceList = [];
+  if (morality >= 16) surfaceList.push({ text: '清純ぶった優等生', score: morality });
+  else if (morality <= 5) surfaceList.push({ text: '奔放で無防備', score: 10 - morality });
+
+  if (ext >= 16) surfaceList.push({ text: '陽気な愛嬌者', score: ext });
+  else if (ext <= -16) surfaceList.push({ text: '物静かで控えめ', score: -ext });
+
+  if (modesty >= 16) surfaceList.push({ text: '純情で奥手', score: modesty });
+  else if (modesty <= -16) surfaceList.push({ text: '羞恥知らずの大胆', score: -modesty });
+
+  if (conf >= 18) surfaceList.push({ text: '気位の高い高慢肌', score: conf });
+  else if (conf <= -16) surfaceList.push({ text: '気弱で押しに弱い', score: -conf });
+
+  if (intellect >= 18) surfaceList.push({ text: '澄ました知性派', score: intellect });
+
+  surfaceList.sort((a, b) => b.score - a.score);
+  const bestSurface = surfaceList[0]?.text;
+
+  // 組み合わせ
+  if (bestSurface && bestCarnal) {
+    return `${bestSurface}・${bestCarnal}`;
+  }
+  if (bestCarnal) {
+    if (carnalList.length >= 2 && carnalList[1].score >= 20) {
+      return `${bestCarnal}・${carnalList[1].text}`;
+    }
+    return bestCarnal;
+  }
   return 'おだやかで自然体';
 }
 
@@ -3781,8 +3894,13 @@ function getInterests(st) {
 
   for (const h of recentHist) {
     const text = `${h.text || ''} ${h.choice || ''} ${h.diary || ''}`;
-    if (/恋|告白|付き合|交際|彼氏|彼女|デート|キス|唇|逢瀬|身体|抱か|愛液|絶頂|エッチ|不倫|浮気/.test(text)) {
-      return '恋愛・親密な関係';
+    if (/恋|告白|付き合|交際|彼氏|彼女|デート|キス|唇|逢瀬|身体|抱か|愛液|絶頂|エッチ|不倫|浮気/.test(text) && st.age >= 11) {
+      if (st.age >= 15) return '濃密な情交・肉体の交わり';
+      return '恋心・逢瀬への憧れ';
+    }
+    if (/自慰|オナニー|秘所|身体を慰め|疼き|秘密/.test(text) && st.age >= 6) {
+      if (st.age >= 15) return '秘所の疼き・愛液まみれの自慰';
+      return '身体の探求・秘密の一人遊び';
     }
     if (/勉強|学習|学校|試験|テスト|読書|本|授業|受験|大学|知識|学問/.test(text)) {
       return '学業・自己研鑽';
@@ -3799,11 +3917,11 @@ function getInterests(st) {
     if (/仕事|アルバイト|バイト|就職|働く|給料|出世|キャリア/.test(text)) {
       return '仕事・自立';
     }
+    if (/風俗|ソープ|デリヘル/.test(text)) {
+      return '夜の街・春売り';
+    }
     if (/家族|母|父|親|兄弟|姉|妹|弟|実家|団らん/.test(text)) {
       return '家族との時間';
-    }
-    if (/自慰|オナニー|秘所|身体を慰め|疼き|秘密/.test(text)) {
-      return '身体の探求・内省';
     }
   }
 
@@ -4025,12 +4143,18 @@ function render() {
   const sexualRecordsWasOpen = document.getElementById('sexualRecordsDetails') ? document.getElementById('sexualRecordsDetails').open : true;
   const sexualRecordsHtml = `<details class="sexual-records-box" id="sexualRecordsDetails" ${sexualRecordsWasOpen ? 'open' : ''} style="margin:7px 0 9px;background:#faf4f8;border:1px solid #ebdbe5;border-radius:8px;padding:8px;"><summary style="cursor:pointer;font-size:11.5px;font-weight:700;color:#6a4a70;outline:none;">心に刻まれた性行為の記憶 ▾</summary><div style="margin-top:6px;">${formatSexCard(sh.firstSex, '🌸 初めての性行為（初体験）', 'first')}${formatSexCard(sh.mostMemorable, '🔥 最も心に残った性行為', 'memorable')}${formatSexCard(sh.latestSex, s.finished ? '🌙 人生最後の性行為' : '🌙 最も直近の性行為', 'latest')}</div></details>`;
   document.getElementById('experiencePanel').innerHTML = `<div class="experience-panel"><details id="experienceDetails"><summary>性的・親密な経験　${exp.length}件 ▾</summary>${sexualRecordsHtml}<div class="exp-counts">${Object.entries(expCounts).map(([k, v]) => `${escapeHtml(k)} ${v}件`).join(' / ') || '記録なし'}</div><div class="exp-list">${exp.length ? exp.slice().reverse().map(e => `<div class="exp-entry"><div class="exp-meta">${escapeHtml(e.age)}歳 ・ ${escapeHtml(expLabels[e.kind] || 'その他')}${e.private ? ' ・ 非公開' : ''}</div><div>${escapeHtml(e.description)}</div>${e.partnerId ? `<div class="exp-meta">相手：${escapeHtml(s.bonds.find(b => b.id === e.partnerId)?.name || '不明')}（${escapeHtml(e.partnerId)}）</div>` : ''}${e.satisfaction != null ? `<div class="exp-meta">満足感 ${escapeHtml(e.satisfaction)}</div>` : ''}</div>`).join('') : '<div class="exp-empty">まだ経験の記録はありません。出会い・交際・親密さに関する出来事が起きると、ここに追加されます。</div>'}</div></details></div>`;
-  if (!s.photo) {
+  if (!s.photo || !['photo/0001.png', 'photo/0002.png'].includes(s.photo)) {
     const randVal = (rng && typeof rng.next === 'function') ? rng.next() : Math.random();
-    const photoNum = String(Math.floor(randVal * 77) + 1).padStart(4, '0');
+    const photoNum = String(Math.floor(randVal * 2) + 1).padStart(4, '0');
     s.photo = `photo/${photoNum}.png`;
   }
-  document.getElementById('identity').innerHTML = `<div class="identity-wrapper"><img src="${s.photo}" class="identity-avatar" alt="${escapeHtml(s.name)}" title="タップして拡大" onclick="window.openPhotoModal('${s.photo}')"><div class="identity-text"><h2>${escapeHtml(s.name)} · ${s.age}歳 ${s.finished ? '（終了）' : ''} <span class="badge" style="background:#e0e7ff;color:#3730a3;padding:2px 10px;border-radius:12px;font-size:0.65em;font-weight:600;vertical-align:middle;">${escapeHtml(s.occupation || '学生')}</span></h2><p class="muted" style="margin:2px 0 0;">${s.age < 6 ? '幼少期' : s.age < 18 ? '学生時代' : s.age < 65 ? '成人期' : 'シニア期'} / 人間関係 ${s.relationships}件</p></div></div>`;
+  let currentPhoto = s.photo;
+  if (s.age <= 3) {
+    currentPhoto = 'photo/0000-0.png';
+  } else if (s.age <= 11) {
+    currentPhoto = s.photo ? s.photo.replace(/\.png$/, '-1.png') : s.photo;
+  }
+  document.getElementById('identity').innerHTML = `<div class="identity-wrapper"><img src="${currentPhoto}" class="identity-avatar" alt="${escapeHtml(s.name)}" title="タップして拡大" onerror="if (!this.dataset.fallback) { this.dataset.fallback='1'; this.src='${s.photo}'; }" onclick="window.openPhotoModal(this.src)"><div class="identity-text"><h2>${escapeHtml(s.name)} · ${s.age}歳 ${s.finished ? '（終了）' : ''} <span class="badge" style="background:#e0e7ff;color:#3730a3;padding:2px 10px;border-radius:12px;font-size:0.65em;font-weight:600;vertical-align:middle;">${escapeHtml(s.occupation || '学生')}</span></h2><p class="muted" style="margin:2px 0 0;">${s.age < 6 ? '幼少期' : s.age < 18 ? '学生時代' : s.age < 65 ? '成人期' : 'シニア期'} / 人間関係 ${s.relationships}件</p></div></div>`;
   const persEl = document.getElementById('personalityInterest');
   if (persEl) persEl.innerHTML = getPersonalityAndInterestsHtml(s);
   document.getElementById('partnerStatus').innerHTML = getPartnerSummary(s);
@@ -4343,7 +4467,7 @@ function start(seed = (Date.now() >>> 0)) {
   s = makeState(seed);
   rng = random(s.rngState);
   const randVal = (rng && typeof rng.next === 'function') ? rng.next() : Math.random();
-  const photoNum = String(Math.floor(randVal * 77) + 1).padStart(4, '0');
+  const photoNum = String(Math.floor(randVal * 2) + 1).padStart(4, '0');
   s.photo = `photo/${photoNum}.png`;
 
   // 本人の誕生月から人生が始まる（0歳0ヶ月）
@@ -4421,7 +4545,7 @@ window.addEventListener('resize', syncProfileSummaryHeight);
 syncProfileSummaryHeight();
 
 // 写真拡大モーダル処理
-window.openPhotoModal = function(src) {
+window.openPhotoModal = function (src) {
   let modal = document.getElementById('photoModal');
   if (!modal) {
     modal = document.createElement('div');
@@ -4447,3 +4571,34 @@ window.addEventListener('keydown', e => {
     if (modal) modal.classList.remove('active');
   }
 });
+
+// デスクトップ／スマホに応じた「人間関係パネル」の動的配置切り替え
+// デスクトップ：左カラムのパラメータ（#stats）直下
+// スマホ：操作パネル（.play-panel）の上（.workspace直下）
+function updateBondsPanelPosition() {
+  const bondsPanel = document.querySelector('.bonds-panel');
+  if (!bondsPanel) return;
+  const isMobile = window.matchMedia('(max-width: 600px)').matches;
+  if (isMobile) {
+    const playPanel = document.querySelector('.play-panel');
+    const workspace = document.querySelector('.workspace');
+    if (playPanel && workspace && bondsPanel.parentElement !== workspace) {
+      workspace.insertBefore(bondsPanel, playPanel);
+    }
+  } else {
+    const stats = document.getElementById('stats');
+    const profilePanel = document.querySelector('.profile-panel');
+    if (stats && profilePanel && bondsPanel.parentElement !== profilePanel) {
+      stats.insertAdjacentElement('afterend', bondsPanel);
+    }
+  }
+}
+
+const bondsMql = window.matchMedia('(max-width: 600px)');
+if (bondsMql.addEventListener) {
+  bondsMql.addEventListener('change', updateBondsPanelPosition);
+} else if (bondsMql.addListener) {
+  bondsMql.addListener(updateBondsPanelPosition);
+}
+window.addEventListener('resize', updateBondsPanelPosition);
+updateBondsPanelPosition();
