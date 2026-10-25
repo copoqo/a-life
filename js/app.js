@@ -394,17 +394,19 @@ function isPartnerEvent(e) {
   return false;
 }
 function injectPartnerName(str, partner) {
-  if (!str || !partner || !partner.name) return str;
-  const pName = partner.name;
+  if (!str) return str;
+  const pName = partner?.name || '';
   let res = str;
-  res = res.replace(/パートナー/g, pName);
-  res = res.replace(/交際相手/g, pName);
-  res = res.replace(/配偶者/g, pName);
-  res = res.replace(/相手(?=[のとをにはへがから])|相手(?=自身|特有)/g, pName);
-  res = res.replace(/彼(?=[のとをにはへがから])/g, pName);
-  res = res.replace(/夫(?=[のとをにはへがから])/g, pName);
-  if (partner.gender === 'female') {
-    res = res.replace(/彼女(?=[のとをにはへがから])/g, pName);
+
+  // テンプレート記法（{partner}, {partner_name}, {spouse}, {target} 等）をパートナー名で置き換える
+  if (pName) {
+    res = res.replace(/\{(?:partner(?:_?name)?|spouse(?:_?name)?|target(?:_?name)?)\}/gi, pName);
+  } else {
+    res = res.replace(/\{(?:partner(?:_?name)?|target(?:_?name)?)\}/gi, 'パートナー');
+    res = res.replace(/\{spouse(?:_?name)?\}/gi, '配偶者');
+  }
+
+  if (partner && partner.gender === 'female') {
     // 同性パートナー時の汎用テキスト内での身体・行為表現の自然な補正
     res = res.replace(/太い熱情/g, '熱い指先と柔肌');
     res = res.replace(/硬い熱塊|熱く硬くなった肉塊|熱い肉塊/g, '熱く濡れた指先と素肌');
@@ -1374,23 +1376,22 @@ function getEventCurrent(rawEvent) {
     };
   }
 
-  if (partner && isPartnerEvent(rawEvent)) {
-    e.title = injectPartnerName(e.title, partner);
-    e.text = injectPartnerName(e.text, partner);
-    e.description = injectPartnerName(e.description || e.text, partner);
-    if (e.choices) {
-      e.choices = e.choices.map(c => Array.isArray(c) ? [injectPartnerName(c[0], partner), c[1]] : { ...c, label: injectPartnerName(c.label || '', partner) });
-    }
-    if (Array.isArray(e.diary)) {
-      e.diary = e.diary.map(d => injectPartnerName(d, partner));
-    } else if (typeof e.diary === 'string') {
-      e.diary = injectPartnerName(e.diary, partner);
-    }
-    if (Array.isArray(e.variantDiary)) {
-      e.variantDiary = e.variantDiary.map(d => injectPartnerName(d, partner));
-    } else if (typeof e.variantDiary === 'string') {
-      e.variantDiary = injectPartnerName(e.variantDiary, partner);
-    }
+  // テンプレート記法（{partner}等）の展開
+  e.title = injectPartnerName(e.title, partner);
+  e.text = injectPartnerName(e.text, partner);
+  e.description = injectPartnerName(e.description || e.text, partner);
+  if (e.choices) {
+    e.choices = e.choices.map(c => Array.isArray(c) ? [injectPartnerName(c[0], partner), c[1]] : { ...c, label: injectPartnerName(c.label || '', partner) });
+  }
+  if (Array.isArray(e.diary)) {
+    e.diary = e.diary.map(d => injectPartnerName(d, partner));
+  } else if (typeof e.diary === 'string') {
+    e.diary = injectPartnerName(e.diary, partner);
+  }
+  if (Array.isArray(e.variantDiary)) {
+    e.variantDiary = e.variantDiary.map(d => injectPartnerName(d, partner));
+  } else if (typeof e.variantDiary === 'string') {
+    e.variantDiary = injectPartnerName(e.variantDiary, partner);
   }
   return e;
 }
@@ -2516,6 +2517,7 @@ function createBond(role = null, gender = null, customProps = {}) {
   const b = {
     id,
     status,
+    initialStatus: customProps.initialStatus || status,
     gender: g,
     role: r,
     affection: 25 + Math.floor(rng.next() * 30),
@@ -2529,6 +2531,7 @@ function createBond(role = null, gender = null, customProps = {}) {
     cohabiting: false,
     ...customProps
   };
+  if (!b.initialStatus) b.initialStatus = b.status;
   if (!b.name) assignBondName(b, s);
   normalizeBond(b, s.seed);
   return b;
@@ -2541,6 +2544,9 @@ function startRelationship(b) {
   b.kissed ??= false;
   b.intimate ??= false;
   b.cohabiting ??= false;
+  if (!b.relationContext || b.relationContext === b.metContext) {
+    b.relationContext = b.private ? '秘密の交際相手' : '交際中';
+  }
   // 新しいパートナーとの交際開始時は「現在の相手との段階フラグ」をリセットし、Stage 1（交際初期）から始める
   s.flags.had_first_kiss_with_partner = !!b.kissed;
   s.flags.had_first_intimacy_with_partner = !!b.intimate;
@@ -2845,10 +2851,12 @@ function upsertEventBond(spec = {}, event = null) {
   }
 
   if (s.bonds.length >= 30) return null;
-  const custom = { ...spec, status: targetStatus };
+  const custom = { ...spec, status: targetStatus, initialStatus: targetStatus };
   if (metContext) {
     custom.metContext = metContext;
-    custom.relationContext = spec.relationContext || metContext;
+    if (spec.relationContext && spec.relationContext !== metContext) {
+      custom.relationContext = spec.relationContext;
+    }
   }
   const b = createBond(role, gender, custom);
   if (spec.affection != null) b.affection = clamp(spec.affection);
@@ -3588,6 +3596,8 @@ function settle(event, index, continueYear = true) {
       curPartner.kissed = true;
       curPartner.intimate = true;
       curPartner.cohabiting = true;
+      curPartner.marriedAge = s.age;
+      updateBondRelation(curPartner, '生涯を誓い合った配偶者');
     }
     advanceScenario('romance', 'married');
     completeScenario('romance');
@@ -3721,8 +3731,9 @@ function settle(event, index, continueYear = true) {
 
   const { label: choiceLabel, result: parsedResult } = parseChoice(active, index, choice);
   const rawResult = finalChoiceResult || parsedResult;
-  const displayResult = isPartnerEvent(event) ? injectPartnerName(rawResult, getPrimaryPartner(s)) : rawResult;
-  const displayDiary = finalDiary ? ageDiary(injectPartnerName(finalDiary, getPrimaryPartner(s))) : ageDiary(diaryForEvent(active, index));
+  const p = getPrimaryPartner(s);
+  const displayResult = injectPartnerName(rawResult, p);
+  const displayDiary = finalDiary ? ageDiary(injectPartnerName(finalDiary, p)) : ageDiary(injectPartnerName(diaryForEvent(active, index), p));
 
   log(active.title, displayDiary, changeSummary(before, snapshot()), {
     choice: choiceLabel,
@@ -3785,13 +3796,15 @@ function settleNarrative(rawEvent, continueYear = true) {
     }
   }
 
-  const diaryText = rawEvent.diary || ageDiary(diaryForEvent(rawEvent, 0));
-  const badgeLabel = rawEvent.narrative_type === 'precursor' ? 'きっかけ' :
-    rawEvent.narrative_type === 'followup' ? '後日談' : '出来事';
+  const active = getEventCurrent(rawEvent);
+  const p = getPrimaryPartner(s);
+  const diaryText = active.diary || ageDiary(injectPartnerName(diaryForEvent(active, 0), p));
+  const badgeLabel = active.narrative_type === 'precursor' ? 'きっかけ' :
+    active.narrative_type === 'followup' ? '後日談' : '出来事';
 
-  log(rawEvent.title, diaryText, changeSummary(before, snapshot()), {
+  log(active.title, diaryText, changeSummary(before, snapshot()), {
     narrative: true,
-    narrativeType: rawEvent.narrative_type || 'story',
+    narrativeType: active.narrative_type || 'story',
     badgeLabel
   });
 
@@ -4585,15 +4598,29 @@ function render() {
 
     const newBondsHtml = `<div class="bonds-box"><details id="bondDetails" ${bondsWasOpen ? 'open' : ''}><summary>人間関係：知人 ${s.bonds.filter(b => b.status === 'acquaintance').length} / 親しい友人 ${s.bonds.filter(b => b.status === 'close').length} / 交際中 ${s.bonds.filter(b => b.status === 'partner').length} / 配偶者 ${s.bonds.filter(b => b.status === 'spouse').length} / 合計 ${s.bonds.length}人</summary><div style="padding:6px 0;margin-bottom:8px;border-bottom:1px solid #e2e8f0;font-size:0.9em;"><strong>経験人数</strong>：${getSexualPartnerCount(s)}人（交際・婚姻関係：${getSexualPartnerList(s).filter(p => p.type === 'bond').length}人 / 逢瀬・風俗・見知らぬ人等：${getSexualPartnerList(s).filter(p => p.type !== 'bond').length}人）</div><div class="exp-list" style="display:flex;flex-direction:column;gap:6px;">${s.bonds.map(b => {
       const metText = b.metContext || (b.metAge != null ? `${b.metAge}歳で出会い` : '出会い');
-      const relText = b.relationContext || ({
+      const fallbackRelText = {
         spouse: '配偶者',
         partner: b.private ? '秘密の交際相手' : '交際中',
         former: '元交際',
         widowed: '死別した最愛の伴侶',
         close: '親しい友人',
         acquaintance: '知人'
-      }[b.status] || b.status);
-      return `<div style="padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;display:flex;justify-content:space-between;align-items:center;gap:6px;"><div style="min-width:0;"><strong style="color:${b.gender === 'female' ? '#e11d48' : '#1e293b'};font-size:0.95em;">${escapeBond(b.name)}</strong>${getSexualPartnerList(s).some(p => p.id === b.id) || b.intimate ? '<span title="肉体関係あり" style="color:#e11d48;margin-left:4px;">❤</span>' : (b.kissed ? '<span title="キス済み" style="color:#ec4899;margin-left:4px;font-size:0.85em;">💋</span>' : '')}<span style="color:#64748b;font-size:0.85em;margin-left:6px;">（${b.gender === 'female' ? '<span style="color:#e11d48;font-weight:600;">女性</span>' : '男性'}・${BOND_ROLE_LABELS[b.role] || '知人'}）</span>${b.metAge != null ? `<span style="color:#94a3b8;font-size:0.8em;margin-left:5px;">${b.metAge}歳で出会い</span>` : ''}<div style="color:#64748b;font-size:0.78em;margin-top:2px;line-height:1.2;">きっかけ：${escapeHtml(metText)}</div><div style="color:#334155;font-size:0.78em;margin-top:1px;line-height:1.2;font-weight:500;">今の関係：${escapeHtml(relText)}${b.private ? ' <span style="color:#7c3aed;font-weight:600;">[秘密]</span>' : ''}</div></div><div style="flex-shrink:0;display:flex;align-items:center;gap:4px;">${s.age >= 18 && b.status === 'partner' && !s.flags.married ? `<button type="button" onclick="triggerProposal('${b.id}')" style="background:#e11d48;color:#fff;border:none;border-radius:4px;padding:2px 8px;font-size:0.75em;cursor:pointer;font-weight:700;" title="パートナーにプロポーズする">💍 プロポーズ</button>` : ''}<span class="badge" style="background:${b.status === 'spouse' ? '#fdf2f8;color:#be185d;border:1px solid #fbcfe8' : b.status === 'partner' ? '#fef2f2;color:#b91c1c;border:1px solid #fecaca' : b.status === 'close' ? '#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe' : '#f1f5f9;color:#475569;border:1px solid #e2e8f0'};padding:2px 8px;border-radius:10px;font-size:0.8em;font-weight:600;">${({ acquaintance: '知人', close: '親しい友人', partner: '交際中', spouse: '配偶者', former: '元交際', widowed: '死別' })[b.status] || b.status}</span></div></div>`;
+      }[b.status] || b.status;
+      const relText = (b.relationContext && b.relationContext !== b.metContext)
+        ? b.relationContext
+        : fallbackRelText;
+
+      // きっかけから関係性が変化した時のみ「今の関係」を表示
+      const initialStatus = b.initialStatus || (
+        (b.status === 'spouse' || b.status === 'former' || b.status === 'widowed' || (b.status === 'partner' && b.partnerSinceAge != null && b.partnerSinceAge !== b.metAge))
+          ? 'acquaintance'
+          : b.status
+      );
+      const isStatusChanged = b.status !== initialStatus;
+      const hasSpecificRelationContext = !!(b.relationContext && b.relationContext !== b.metContext && b.relationContext !== metText);
+      const isRelationChanged = (hasSpecificRelationContext || isStatusChanged) && (relText !== metText);
+
+      return `<div style="padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;display:flex;justify-content:space-between;align-items:center;gap:6px;"><div style="min-width:0;"><strong style="color:${b.gender === 'female' ? '#e11d48' : '#1e293b'};font-size:0.95em;">${escapeBond(b.name)}</strong>${getSexualPartnerList(s).some(p => p.id === b.id) || b.intimate ? '<span title="肉体関係あり" style="color:#e11d48;margin-left:4px;">❤</span>' : (b.kissed ? '<span title="キス済み" style="color:#ec4899;margin-left:4px;font-size:0.85em;">💋</span>' : '')}<span style="color:#64748b;font-size:0.85em;margin-left:6px;">（${b.gender === 'female' ? '<span style="color:#e11d48;font-weight:600;">女性</span>' : '男性'}・${BOND_ROLE_LABELS[b.role] || '知人'}）</span>${b.metAge != null ? `<span style="color:#94a3b8;font-size:0.8em;margin-left:5px;">${b.metAge}歳で出会い</span>` : ''}<div style="color:#64748b;font-size:0.78em;margin-top:2px;line-height:1.2;">きっかけ：${escapeHtml(metText)}</div>${isRelationChanged ? `<div style="color:#334155;font-size:0.78em;margin-top:1px;line-height:1.2;font-weight:500;">今の関係：${escapeHtml(relText)}${b.private ? ' <span style="color:#7c3aed;font-weight:600;">[秘密]</span>' : ''}</div>` : ''}</div><div style="flex-shrink:0;display:flex;align-items:center;gap:4px;">${s.age >= 18 && b.status === 'partner' && !s.flags.married ? `<button type="button" onclick="triggerProposal('${b.id}')" style="background:#e11d48;color:#fff;border:none;border-radius:4px;padding:2px 8px;font-size:0.75em;cursor:pointer;font-weight:700;" title="パートナーにプロポーズする">💍 プロポーズ</button>` : ''}<span class="badge" style="background:${b.status === 'spouse' ? '#fdf2f8;color:#be185d;border:1px solid #fbcfe8' : b.status === 'partner' ? '#fef2f2;color:#b91c1c;border:1px solid #fecaca' : b.status === 'close' ? '#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe' : '#f1f5f9;color:#475569;border:1px solid #e2e8f0'};padding:2px 8px;border-radius:10px;font-size:0.8em;font-weight:600;">${({ acquaintance: '知人', close: '親しい友人', partner: '交際中', spouse: '配偶者', former: '元交際', widowed: '死別' })[b.status] || b.status}</span></div></div>`;
     }).join('') || '<p class="muted" style="padding:6px 0;">まだ出会いはありません。</p>'}</div></details></div>`;
     if (bondsEl.innerHTML !== newBondsHtml) {
       bondsEl.innerHTML = newBondsHtml;

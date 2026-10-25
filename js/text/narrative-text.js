@@ -51,17 +51,19 @@ function parseChoice(event, index, c) {
 }
 
 function injectPartnerName(str, partner) {
-  if (!str || !partner || !partner.name) return str;
-  const pName = partner.name;
+  if (!str) return str;
+  const pName = partner?.name || '';
   let res = str;
-  res = res.replace(/パートナー/g, pName);
-  res = res.replace(/交際相手/g, pName);
-  res = res.replace(/配偶者/g, pName);
-  res = res.replace(/相手(?=[のとをにはへがから])|相手(?=自身|特有)/g, pName);
-  res = res.replace(/彼(?=[のとをにはへがから])/g, pName);
-  res = res.replace(/夫(?=[のとをにはへがから])/g, pName);
-  if (partner.gender === 'female') {
-    res = res.replace(/彼女(?=[のとをにはへがから])/g, pName);
+
+  // テンプレート記法（{partner}, {partner_name}, {spouse}, {target} 等）をパートナー名で置き換える
+  if (pName) {
+    res = res.replace(/\{(?:partner(?:_?name)?|spouse(?:_?name)?|target(?:_?name)?)\}/gi, pName);
+  } else {
+    res = res.replace(/\{(?:partner(?:_?name)?|target(?:_?name)?)\}/gi, 'パートナー');
+    res = res.replace(/\{spouse(?:_?name)?\}/gi, '配偶者');
+  }
+
+  if (partner && partner.gender === 'female') {
     // 同性パートナー時の汎用テキスト内での身体・行為表現の自然な補正
     res = res.replace(/太い熱情/g, '熱い指先と柔肌');
     res = res.replace(/硬い熱塊|熱く硬くなった肉塊|熱い肉塊/g, '熱く濡れた指先と素肌');
@@ -71,3 +73,4 @@ function injectPartnerName(str, partner) {
   }
   return res;
 }
+

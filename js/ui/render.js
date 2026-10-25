@@ -131,7 +131,32 @@ function render() {
   const bondsEl = document.getElementById('bonds');
   if (bondsEl) {
     const bondsWasOpen = !!document.getElementById('bondDetails')?.open;
-    const newBondsHtml = `<div class="bonds-box"><details id="bondDetails" ${bondsWasOpen ? 'open' : ''}><summary>人間関係：知人 ${s.bonds.filter(b => b.status === 'acquaintance').length} / 親しい友人 ${s.bonds.filter(b => b.status === 'close').length} / 交際中 ${s.bonds.filter(b => b.status === 'partner').length} / 配偶者 ${s.bonds.filter(b => b.status === 'spouse').length} / 合計 ${s.bonds.length}人</summary><div style="padding:6px 0;margin-bottom:8px;border-bottom:1px solid #e2e8f0;font-size:0.9em;"><strong>性経験人数</strong>：${getSexualPartnerCount(s)}人（交際・婚姻関係：${getSexualPartnerList(s).filter(p => p.type === 'bond').length}人 / 逢瀬・風俗・見知らぬ人等：${getSexualPartnerList(s).filter(p => p.type !== 'bond').length}人）</div><div class="exp-list" style="display:flex;flex-direction:column;gap:6px;">${s.bonds.map(b => `<div style="padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;display:flex;justify-content:space-between;align-items:center;gap:6px;"><div style="min-width:0;"><strong style="color:${b.gender === 'female' ? '#e11d48' : '#1e293b'};font-size:0.95em;">${escapeBond(b.name)}</strong>${getSexualPartnerList(s).some(p => p.id === b.id) || b.intimate ? '<span title="肉体関係あり" style="color:#e11d48;margin-left:4px;">❤</span>' : (b.kissed ? '<span title="キス済み" style="color:#ec4899;margin-left:4px;font-size:0.85em;">💋</span>' : '')}<span style="color:#64748b;font-size:0.85em;margin-left:6px;">（${b.gender === 'female' ? '<span style="color:#e11d48;font-weight:600;">女性</span>' : '男性'}・${BOND_ROLE_LABELS[b.role] || '知人'}）</span>${b.metAge != null ? `<span style="color:#94a3b8;font-size:0.8em;margin-left:5px;">${b.metAge}歳で出会い</span>` : ''}${b.metContext ? `<div style="color:#475569;font-size:0.78em;margin-top:2px;">きっかけ・関係：${escapeHtml(b.metContext)}${b.private ? ' <span style="color:#7c3aed;font-weight:600;">[秘密]</span>' : ''}</div>` : ''}</div><div style="flex-shrink:0;"><span class="badge" style="background:${b.status === 'spouse' ? '#fdf2f8;color:#be185d;border:1px solid #fbcfe8' : b.status === 'partner' ? '#fef2f2;color:#b91c1c;border:1px solid #fecaca' : b.status === 'close' ? '#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe' : '#f1f5f9;color:#475569;border:1px solid #e2e8f0'};padding:2px 8px;border-radius:10px;font-size:0.8em;font-weight:600;">${({ acquaintance: '知人', close: '親しい友人', partner: '交際中', spouse: '配偶者', former: '元交際', widowed: '死別' })[b.status] || b.status}</span></div></div>`).join('') || '<p class="muted" style="padding:6px 0;">まだ出会いはありません。</p>'}</div></details></div>`;
+    const newBondsHtml = `<div class="bonds-box"><details id="bondDetails" ${bondsWasOpen ? 'open' : ''}><summary>人間関係：知人 ${s.bonds.filter(b => b.status === 'acquaintance').length} / 親しい友人 ${s.bonds.filter(b => b.status === 'close').length} / 交際中 ${s.bonds.filter(b => b.status === 'partner').length} / 配偶者 ${s.bonds.filter(b => b.status === 'spouse').length} / 合計 ${s.bonds.length}人</summary><div style="padding:6px 0;margin-bottom:8px;border-bottom:1px solid #e2e8f0;font-size:0.9em;"><strong>性経験人数</strong>：${getSexualPartnerCount(s)}人（交際・婚姻関係：${getSexualPartnerList(s).filter(p => p.type === 'bond').length}人 / 逢瀬・風俗・見知らぬ人等：${getSexualPartnerList(s).filter(p => p.type !== 'bond').length}人）</div><div class="exp-list" style="display:flex;flex-direction:column;gap:6px;">${s.bonds.map(b => {
+      const metText = b.metContext || (b.metAge != null ? `${b.metAge}歳で出会い` : '出会い');
+      const fallbackRelText = {
+        spouse: '配偶者',
+        partner: b.private ? '秘密の交際相手' : '交際中',
+        former: '元交際',
+        widowed: '死別した最愛の伴侶',
+        close: '親しい友人',
+        acquaintance: '知人'
+      }[b.status] || b.status;
+      const relText = (b.relationContext && b.relationContext !== b.metContext)
+        ? b.relationContext
+        : fallbackRelText;
+
+      // きっかけから関係性が変化した時のみ「今の関係」を表示
+      const initialStatus = b.initialStatus || (
+        (b.status === 'spouse' || b.status === 'former' || b.status === 'widowed' || (b.status === 'partner' && b.partnerSinceAge != null && b.partnerSinceAge !== b.metAge))
+          ? 'acquaintance'
+          : b.status
+      );
+      const isStatusChanged = b.status !== initialStatus;
+      const hasSpecificRelationContext = !!(b.relationContext && b.relationContext !== b.metContext && b.relationContext !== metText);
+      const isRelationChanged = (hasSpecificRelationContext || isStatusChanged) && (relText !== metText);
+
+      return `<div style="padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;display:flex;justify-content:space-between;align-items:center;gap:6px;"><div style="min-width:0;"><strong style="color:${b.gender === 'female' ? '#e11d48' : '#1e293b'};font-size:0.95em;">${escapeBond(b.name)}</strong>${getSexualPartnerList(s).some(p => p.id === b.id) || b.intimate ? '<span title="肉体関係あり" style="color:#e11d48;margin-left:4px;">❤</span>' : (b.kissed ? '<span title="キス済み" style="color:#ec4899;margin-left:4px;font-size:0.85em;">💋</span>' : '')}<span style="color:#64748b;font-size:0.85em;margin-left:6px;">（${b.gender === 'female' ? '<span style="color:#e11d48;font-weight:600;">女性</span>' : '男性'}・${BOND_ROLE_LABELS[b.role] || '知人'}）</span>${b.metAge != null ? `<span style="color:#94a3b8;font-size:0.8em;margin-left:5px;">${b.metAge}歳で出会い</span>` : ''}<div style="color:#64748b;font-size:0.78em;margin-top:2px;line-height:1.2;">きっかけ：${escapeHtml(metText)}</div>${isRelationChanged ? `<div style="color:#334155;font-size:0.78em;margin-top:1px;line-height:1.2;font-weight:500;">今の関係：${escapeHtml(relText)}${b.private ? ' <span style="color:#7c3aed;font-weight:600;">[秘密]</span>' : ''}</div>` : ''}</div><div style="flex-shrink:0;"><span class="badge" style="background:${b.status === 'spouse' ? '#fdf2f8;color:#be185d;border:1px solid #fbcfe8' : b.status === 'partner' ? '#fef2f2;color:#b91c1c;border:1px solid #fecaca' : b.status === 'close' ? '#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe' : '#f1f5f9;color:#475569;border:1px solid #e2e8f0'};padding:2px 8px;border-radius:10px;font-size:0.8em;font-weight:600;">${({ acquaintance: '知人', close: '親しい友人', partner: '交際中', spouse: '配偶者', former: '元交際', widowed: '死別' })[b.status] || b.status}</span></div></div>`;
+    }).join('') || '<p class="muted" style="padding:6px 0;">まだ出会いはありません。</p>'}</div></details></div>`;
     if (bondsEl.innerHTML !== newBondsHtml) {
       bondsEl.innerHTML = newBondsHtml;
     }
