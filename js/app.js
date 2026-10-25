@@ -52,6 +52,18 @@ function normal(mean = 0, std = 20, r) {
 }
 
 // 仕様書準拠 内部パラメータ辞書 (第4章)
+// 利用可能な大人アバター画像（0001〜0077から削除済みの0013を除外）
+const EXCLUDED_ADULT_PHOTOS = new Set(['photo/0013.png']);
+const AVAILABLE_ADULT_PHOTOS = Array.from({ length: 77 }, (_, i) => {
+  const num = String(i + 1).padStart(4, '0');
+  return `photo/${num}.png`;
+}).filter(p => !EXCLUDED_ADULT_PHOTOS.has(p));
+
+function pickRandomAdultPhoto(rngObj) {
+  const randVal = (rngObj && typeof rngObj.next === 'function') ? rngObj.next() : Math.random();
+  const idx = Math.floor(randVal * AVAILABLE_ADULT_PHOTOS.length);
+  return AVAILABLE_ADULT_PHOTOS[idx] || 'photo/0001.png';
+}
 const TRAIT_KEYS = [
   'constitution', 'cognitive_potential', 'learning_drive', 'extraversion',
   'social_initiative', 'appearance_potential', 'self_worth_disposition',
@@ -3790,7 +3802,7 @@ function getPersonality(st) {
   // 1. 被虐・ドM（乱暴に突き上げられたい、犯されて歓喜）
   if (maso >= 10) {
     carnalList.push({
-      text: maso >= 20 ? '乱暴に突き上げられて悦ぶドM体質' : '犯されて辱められるほど濡れる被虐気質',
+      text: maso >= 20 ? '乱暴にされたいM体質' : '辱められたい被虐気質',
       score: maso * 2.2 + libido * 0.6
     });
   }
@@ -3798,58 +3810,58 @@ function getPersonality(st) {
   // 2. 加虐・淫虐サド（男を支配・搾り取る）
   if (sado >= 10) {
     carnalList.push({
-      text: sado >= 20 ? '男の下半身を支配して弄ぶ淫虐女王' : '男の肉棒を貪り搾り取る肉食系',
+      text: sado >= 20 ? '男を支配して弄ぶ淫虐女王' : '男を貪る肉食系',
       score: sado * 2.2 + libido * 0.6
     });
   }
 
   // 3. 低モラル×高性欲（肉便器・淫売・男喰い・見境なし）
   if (morality <= 8 && libido >= 15) {
-    let t = '誰にでも股を開く肉便器気質';
-    if (morality <= 5 && libido >= 30) t = '見境なくチンポを咥え込む発情雌豚';
+    let t = '誰にでも股を開く';
+    if (morality <= 5 && libido >= 30) t = '見境なく咥え込む発情期';
     else if (morality <= 6) t = '男の精液を欲しがる淫売体質';
-    else t = '貞操観念ゼロの淫乱男喰い';
+    else t = '貞操観念ゼロの淫乱';
     carnalList.push({ text: t, score: (14 - morality) * 3.5 + libido * 1.2 });
   }
 
   // 4. 高恥じらい×高性欲（下唇を噛んで耐える・むっつりスケベ・奥をヒクつかせる）
   if (modesty >= 8 && libido >= 15) {
-    let t = '下唇を噛んで疼きに耐える淫肉';
-    if (modesty >= 18 && libido >= 35) t = '羞恥に震えながら愛液を垂らす雌穴';
-    else if (modesty >= 15) t = '拒みながらも奥をヒクつかせる敏感体質';
-    else t = '恥じらいつつも男の肉棒を欲しがるむっつりスケベ';
+    let t = '疼きに耐える女体';
+    if (modesty >= 18 && libido >= 35) t = '羞恥に震えながら期待する';
+    else if (modesty >= 15) t = '拒みながらも悦ぶ敏感体質';
+    else t = '恥じらいつつも欲しがる';
     carnalList.push({ text: t, score: modesty * 2.2 + libido * 1.0 });
   }
 
   // 5. 超高リビドー・絶え間ない発情（男の肉棒に飢えた発情牝・淫乱肉穴）
   if (libido >= 30) {
     if (libido >= 50) {
-      carnalList.push({ text: '常に愛液で濡れそぼる淫乱肉穴', score: libido * 1.5 });
-      carnalList.push({ text: '男の肉棒に飢えた発情牝', score: libido * 1.35 });
+      carnalList.push({ text: '常に快楽を求める淫乱', score: libido * 1.5 });
+      carnalList.push({ text: '快楽に飢えた発情期', score: libido * 1.35 });
     } else if (libido >= 40) {
-      carnalList.push({ text: '下腹が疼いて止まらない淫乱体質', score: libido * 1.5 });
-      carnalList.push({ text: '男の肉棒に飢えた発情牝', score: libido * 1.35 });
+      carnalList.push({ text: '女体の疼きに従順な淫乱', score: libido * 1.5 });
+      carnalList.push({ text: '快楽に飢えた発情期', score: libido * 1.35 });
     } else {
-      carnalList.push({ text: '男の肉棒に飢えた発情牝', score: libido * 1.4 });
-      carnalList.push({ text: '疼きが収まらない欲求不満の淫肉', score: libido * 1.25 });
+      carnalList.push({ text: '快楽に飢えた発情期', score: libido * 1.4 });
+      carnalList.push({ text: '女体の歓びに目覚めた', score: libido * 1.25 });
     }
   }
 
   // 6. 積極的・痴女・露出・変態的好奇心
   if (initiative >= 12 || risk >= 16 || modesty <= -12) {
-    let t = '自ら股を開いて男を誘惑する痴女気質';
-    if (risk >= 18 && modesty <= -10) t = '人目につく場所で濡れる露出狂気質';
-    else if (initiative >= 15) t = '未知の快楽に奥を疼かせる変態的好奇心';
+    let t = '自ら男を誘惑する痴女気質';
+    if (risk >= 18 && modesty <= -10) t = '人目につく場所で濡れる露出気質';
+    else if (initiative >= 15) t = '未知の快楽に疼く好奇心';
     carnalList.push({ text: t, score: (initiative + risk - modesty) * 1.2 });
   }
 
   // 7. 中〜通常のリビドー
   if (libido >= 12 && libido < 35) {
-    carnalList.push({ text: '男の温もりにすぐ奥を濡らす淫らな身体', score: libido * 0.9 });
+    carnalList.push({ text: '男の温もりに反応する身体', score: libido * 0.9 });
   } else if (libido < 12) {
     // 低リビドー・処女
-    if (modesty >= 10) carnalList.push({ text: '男の影を恐れつつも微かに疼く生娘', score: 14 });
-    else carnalList.push({ text: 'まだ男を知らない未開の処女穴', score: 12 });
+    if (modesty >= 10) carnalList.push({ text: '男の影を恐れつつも微かに疼く体', score: 14 });
+    else carnalList.push({ text: '男を知らない未開の処女', score: 12 });
   }
 
   carnalList.sort((a, b) => b.score - a.score);
@@ -3895,7 +3907,7 @@ function getInterests(st) {
   for (const h of recentHist) {
     const text = `${h.text || ''} ${h.choice || ''} ${h.diary || ''}`;
     if (/恋|告白|付き合|交際|彼氏|彼女|デート|キス|唇|逢瀬|身体|抱か|愛液|絶頂|エッチ|不倫|浮気/.test(text) && st.age >= 11) {
-      if (st.age >= 15) return '濃密な情交・肉体の交わり';
+      if (st.age >= 15) return '濃密な情交・肉体の交わり・快楽の享受';
       return '恋心・逢瀬への憧れ';
     }
     if (/自慰|オナニー|秘所|身体を慰め|疼き|秘密/.test(text) && st.age >= 6) {
@@ -3918,7 +3930,7 @@ function getInterests(st) {
       return '仕事・自立';
     }
     if (/風俗|ソープ|デリヘル/.test(text)) {
-      return '夜の街・春売り';
+      return '夜の街・パパ活';
     }
     if (/家族|母|父|親|兄弟|姉|妹|弟|実家|団らん/.test(text)) {
       return '家族との時間';
@@ -4124,44 +4136,54 @@ function getInternalParamsHtml(st) {
         </details>
       `;
 }
-function render() {
-  normalizeSexuality(s); const locWasOpen = !!document.getElementById('locDetails')?.open; const jobWasOpen = !!document.getElementById('jobDetails')?.open; const experienceWasOpen = !!document.getElementById('experienceDetails')?.open; const bondsWasOpen = !!document.getElementById('bondDetails')?.open; const libidoTierWasOpen = !!document.getElementById('libidoTierDetails')?.open; const moralityWasOpen = !!document.getElementById('moralityDetails')?.open; const historyDebugWasOpen = !!document.getElementById('historyDebugDetails')?.open;
-  const escapeHtml = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const sh = s.sexuality?.sexualHistory || {};
-  const formatSexCard = (rec, label, cls) => {
-    if (!rec) return `<div class="sexual-record-card ${cls}"><div class="sexual-record-label">${label}</div><div class="muted">まだ記録はありません</div></div>`;
-    return `<div class="sexual-record-card ${cls}"><div class="sexual-record-label">${label}：${escapeHtml(rec.age)}歳（相手：${escapeHtml(rec.partnerName)}）</div><div class="sexual-record-meta"><strong>${escapeHtml(rec.title)}</strong>${rec.satisfaction != null ? ` / 満足度 ${escapeHtml(rec.satisfaction)}` : ''}</div><div style="margin-top:2px;">${escapeHtml(rec.description)}</div>${rec.diary ? `<div class="sexual-record-diary">「${escapeHtml(rec.diary)}」</div>` : ''}</div>`;
-  };
-  const sexHistoryHtml = `<div class="sexual-records-box"><h4>心に刻まれた性行為の記憶</h4>${formatSexCard(sh.firstSex, '🌸 初めての性行為（初体験）', 'first')}${formatSexCard(sh.mostMemorable, '🔥 最も心に残った性行為', 'memorable')}${formatSexCard(sh.latestSex, s.finished ? '🌙 人生最後の性行為' : '🌙 最も直近の性行為', 'latest')}</div>`;
-  // Sexual records integrated into experiencePanel
-  const internalParamsWasOpen = !!document.getElementById('internalParamsDetails')?.open;
-  document.getElementById('internalParams').innerHTML = getInternalParamsHtml(s);
-  if (document.getElementById('internalParamsDetails')) document.getElementById('internalParamsDetails').open = internalParamsWasOpen; document.getElementById('bonds').innerHTML = `<div class="bonds-box"><details id="bondDetails" open><summary>人間関係：知人 ${s.bonds.filter(b => b.status === 'acquaintance').length} / 親しい友人 ${s.bonds.filter(b => b.status === 'close').length} / 交際中 ${s.bonds.filter(b => b.status === 'partner').length} / 配偶者 ${s.bonds.filter(b => b.status === 'spouse').length} / 合計 ${s.bonds.length}人</summary><div style="padding:6px 0;margin-bottom:8px;border-bottom:1px solid #e2e8f0;font-size:0.9em;"><strong>性経験人数</strong>：${getSexualPartnerCount(s)}人（交際・婚姻関係：${getSexualPartnerList(s).filter(p => p.type === 'bond').length}人 / 逢瀬・風俗・見知らぬ人等：${getSexualPartnerList(s).filter(p => p.type !== 'bond').length}人）</div><div class="exp-list" style="display:flex;flex-direction:column;gap:6px;">${s.bonds.map(b => `<div style="padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;display:flex;justify-content:space-between;align-items:center;gap:6px;"><div style="min-width:0;"><strong style="color:${b.gender === 'female' ? '#e11d48' : '#1e293b'};font-size:0.95em;">${escapeBond(b.name)}</strong>${getSexualPartnerList(s).some(p => p.id === b.id) || b.intimate ? '<span title="肉体関係あり" style="color:#e11d48;margin-left:4px;">❤</span>' : (b.kissed ? '<span title="キス済み" style="color:#ec4899;margin-left:4px;font-size:0.85em;">💋</span>' : '')}<span style="color:#64748b;font-size:0.85em;margin-left:6px;">（${b.gender === 'female' ? '<span style="color:#e11d48;font-weight:600;">女性</span>' : '男性'}・${BOND_ROLE_LABELS[b.role] || '知人'}）</span>${b.metAge != null ? `<span style="color:#94a3b8;font-size:0.8em;margin-left:5px;">${b.metAge}歳で出会い</span>` : ''}${b.metContext ? `<div style="color:#475569;font-size:0.78em;margin-top:2px;">きっかけ・関係：${escapeHtml(b.metContext)}${b.private ? ' <span style="color:#7c3aed;font-weight:600;">[秘密]</span>' : ''}</div>` : ''}</div><div style="flex-shrink:0;"><span class="badge" style="background:${b.status === 'spouse' ? '#fdf2f8;color:#be185d;border:1px solid #fbcfe8' : b.status === 'partner' ? '#fef2f2;color:#b91c1c;border:1px solid #fecaca' : b.status === 'close' ? '#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe' : '#f1f5f9;color:#475569;border:1px solid #e2e8f0'};padding:2px 8px;border-radius:10px;font-size:0.8em;font-weight:600;">${({ acquaintance: '知人', close: '親しい友人', partner: '交際中', spouse: '配偶者', former: '元交際', widowed: '死別' })[b.status] || b.status}</span></div></div>`).join('') || '<p class="muted" style="padding:6px 0;">まだ出会いはありません。</p>'}</div></details></div>`;
-  const exp = s.sexuality.experience;
-  const expLabels = { multiple_relationship: '合意のある複数交際', secret_relationship: '秘密の交際', friendship: '親交', rejection: '意思の尊重', reunion: '再会', reflection: '振り返り', privacy: '非公開', intimacy: '身体的な親密さ', masturbation: '自慰', relationship: '交際・婚姻', boundary: '境界線', communication: '対話', meeting: '出会い', disclosure: '公開・秘密', breakup: '別れ・破局', bereavement: '死別' };
-  const expCounts = {}; for (const e of exp) { const label = expLabels[e.kind] || 'その他'; expCounts[label] = (expCounts[label] || 0) + 1; }
-  const sexualRecordsWasOpen = document.getElementById('sexualRecordsDetails') ? document.getElementById('sexualRecordsDetails').open : true;
-  const sexualRecordsHtml = `<details class="sexual-records-box" id="sexualRecordsDetails" ${sexualRecordsWasOpen ? 'open' : ''} style="margin:7px 0 9px;background:#faf4f8;border:1px solid #ebdbe5;border-radius:8px;padding:8px;"><summary style="cursor:pointer;font-size:11.5px;font-weight:700;color:#6a4a70;outline:none;">心に刻まれた性行為の記憶 ▾</summary><div style="margin-top:6px;">${formatSexCard(sh.firstSex, '🌸 初めての性行為（初体験）', 'first')}${formatSexCard(sh.mostMemorable, '🔥 最も心に残った性行為', 'memorable')}${formatSexCard(sh.latestSex, s.finished ? '🌙 人生最後の性行為' : '🌙 最も直近の性行為', 'latest')}</div></details>`;
-  document.getElementById('experiencePanel').innerHTML = `<div class="experience-panel"><details id="experienceDetails"><summary>性的・親密な経験　${exp.length}件 ▾</summary>${sexualRecordsHtml}<div class="exp-counts">${Object.entries(expCounts).map(([k, v]) => `${escapeHtml(k)} ${v}件`).join(' / ') || '記録なし'}</div><div class="exp-list">${exp.length ? exp.slice().reverse().map(e => `<div class="exp-entry"><div class="exp-meta">${escapeHtml(e.age)}歳 ・ ${escapeHtml(expLabels[e.kind] || 'その他')}${e.private ? ' ・ 非公開' : ''}</div><div>${escapeHtml(e.description)}</div>${e.partnerId ? `<div class="exp-meta">相手：${escapeHtml(s.bonds.find(b => b.id === e.partnerId)?.name || '不明')}（${escapeHtml(e.partnerId)}）</div>` : ''}${e.satisfaction != null ? `<div class="exp-meta">満足感 ${escapeHtml(e.satisfaction)}</div>` : ''}</div>`).join('') : '<div class="exp-empty">まだ経験の記録はありません。出会い・交際・親密さに関する出来事が起きると、ここに追加されます。</div>'}</div></details></div>`;
-  if (!s.photo || !['photo/0001.png', 'photo/0002.png'].includes(s.photo)) {
-    const randVal = (rng && typeof rng.next === 'function') ? rng.next() : Math.random();
-    const photoNum = String(Math.floor(randVal * 2) + 1).padStart(4, '0');
-    s.photo = `photo/${photoNum}.png`;
+function updateIdentity(s, currentPhoto, escapeHtml) {
+  const el = document.getElementById('identity');
+  if (!el) return;
+  const img = el.querySelector('.identity-avatar');
+  const h2 = el.querySelector('h2');
+  const p = el.querySelector('p.muted');
+  const newH2 = `${escapeHtml(s.name)} · ${s.age}歳 ${s.finished ? '（終了）' : ''} <span class="badge" style="background:#e0e7ff;color:#3730a3;padding:2px 10px;border-radius:12px;font-size:0.65em;font-weight:600;vertical-align:middle;">${escapeHtml(s.occupation || '学生')}</span>`;
+  const newP = `${s.age < 6 ? '幼少期' : s.age < 18 ? '学生時代' : s.age < 65 ? '成人期' : 'シニア期'} / 人間関係 ${s.relationships}件`;
+
+  if (!img || !h2 || !p) {
+    el.innerHTML = `<div class="identity-wrapper"><img src="${currentPhoto}" class="identity-avatar" alt="${escapeHtml(s.name)}" title="タップして拡大" onerror="if (!this.dataset.fallback) { this.dataset.fallback='child'; this.src='photo/child01.png'; } else if (this.dataset.fallback==='child') { this.dataset.fallback='default'; this.src='photo/0001.png'; }" onclick="window.openPhotoModal(this.src)"><div class="identity-text"><h2>${newH2}</h2><p class="muted" style="margin:2px 0 0;">${newP}</p></div></div>`;
+    return;
   }
-  let currentPhoto = s.photo;
-  if (s.age <= 3) {
-    currentPhoto = 'photo/0000-0.png';
-  } else if (s.age <= 11) {
-    currentPhoto = s.photo ? s.photo.replace(/\.png$/, '-1.png') : s.photo;
+  if (img.getAttribute('src') !== currentPhoto) {
+    img.setAttribute('src', currentPhoto);
   }
-  document.getElementById('identity').innerHTML = `<div class="identity-wrapper"><img src="${currentPhoto}" class="identity-avatar" alt="${escapeHtml(s.name)}" title="タップして拡大" onerror="if (!this.dataset.fallback) { this.dataset.fallback='1'; this.src='${s.photo}'; }" onclick="window.openPhotoModal(this.src)"><div class="identity-text"><h2>${escapeHtml(s.name)} · ${s.age}歳 ${s.finished ? '（終了）' : ''} <span class="badge" style="background:#e0e7ff;color:#3730a3;padding:2px 10px;border-radius:12px;font-size:0.65em;font-weight:600;vertical-align:middle;">${escapeHtml(s.occupation || '学生')}</span></h2><p class="muted" style="margin:2px 0 0;">${s.age < 6 ? '幼少期' : s.age < 18 ? '学生時代' : s.age < 65 ? '成人期' : 'シニア期'} / 人間関係 ${s.relationships}件</p></div></div>`;
-  const persEl = document.getElementById('personalityInterest');
-  if (persEl) persEl.innerHTML = getPersonalityAndInterestsHtml(s);
-  document.getElementById('partnerStatus').innerHTML = getPartnerSummary(s);
-  const locEl = document.getElementById('location');
-  if (locEl) locEl.innerHTML = `<div class="location-box" style="display:none;"></div>`;
-  if (document.getElementById('locApply')) document.getElementById('locApply').onclick = () => { if (s.pending || s.finished) { alert('選択待ち・人生終了時は変更できません'); return } const next = { terrain: document.getElementById('locTerrain').value, district: document.getElementById('locDistrict').value }; if (setLocation(next, '居住地変更')) { apply({ money: -5, stress: 2 }); s.rngState = rng.state() } render() };
-  if (document.getElementById('jobApply')) document.getElementById('jobApply').onclick = () => { if (s.pending || s.finished) { alert('選択待ち・人生終了時は変更できません'); return } const nextJob = document.getElementById('jobSelect').value; if (nextJob && nextJob !== s.occupation) { const old = s.occupation; s.occupation = nextJob; if (nextJob === '学生') s.flags.university = s.age >= 18; if (nextJob === '一般職') s.flags.employed = true; log(`職業を「${old}」から「${nextJob}」に変更した。`); s.rngState = rng.state(); render() } };
+  if (img.getAttribute('alt') !== s.name) {
+    img.setAttribute('alt', s.name);
+  }
+  if (h2.innerHTML !== newH2) h2.innerHTML = newH2;
+  if (p.innerHTML !== newP) p.innerHTML = newP;
+}
+
+function updateStats(s) {
+  const statsEl = document.getElementById('stats');
+  if (!statsEl) return;
+  const statNodes = statsEl.querySelectorAll('.stat');
+  if (statNodes.length === DISPLAY_KEYS.length) {
+    DISPLAY_KEYS.forEach(([k, label], i) => {
+      const val = s.display[k];
+      const color = val > 0 ? '#1e7b85' : val < 0 ? '#b91c1c' : '#475569';
+      const b = statNodes[i].querySelector('b');
+      const text = (val > 0 ? '+' : '') + val;
+      if (b) {
+        if (b.textContent !== text) b.textContent = text;
+        if (b.style.color !== color) b.style.color = color;
+      }
+    });
+  } else {
+    statsEl.innerHTML = DISPLAY_KEYS.map(([k, label]) => {
+      const val = s.display[k];
+      const color = val > 0 ? '#1e7b85' : val < 0 ? '#b91c1c' : '#475569';
+      return `<div class="stat"><span class="muted">${label}</span><b style="color:${color}">${val > 0 ? '+' : ''}${val}</b></div>`;
+    }).join('');
+  }
+}
+
+function bindInternalParamHandlers() {
   const libidoApplyBtn = document.getElementById('libidoTierApply');
   if (libidoApplyBtn) {
     libidoApplyBtn.onclick = () => {
@@ -4198,11 +4220,126 @@ function render() {
       render();
     };
   }
-  document.getElementById('stats').innerHTML = DISPLAY_KEYS.map(([k, label]) => {
-    const val = s.display[k];
-    const color = val > 0 ? '#1e7b85' : val < 0 ? '#b91c1c' : '#475569';
-    return `<div class="stat"><span class="muted">${label}</span><b style="color:${color}">${val > 0 ? '+' : ''}${val}</b></div>`;
-  }).join(''); const rawEvent = eventDefs.find(x => x.id === s.pending);
+}
+
+function render() {
+  normalizeSexuality(s);
+  const locWasOpen = !!document.getElementById('locDetails')?.open;
+  const jobWasOpen = !!document.getElementById('jobDetails')?.open;
+  const historyDebugWasOpen = !!document.getElementById('historyDebugDetails')?.open;
+  const bondsWasOpen = !!document.getElementById('bondDetails')?.open;
+  const libidoTierWasOpen = !!document.getElementById('libidoTierDetails')?.open;
+  const moralityWasOpen = !!document.getElementById('moralityDetails')?.open;
+  const experienceWasOpen = !!document.getElementById('experienceDetails')?.open;
+  const internalParamsWasOpen = !!document.getElementById('internalParamsDetails')?.open;
+  const escapeHtml = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const sh = s.sexuality?.sexualHistory || {};
+  const formatSexCard = (rec, label, cls) => {
+    if (!rec) return `<div class="sexual-record-card ${cls}"><div class="sexual-record-label">${label}</div><div class="muted">まだ記録はありません</div></div>`;
+    return `<div class="sexual-record-card ${cls}"><div class="sexual-record-label">${label}：${escapeHtml(rec.age)}歳（相手：${escapeHtml(rec.partnerName)}）</div><div class="sexual-record-meta"><strong>${escapeHtml(rec.title)}</strong>${rec.satisfaction != null ? ` / 満足度 ${escapeHtml(rec.satisfaction)}` : ''}</div><div style="margin-top:2px;">${escapeHtml(rec.description)}</div>${rec.diary ? `<div class="sexual-record-diary">「${escapeHtml(rec.diary)}」</div>` : ''}</div>`;
+  };
+
+  // 左ステータス領域のスクロール位置を退避
+  const profilePanel = document.querySelector('.profile-panel');
+  const prevProfileScroll = profilePanel ? profilePanel.scrollTop : 0;
+
+  // 内部パラメータ表示
+  const internalParamsEl = document.getElementById('internalParams');
+  if (internalParamsEl) {
+    const newInternalHtml = getInternalParamsHtml(s);
+    if (internalParamsEl.innerHTML !== newInternalHtml) {
+      internalParamsEl.innerHTML = newInternalHtml;
+      const ipd = document.getElementById('internalParamsDetails');
+      if (ipd) ipd.open = internalParamsWasOpen;
+      const ltd = document.getElementById('libidoTierDetails');
+      if (ltd) ltd.open = libidoTierWasOpen;
+      const md = document.getElementById('moralityDetails');
+      if (md) md.open = moralityWasOpen;
+      bindInternalParamHandlers();
+    }
+  }
+
+  // デスクトップ／スマホに応じた人間関係パネルの配置を同期
+  updateBondsPanelPosition();
+
+  // 人間関係
+  const bondsEl = document.getElementById('bonds');
+  if (bondsEl) {
+    const bondsWasOpen = !!document.getElementById('bondDetails')?.open;
+    const newBondsHtml = `<div class="bonds-box"><details id="bondDetails" ${bondsWasOpen ? 'open' : ''}><summary>人間関係：知人 ${s.bonds.filter(b => b.status === 'acquaintance').length} / 親しい友人 ${s.bonds.filter(b => b.status === 'close').length} / 交際中 ${s.bonds.filter(b => b.status === 'partner').length} / 配偶者 ${s.bonds.filter(b => b.status === 'spouse').length} / 合計 ${s.bonds.length}人</summary><div style="padding:6px 0;margin-bottom:8px;border-bottom:1px solid #e2e8f0;font-size:0.9em;"><strong>性経験人数</strong>：${getSexualPartnerCount(s)}人（交際・婚姻関係：${getSexualPartnerList(s).filter(p => p.type === 'bond').length}人 / 逢瀬・風俗・見知らぬ人等：${getSexualPartnerList(s).filter(p => p.type !== 'bond').length}人）</div><div class="exp-list" style="display:flex;flex-direction:column;gap:6px;">${s.bonds.map(b => `<div style="padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;display:flex;justify-content:space-between;align-items:center;gap:6px;"><div style="min-width:0;"><strong style="color:${b.gender === 'female' ? '#e11d48' : '#1e293b'};font-size:0.95em;">${escapeBond(b.name)}</strong>${getSexualPartnerList(s).some(p => p.id === b.id) || b.intimate ? '<span title="肉体関係あり" style="color:#e11d48;margin-left:4px;">❤</span>' : (b.kissed ? '<span title="キス済み" style="color:#ec4899;margin-left:4px;font-size:0.85em;">💋</span>' : '')}<span style="color:#64748b;font-size:0.85em;margin-left:6px;">（${b.gender === 'female' ? '<span style="color:#e11d48;font-weight:600;">女性</span>' : '男性'}・${BOND_ROLE_LABELS[b.role] || '知人'}）</span>${b.metAge != null ? `<span style="color:#94a3b8;font-size:0.8em;margin-left:5px;">${b.metAge}歳で出会い</span>` : ''}${b.metContext ? `<div style="color:#475569;font-size:0.78em;margin-top:2px;">きっかけ・関係：${escapeHtml(b.metContext)}${b.private ? ' <span style="color:#7c3aed;font-weight:600;">[秘密]</span>' : ''}</div>` : ''}</div><div style="flex-shrink:0;"><span class="badge" style="background:${b.status === 'spouse' ? '#fdf2f8;color:#be185d;border:1px solid #fbcfe8' : b.status === 'partner' ? '#fef2f2;color:#b91c1c;border:1px solid #fecaca' : b.status === 'close' ? '#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe' : '#f1f5f9;color:#475569;border:1px solid #e2e8f0'};padding:2px 8px;border-radius:10px;font-size:0.8em;font-weight:600;">${({ acquaintance: '知人', close: '親しい友人', partner: '交際中', spouse: '配偶者', former: '元交際', widowed: '死別' })[b.status] || b.status}</span></div></div>`).join('') || '<p class="muted" style="padding:6px 0;">まだ出会いはありません。</p>'}</div></details></div>`;
+    if (bondsEl.innerHTML !== newBondsHtml) {
+      bondsEl.innerHTML = newBondsHtml;
+    }
+  }
+
+  // 性的・親密な経験パネル
+  const exp = s.sexuality.experience;
+  const expLabels = { multiple_relationship: '合意のある複数交際', secret_relationship: '秘密の交際', friendship: '親交', rejection: '意思の尊重', reunion: '再会', reflection: '振り返り', privacy: '非公開', intimacy: '身体的な親密さ', masturbation: '自慰', relationship: '交際・婚姻', boundary: '境界線', communication: '対話', meeting: '出会い', disclosure: '公開・秘密', breakup: '別れ・破局', bereavement: '死別' };
+  const expCounts = {}; for (const e of exp) { const label = expLabels[e.kind] || 'その他'; expCounts[label] = (expCounts[label] || 0) + 1; }
+  const expPanel = document.getElementById('experiencePanel');
+  if (expPanel) {
+    const experienceWasOpen = !!document.getElementById('experienceDetails')?.open;
+    const sexualRecordsWasOpen = document.getElementById('sexualRecordsDetails') ? document.getElementById('sexualRecordsDetails').open : true;
+    const sexualRecordsHtml = `<details class="sexual-records-box" id="sexualRecordsDetails" ${sexualRecordsWasOpen ? 'open' : ''} style="margin:7px 0 9px;background:#faf4f8;border:1px solid #ebdbe5;border-radius:8px;padding:8px;"><summary style="cursor:pointer;font-size:11.5px;font-weight:700;color:#6a4a70;outline:none;">心に刻まれた性行為の記憶 ▾</summary><div style="margin-top:6px;">${formatSexCard(sh.firstSex, '🌸 初めての性行為（初体験）', 'first')}${formatSexCard(sh.mostMemorable, '🔥 最も心に残った性行為', 'memorable')}${formatSexCard(sh.latestSex, s.finished ? '🌙 人生最後の性行為' : '🌙 最も直近の性行為', 'latest')}</div></details>`;
+    const newExpHtml = `<div class="experience-panel"><details id="experienceDetails" ${experienceWasOpen ? 'open' : ''}><summary>性的・親密な経験　${exp.length}件 ▾</summary>${sexualRecordsHtml}<div class="exp-counts">${Object.entries(expCounts).map(([k, v]) => `${escapeHtml(k)} ${v}件`).join(' / ') || '記録なし'}</div><div class="exp-list">${exp.length ? exp.slice().reverse().map(e => `<div class="exp-entry"><div class="exp-meta">${escapeHtml(e.age)}歳 ・ ${escapeHtml(expLabels[e.kind] || 'その他')}${e.private ? ' ・ 非公開' : ''}</div><div>${escapeHtml(e.description)}</div>${e.partnerId ? `<div class="exp-meta">相手：${escapeHtml(s.bonds.find(b => b.id === e.partnerId)?.name || '不明')}（${escapeHtml(e.partnerId)}）</div>` : ''}${e.satisfaction != null ? `<div class="exp-meta">満足感 ${escapeHtml(e.satisfaction)}</div>` : ''}</div>`).join('') : '<div class="exp-empty">まだ経験の記録はありません。出会い・交際・親密さに関する出来事が起きると、ここに追加されます。</div>'}</div></details></div>`;
+    if (expPanel.innerHTML !== newExpHtml) {
+      expPanel.innerHTML = newExpHtml;
+    }
+  }
+
+  // アバター選択バリデーション
+  if (!s.photo || !AVAILABLE_ADULT_PHOTOS.includes(s.photo)) {
+    s.photo = pickRandomAdultPhoto(rng);
+  }
+  const infancyList = ['photo/infancy01.png', 'photo/infancy02.png', 'photo/infancy03.png'];
+  if (!s.infancyPhoto || !infancyList.includes(s.infancyPhoto)) {
+    const randVal = (rng && typeof rng.next === 'function') ? rng.next() : Math.random();
+    s.infancyPhoto = infancyList[Math.floor(randVal * infancyList.length)];
+  }
+  const knownDedicatedChilds = ['photo/0001-1.png', 'photo/0002-1.png', 'photo/0003-1.png'];
+  let currentPhoto = s.photo;
+  if (s.age <= 3) {
+    currentPhoto = s.infancyPhoto || 'photo/infancy01.png';
+  } else if (s.age <= 11) {
+    const dedicated = s.photo ? s.photo.replace(/\.png$/, '-1.png') : null;
+    currentPhoto = (dedicated && knownDedicatedChilds.includes(dedicated)) ? dedicated : 'photo/child01.png';
+  }
+
+  // アバター・名前のインプレース更新（画像再読み込み点滅を防止）
+  updateIdentity(s, currentPhoto, escapeHtml);
+
+  // 性格・パートナー
+  const persEl = document.getElementById('personalityInterest');
+  if (persEl) {
+    const newPersHtml = getPersonalityAndInterestsHtml(s);
+    if (persEl.innerHTML !== newPersHtml) persEl.innerHTML = newPersHtml;
+  }
+  const partnerEl = document.getElementById('partnerStatus');
+  if (partnerEl) {
+    const newPartnerHtml = getPartnerSummary(s);
+    if (partnerEl.innerHTML !== newPartnerHtml) partnerEl.innerHTML = newPartnerHtml;
+  }
+
+  const locEl = document.getElementById('location');
+  if (locEl && !locEl.innerHTML) locEl.innerHTML = `<div class="location-box" style="display:none;"></div>`;
+  if (document.getElementById('locApply') && !document.getElementById('locApply').dataset.bound) {
+    document.getElementById('locApply').dataset.bound = '1';
+    document.getElementById('locApply').onclick = () => { if (s.pending || s.finished) { alert('選択待ち・人生終了時は変更できません'); return } const next = { terrain: document.getElementById('locTerrain').value, district: document.getElementById('locDistrict').value }; if (setLocation(next, '居住地変更')) { apply({ money: -5, stress: 2 }); s.rngState = rng.state() } render() };
+  }
+  if (document.getElementById('jobApply') && !document.getElementById('jobApply').dataset.bound) {
+    document.getElementById('jobApply').dataset.bound = '1';
+    document.getElementById('jobApply').onclick = () => { if (s.pending || s.finished) { alert('選択待ち・人生終了時は変更できません'); return } const nextJob = document.getElementById('jobSelect').value; if (nextJob && nextJob !== s.occupation) { const old = s.occupation; s.occupation = nextJob; if (nextJob === '学生') s.flags.university = s.age >= 18; if (nextJob === '一般職') s.flags.employed = true; log(`職業を「${old}」から「${nextJob}」に変更した。`); s.rngState = rng.state(); render() } };
+  }
+
+  // ステータス表示のインプレース更新（点滅を防止）
+  updateStats(s);
+
+  // 左パネルのスクロール位置を復元
+  if (profilePanel && profilePanel.scrollTop !== prevProfileScroll) {
+    profilePanel.scrollTop = prevProfileScroll;
+  }
+
+  const rawEvent = eventDefs.find(x => x.id === s.pending);
   const e = getEventCurrent(rawEvent);
   const eventContainer = document.getElementById('event');
   if (s.pending === 'multiple_relationship') {
@@ -4466,9 +4603,10 @@ function start(seed = (Date.now() >>> 0)) {
   if (typeof clearTimeout !== "undefined") clearTimeout(autoPlayTimer);
   s = makeState(seed);
   rng = random(s.rngState);
-  const randVal = (rng && typeof rng.next === 'function') ? rng.next() : Math.random();
-  const photoNum = String(Math.floor(randVal * 2) + 1).padStart(4, '0');
-  s.photo = `photo/${photoNum}.png`;
+  s.photo = pickRandomAdultPhoto(rng);
+  const infancyList = ['photo/infancy01.png', 'photo/infancy02.png', 'photo/infancy03.png'];
+  const infancyRand = (rng && typeof rng.next === 'function') ? rng.next() : Math.random();
+  s.infancyPhoto = infancyList[Math.floor(infancyRand * infancyList.length)];
 
   // 本人の誕生月から人生が始まる（0歳0ヶ月）
   const bm = s.birth_month || 4;
@@ -4518,7 +4656,10 @@ function syncProfileSummaryHeight() {
   if (summary) {
     const h = Math.ceil(summary.getBoundingClientRect().height);
     if (h > 0) {
-      document.documentElement.style.setProperty('--profile-summary-height', `${h}px`);
+      const currentVal = document.documentElement.style.getPropertyValue('--profile-summary-height');
+      if (currentVal !== `${h}px`) {
+        document.documentElement.style.setProperty('--profile-summary-height', `${h}px`);
+      }
     }
   }
 }
@@ -4573,7 +4714,7 @@ window.addEventListener('keydown', e => {
 });
 
 // デスクトップ／スマホに応じた「人間関係パネル」の動的配置切り替え
-// デスクトップ：左カラムのパラメータ（#stats）直下
+// デスクトップ：左カラムのパラメータ（#stats）直下（性的・親密な経験パネルの上）
 // スマホ：操作パネル（.play-panel）の上（.workspace直下）
 function updateBondsPanelPosition() {
   const bondsPanel = document.querySelector('.bonds-panel');
@@ -4582,13 +4723,13 @@ function updateBondsPanelPosition() {
   if (isMobile) {
     const playPanel = document.querySelector('.play-panel');
     const workspace = document.querySelector('.workspace');
-    if (playPanel && workspace && bondsPanel.parentElement !== workspace) {
+    if (playPanel && workspace && bondsPanel.nextElementSibling !== playPanel) {
       workspace.insertBefore(bondsPanel, playPanel);
     }
   } else {
     const stats = document.getElementById('stats');
     const profilePanel = document.querySelector('.profile-panel');
-    if (stats && profilePanel && bondsPanel.parentElement !== profilePanel) {
+    if (stats && profilePanel && stats.nextElementSibling !== bondsPanel) {
       stats.insertAdjacentElement('afterend', bondsPanel);
     }
   }
