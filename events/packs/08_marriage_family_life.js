@@ -1904,6 +1904,9 @@ window.defineEvent({
   "presets": [
     "has_children"
   ],
+  "requires": function (s) {
+    return !!(s.flags?.hasChildren && s.flags?.child_born && s.flags?.childBirthAge && (s.age - s.flags.childBirthAge) >= 18);
+  },
   "weight": 22,
   "once": true,
   "is_major": true,
@@ -3581,3 +3584,173 @@ window.defineEvent({
     }
   ]
 });
+
+window.defineEvent({
+  "id": "story_pregnancy_discovery",
+  "title": "微熱の朝と膨らむ乳房・宿った新しい命",
+  "age": [
+    20,
+    45
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "married",
+    "male_partner"
+  ],
+  "requires": function (s) {
+    return hasSpouse(s) && hasMalePartner(s) && !s.flags?.hasChildren && !s.flags?.pregnant && !s.flags?.childfree_chosen;
+  },
+  "text": "ここ最近、身体の奥がずっと微熱を帯びているようにぽかぽかと熱く、朝起きると胃の腑が微かにムカムカと波打っていた。お風呂上がりに鏡を見ると、普段よりも明らかにふっくらと張り詰めた乳房。下着のレースが擦れるだけでツンと尖り、痛痒い熱を放つ乳頭。予定日を二週間も過ぎた月経。洗面所の戸を閉め、震える指先で検査薬を握りしめると、窓にはくっきりと鮮やかな二本の赤紫色のラインが浮かび上がっていた。息を呑み、下腹にそっと手のひらを重ねる。私の子宮の中に、{partner}と愛し合った証である小さな小さな命が宿っている……！ リビングでくつろぐ{partner}に駆け寄り、涙で潤んだ瞳で検査薬を差し出した。",
+  "choices": [
+    {
+      "id": "choice_pregnancy_joy_tears",
+      "label": "「私たち、お父さんとお母さんになるんだね」と抱きついて涙を流す",
+      "effects": {
+        "happiness": 8,
+        "stress": -3,
+        "morality": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "{partner}は目を見開いて検査薬を見つめた後、叫び声をあげて私をきつく抱きしめてくれた。「ありがとう……！ 本当にありがとう！」。二人で抱き合って涙を流し、新しい命を迎える喜びに胸を震わせた。",
+          "diary": "妊娠が判明した。{partner}に伝えると、涙を流して全身で喜んでくれた。私のお腹の中に、二人のかけがえのない命が息づいている。"
+        }
+      ]
+    },
+    {
+      "id": "choice_pregnancy_caress_bliss",
+      "label": "母となる身体の変化を愛おしむように、張った胸とお腹を夫の手で優しく撫でてもらう",
+      "effects": {
+        "happiness": 7,
+        "intimacyNeed": 5,
+        "sexualEffects": {
+          "intimacy": 12,
+          "libido": 8
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "ソファに並んで腰掛け、{partner}の大きく温かい手が私のパジャマの下へと滑り込んできた。熱く張った乳房を慈しむように手のひらで包まれ、下腹を撫でられると、身体の芯から甘い疼きと母性の歓喜が溢れ出した。「絶対に二人で大切に守ろうね」と交わしたキスの甘さに、うっとりと身を委ねた。",
+          "diary": "妊娠を打ち明けると、{partner}は愛おしそうに私の胸とお腹を優しく撫でてくれた。母になる身体の神秘と幸福な温もりに包まれ、一生忘れられない夜になった。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_childbirth_miracle",
+  "title": "陣痛の嵐と最初の産声・ふたりの愛の結晶",
+  "age": [
+    20,
+    46
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "partnered"
+  ],
+  "requires": function (s) {
+    return !!s.flags?.pregnant;
+  },
+  "text": "深夜、下腹部を締め上げるような鋭い激痛と破水。病院の分娩台の上で、私は全身に玉の汗をびっしりと浮かべ、呼吸を荒げていた。「息を吸って、長く吐いて！」。助産師の声に合わせ、陣痛の大きな波が押し寄せるたびに、奥歯を噛みしめて下腹に渾身の力を込める。隣で私の右手を両手できつく握りしめる{partner}の手は、痛ましいほどに震え、汗と涙で濡れていた。「頑張れ、もうすぐ頭が見えてるぞ！ 頑張れ……！」。激痛で引き裂かれそうな骨盤の奥から、熱くぬめりけのある大きな塊が滑り出していく感覚。その瞬間——「オギャァ！ オギャァ！」と、張り詰めた静寂を破って高らかな産声が分娩室いっぱいに響き渡った……！",
+  "choices": [
+    {
+      "id": "choice_childbirth_hold_baby",
+      "label": "胸の上に置かれた赤ちゃんの柔らかな体温と匂いに、涙を流して感謝を告げる",
+      "effects": {
+        "happiness": 10,
+        "stress": -5,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "助産師の手によって、臍の緒を切られたばかりの我が子が私の胸元へと抱き上げられた。湿り気を帯びた柔らかな産毛、ミルクのような甘い匂い、小さな身体から放たれる熱い命の鼓動。極限の疲労が歓喜の涙となって溢れ、「生まれてきてくれてありがとう……」と掠れた声で囁いた。",
+          "diary": "元気な赤ちゃんを出産した。胸の上に置かれた小さな体温を感じた瞬間、涙が止まらなかった。命がけでこの世に送り出した我が子。私の宝物。"
+        }
+      ]
+    },
+    {
+      "id": "choice_childbirth_husband_hand",
+      "label": "泣き崩れる{partner}と額を合わせ、愛の結晶の誕生をふたりで分かち合う",
+      "effects": {
+        "happiness": 9,
+        "passion": 3,
+        "morality": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "{partner}は分娩台の脇で子供の顔を見つめ、大粒の涙をボロボロとこぼしながら私の額に優しく唇を落とした。「本当によく頑張ってくれた……二人とも、世界で一番愛してる」。二人の愛が形になった奇跡に、これ以上ない至福が満ちていた。",
+          "diary": "夫に手を握られながら我が子を産み落とした。泣きじゃくりながら感謝を伝えてくれた{partner}の顔を見て、この人と夫婦になれて本当に良かったと心から実感した。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_tender_days",
+  "title": "深夜の授乳と寄り添う寝息・母としての目覚め",
+  "age": [
+    20,
+    50
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    return !!(s.flags?.hasChildren && s.flags?.child_born && !s.flags?.seen_parenting_story);
+  },
+  "text": "夜中の二時。暗い寝室に響く赤ちゃんの泣き声で目を覚ます。まだ重い身体を起こし、薄暗いリビングのソファに腰掛けてパジャマの前ボタンを外す。母乳でパンパンに張った乳房を露わにし、ぐずる我が子の小さな口へと乳頭を含ませる。ちゅく……ちゅく……と夢中で吸い付かれるたび、乳腺の奥からツーんと痛痒い快感が全身を駆け抜け、下腹部がじわりと熱く潤んでいく。母性としての深い安らぎと、身体の奥が疼くような生々しい感覚が混ざり合う、甘く切ないひととき。「起きてたの？ 代わろうか」。寝室から起きてきた{partner}が、背中から私を包み込むようにそっと抱き寄せてくれた……。",
+  "choices": [
+    {
+      "id": "choice_parenting_nurse_bliss",
+      "label": "我が子の吸い付くぬくもりに身を委ね、母としての幸福な繋がりに胸を満たす",
+      "effects": {
+        "happiness": 6,
+        "stress": -3,
+        "selfKnowledge": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "小さな手でおっぱいをぎゅっと握りしめながら、夢中で母乳を飲む我が子の頭を優しく撫でた。やがて満腹になって満足そうに吐息を漏らす寝顔に、寝不足の疲労も一瞬で吹き飛んでいった。",
+          "diary": "深夜の授乳。静まり返った部屋で我が子におっぱいを吸わせていると、何ものにも代え難い愛おしさと生命の繋がりを感じる。母になれた喜びを噛み締める毎日。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_husband_embrace",
+      "label": "{partner}の胸に背中を預け、育児の合間に夫の体温と愛撫で温められる",
+      "effects": {
+        "happiness": 7,
+        "intimacyNeed": 4,
+        "sexualEffects": {
+          "intimacy": 10,
+          "libido": 6
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "赤ちゃんが眠りについた後、{partner}が授乳で火照った私の胸元にそっと優しく唇を落としてくれた。「毎日お疲れ様。すごく綺麗なお母さんになったね」。父親と母親になりながらも、男と女として求め合える愛の深さに、甘やかな吐息が漏れた。",
+          "diary": "授乳の後、{partner}が優しく抱きしめて労ってくれた。親としての責任を共に背負いながら、夫婦としての愛もますます深まっている。"
+        }
+      ]
+    }
+  ]
+});
+
