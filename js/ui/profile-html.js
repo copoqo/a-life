@@ -232,19 +232,19 @@ function getPartnerSummary(st) {
     if (partners.length > 0 || secretPartners.length > 0) {
       statusType = 'infidelity'; statusLabel = '不倫中';
       const affair = partners[0] || secretPartners[0];
-      itemsHtml = `<div class="partner-item"><strong>配偶者</strong>：${escapeBond(spouse.name)}（親愛 ${spouse.affection} / 信頼 ${spouse.trust}）</div><div class="partner-item" style="color:#6d28d9;"><strong>不倫相手</strong>：${escapeBond(affair.name)}（親愛 ${affair.affection} / 秘密）</div>`;
+      itemsHtml = `<div class="partner-item"><strong>配偶者</strong>：${escapeBond(spouse.name)}</div><div class="partner-item" style="color:#6d28d9;"><strong>不倫相手</strong>：${escapeBond(affair.name)} <span class="partner-subtext">（秘密）</span></div>`;
     } else {
       statusType = 'married'; statusLabel = '結婚中';
-      itemsHtml = `<div class="partner-item"><strong>配偶者</strong>：${escapeBond(spouse.name)}（親愛 ${spouse.affection} / 信頼 ${spouse.trust}）</div>`;
+      itemsHtml = `<div class="partner-item"><strong>配偶者</strong>：${escapeBond(spouse.name)}</div>`;
     }
   } else if (partners.length > 0) {
     if (partners.length > 1 || secretPartners.length > 0) {
       statusType = 'cheating'; statusLabel = '浮気中';
-      itemsHtml = partners.map((p, idx) => `<div class="partner-item">${idx === 0 ? '<strong>本命</strong>' : '<strong>交際相手</strong>'}：${escapeBond(p.name)}（親愛 ${p.affection} / 信頼 ${p.trust}${p.private ? ' / 秘密' : ''}）</div>`).join('');
+      itemsHtml = partners.map((p, idx) => `<div class="partner-item">${idx === 0 ? '<strong>本命</strong>' : '<strong>交際相手</strong>'}：${escapeBond(p.name)}${p.private ? ' <span class="partner-subtext">（秘密）</span>' : ''}</div>`).join('');
     } else {
       statusType = 'dating'; statusLabel = '交際中';
       const p = partners[0];
-      itemsHtml = `<div class="partner-item"><strong>交際相手</strong>：${escapeBond(p.name)}（親愛 ${p.affection} / 信頼 ${p.trust}）</div>`;
+      itemsHtml = `<div class="partner-item"><strong>交際相手</strong>：${escapeBond(p.name)}</div>`;
     }
   } else if (widowed || st.flags?.widowed) {
     statusType = 'widowed'; statusLabel = '死別';

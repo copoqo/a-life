@@ -3891,13 +3891,14 @@ window.defineEvent({
     35
   ],
   "trigger": "normal",
-  "classification": "daily",
+  "classification": "major",
   "content_rating": "general",
   "presets": [
     "partnered",
     "rel_stage_established"
   ],
-  "weight": 9,
+  "weight": 20,
+  "is_major": true,
   "actors": {
     "partner": {
       "source": "current_partner",
