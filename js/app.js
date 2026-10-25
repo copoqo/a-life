@@ -3755,8 +3755,8 @@ function getPersonality(st) {
     const precocious = (states.current_libido ?? 0) >= 15 || (sexuality.curiosity ?? 0) >= 50;
     if (precocious) {
       const modesty = traits.baseline_modesty?.current ?? 0;
-      if (modesty >= 10) return 'お股のむず痒さに戸惑う早熟';
-      return '秘所の疼きに手が伸びるおませ';
+      if (modesty >= 10) return '自分の体が気になる';
+      return '敏感な年頃';
     }
     const ext = (traits.extraversion?.current ?? 0) + (display.sociability ?? 0);
     if (ext >= 15) return '明るく元気いっぱい';
@@ -3770,13 +3770,13 @@ function getPersonality(st) {
     const modesty = traits.baseline_modesty?.current ?? 0;
     const maso = traits.masochistic_preference?.current ?? 0;
     if (libido >= 25) {
-      if (maso >= 12) return 'いじめられて奥を濡らす被虐の芽生え';
-      if (modesty >= 12) return '下腹の疼きを恥じて耐える純情生娘';
-      return '愛液でショーツを濡らす早熟な肉穴';
+      if (maso >= 12) return 'いじめられると悦び覚える';
+      if (modesty >= 12) return '体の疼きを耐える純情';
+      return '歓びを知った体';
     }
     if (libido >= 12) {
-      if (modesty >= 10) return '恥じらいつつも身体の火照りに戸惑う娘';
-      return '秘所の疼きに指を沈めて息を荒げる早熟';
+      if (modesty >= 10) return '身体の火照りに戸惑';
+      return '自分でさわって息を荒げる';
     }
     const ext = (traits.extraversion?.current ?? 0) + (display.sociability ?? 0);
     if (ext >= 15) return '多感で活発な少女';
