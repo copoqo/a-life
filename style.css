@@ -586,50 +586,60 @@
 
     /* スリムな操作パネルスタイル */
     .play-panel {
-      padding: 8px 10px;
+      padding: 6px 10px;
     }
 
     .play-controls-row {
       display: flex;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 6px 8px;
+      flex-wrap: nowrap;
+      gap: 5px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .play-btn {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
-      padding: 6px 12px;
-      border-radius: 8px;
+      padding: 4px 8px;
+      border-radius: 7px;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      min-width: 86px;
+      gap: 3px;
+      min-width: 0;
       justify-content: center;
       flex-shrink: 0;
+      white-space: nowrap;
+      height: 28px;
+      box-sizing: border-box;
     }
 
     /* 円形プログレスリングによる時間経過 */
     .time-progress-box {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      padding: 3px 8px;
+      gap: 5px;
+      padding: 2px 6px;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-radius: 8px;
+      border-radius: 7px;
       flex: 1 1 auto;
-      min-width: 110px;
+      min-width: 0;
+      height: 28px;
+      box-sizing: border-box;
+      overflow: hidden;
     }
 
     .time-ring-wrapper {
       position: relative;
-      width: 24px;
-      height: 24px;
+      width: 20px;
+      height: 20px;
       flex-shrink: 0;
     }
 
     .time-ring {
+      width: 20px;
+      height: 20px;
       transform: rotate(-90deg);
       display: block;
     }
@@ -653,21 +663,26 @@
     .time-text-group {
       display: flex;
       flex-direction: column;
-      line-height: 1.15;
+      line-height: 1.1;
       min-width: 0;
+      overflow: hidden;
     }
 
     .time-age-text {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       color: #1e293b;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .time-status-text {
-      font-size: 9.5px;
+      font-size: 8.5px;
       color: #64748b;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .play-config-group {
@@ -679,14 +694,16 @@
     }
 
     .compact-select {
-      padding: 4px 6px;
-      font-size: 11px;
+      padding: 2px 5px;
+      font-size: 10.5px;
       border-radius: 6px;
       border: 1px solid #cbd5e1;
       background: #ffffff;
       color: #334155;
       cursor: pointer;
       height: 28px;
+      box-sizing: border-box;
+      max-width: 90px;
     }
 
     /* 人間関係パネル */
@@ -857,7 +874,43 @@
         width: 100% !important;
         box-sizing: border-box !important;
         overflow: visible;
-        padding: 6px 8px !important;
+        padding: 5px 6px !important;
+      }
+
+      .play-controls-row {
+        gap: 3px !important;
+        flex-wrap: nowrap !important;
+      }
+
+      .play-btn {
+        font-size: 10.5px !important;
+        padding: 4px 6px !important;
+        height: 26px !important;
+      }
+
+      .time-progress-box {
+        padding: 2px 4px !important;
+        gap: 4px !important;
+        height: 26px !important;
+      }
+
+      .time-age-text {
+        font-size: 9.5px !important;
+      }
+
+      .time-status-text {
+        font-size: 8px !important;
+      }
+
+      .play-config-group {
+        gap: 3px !important;
+      }
+
+      .compact-select {
+        font-size: 10px !important;
+        padding: 1px 3px !important;
+        height: 26px !important;
+        max-width: 82px !important;
       }
 
       .history-panel {
