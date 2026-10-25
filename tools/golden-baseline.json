@@ -1,0 +1,74 @@
+{
+  "auto:1": {
+    "steps": 1108,
+    "age": 92,
+    "historyLen": 317,
+    "bonds": 10,
+    "stateHash": "334ea468cb56ea74",
+    "htmlHash": "a93d691a28f1b35c",
+    "errors": 0
+  },
+  "auto:42": {
+    "steps": 941,
+    "age": 78,
+    "historyLen": 279,
+    "bonds": 12,
+    "stateHash": "13b7d35228bec6dc",
+    "htmlHash": "01b5e06d9651ca4d",
+    "errors": 0
+  },
+  "auto:20261025": {
+    "steps": 1089,
+    "age": 90,
+    "historyLen": 312,
+    "bonds": 8,
+    "stateHash": "344659c32bade3d6",
+    "htmlHash": "e028219c6f9bafb5",
+    "errors": 0
+  },
+  "auto:987654321": {
+    "steps": 1084,
+    "age": 90,
+    "historyLen": 321,
+    "bonds": 11,
+    "stateHash": "22403c4bc21d0d47",
+    "htmlHash": "ab1b8b6b5d8c3cac",
+    "errors": 0
+  },
+  "choice:1": {
+    "steps": 1081,
+    "age": 73,
+    "historyLen": 264,
+    "bonds": 10,
+    "stateHash": "c5392edbb25530c4",
+    "htmlHash": "35063990faade3ba",
+    "errors": 0
+  },
+  "choice:42": {
+    "steps": 1222,
+    "age": 82,
+    "historyLen": 307,
+    "bonds": 12,
+    "stateHash": "6c1f9c8af6e6e96c",
+    "htmlHash": "78c70d2d2cd78bf9",
+    "errors": 0
+  },
+  "choice:20261025": {
+    "steps": 927,
+    "age": 63,
+    "historyLen": 219,
+    "bonds": 16,
+    "stateHash": "0ed44b0d86768d03",
+    "htmlHash": "91542c4e6c35c3ba",
+    "errors": 0
+  },
+  "choice:987654321": {
+    "steps": 1349,
+    "age": 92,
+    "historyLen": 311,
+    "bonds": 7,
+    "stateHash": "dc5a5cf48f32994d",
+    "htmlHash": "5ad4a34798f8f327",
+    "errors": 0
+  }
+}
