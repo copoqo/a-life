@@ -1209,6 +1209,75 @@ function isScenarioActive(id, phase = null, st = s) {
   return true;
 }
 
+// === ストーリー調停エンジン (ストーリー同士の影響・暗黙終了・整合性管理) ===
+function harmonizeScenarios(st = s) {
+  if (!st || !st.scenarios) return;
+
+  const spouse = st.bonds?.find(b => b.status === 'spouse');
+  const partner = st.bonds?.find(b => b.status === 'partner' && !b.private) || spouse;
+  const isCohabiting = !!st.flags?.cohabiting || !!spouse?.cohabiting || !!partner?.cohabiting;
+  const isMarried = !!spouse || !!st.flags?.married;
+
+  // 1. 「一人暮らし（independence）」の暗黙終了
+  // 同棲中または結婚している場合、一人暮らしストーリーは暗黙に完了する
+  if (isCohabiting || isMarried) {
+    if (isScenarioActive('independence', null, st)) {
+      completeScenario('independence', st);
+    }
+    st.flags.living_alone = false;
+  }
+
+  // 2. 結婚（isMarried）成立時の相互ストーリー調停
+  if (isMarried) {
+    // 恋愛ストーリーは既婚へ進んで完了
+    if (isScenarioActive('romance', null, st)) {
+      advanceScenario('romance', 'married', {}, st);
+      completeScenario('romance', st);
+    }
+    // 同棲の行方（膠着・マンネリ）は結婚成立により解消・完了
+    if (isScenarioActive('cohabitation_limbo', null, st)) {
+      completeScenario('cohabitation_limbo', st);
+    }
+    // 授かり婚ストーリーも婚姻成立により完了
+    if (isScenarioActive('premarital_pregnancy', null, st)) {
+      completeScenario('premarital_pregnancy', st);
+    }
+    // 浮気疑惑・揺れる心も、結婚に踏み切ったことで乗り越えた・決着したとして完了
+    if (isScenarioActive('infidelity_crisis', null, st)) {
+      completeScenario('infidelity_crisis', st);
+    }
+    if (isScenarioActive('wavering_heart', null, st)) {
+      completeScenario('wavering_heart', st);
+    }
+    // 夫婦生活ストーリーがまだなければ開始
+    if (!getScenario('marriage_life', st) && spouse) {
+      startScenario('marriage_life', 'newlywed', { partnerId: spouse.id, partnerName: spouse.name }, st);
+    }
+  }
+
+  // 3. パートナー不在（破局・元恋人化・未交際）時のストーリー整合
+  if (!partner && !spouse) {
+    if (isScenarioActive('romance', null, st)) failScenario('romance', 'broken', st);
+    if (isScenarioActive('cohabitation_limbo', null, st)) failScenario('cohabitation_limbo', 'broken', st);
+    if (isScenarioActive('infidelity_crisis', null, st)) failScenario('infidelity_crisis', 'broken', st);
+    if (isScenarioActive('wavering_heart', null, st)) failScenario('wavering_heart', 'broken', st);
+    if (isScenarioActive('premarital_pregnancy', null, st)) failScenario('premarital_pregnancy', 'broken', st);
+    if (isScenarioActive('marriage_life', null, st)) failScenario('marriage_life', 'broken', st);
+    st.flags.cohabiting = false;
+    st.flags.engaged = false;
+  }
+
+  // 4. 同棲していない場合の「同棲の行方」シナリオの整合
+  if (!isCohabiting && !isMarried && isScenarioActive('cohabitation_limbo', null, st)) {
+    failScenario('cohabitation_limbo', 'not_cohabiting', st);
+  }
+
+  // 5. 就職活動（career: job_hunting）と 就職（employed）の整合
+  if (st.flags?.employed && isScenarioActive('career', 'job_hunting', st)) {
+    advanceScenario('career', 'employed', {}, st);
+  }
+}
+
 function log(message, diary = null, impact = null, meta = null) {
   const m = s.current_month || (s.age === 0 ? 1 : 4);
   const dateText = `${s.age}歳`;
@@ -2159,7 +2228,7 @@ function getEventNarrativeConflictGroup(e) {
 function isStoryEvent(e) {
   if (!e) return false;
   if (e.is_major || e.classification === 'major') return true;
-  if (['adult_marriage_proposal', 'marriage_ceremony', 'adult_future_together', 'youth_first_apartment_hunt', 'young_living_alone', 'confessed_to', 'first_kiss_milestone', 'same_sex_first_kiss', 'first_intimacy_milestone', 'partner_first_intimacy_experienced', 'first_date_milestone', 'adult_first_date', 'youth_job_hunting_suit', 'youth_first_paycheck_parents'].includes(e.id)) return true;
+  if (['adult_marriage_proposal', 'marriage_ceremony', 'adult_future_together', 'youth_first_apartment_hunt', 'young_living_alone', 'confessed_to', 'first_kiss_milestone', 'same_sex_first_kiss', 'first_intimacy_milestone', 'partner_first_intimacy_experienced', 'first_date_milestone', 'adult_first_date', 'youth_job_hunting_suit', 'youth_first_paycheck_parents', 'story_cohabitation_routine_rut', 'story_cohabitation_ultimatum', 'story_partner_infidelity_suspicion', 'story_partner_infidelity_confrontation', 'story_wavering_heart_temptation', 'story_wavering_heart_resolution', 'story_premarital_pregnancy_test', 'story_premarital_pregnancy_announcement'].includes(e.id)) return true;
   return false;
 }
 
@@ -2185,6 +2254,24 @@ function getStoryArcBoost(e, st = s) {
   } else if (stage === 4) {
     const partnerYears = p?.intimateSinceAge != null ? Math.max(0, (st.age ?? 0) - p.intimateSinceAge) : (p?.partnerYears || 0);
     const maturityBonus = Math.min(3.5, 1.0 + partnerYears * 0.6);
+
+    // 進行中シナリオの次ステップへの優先ブースト
+    if (isScenarioActive('cohabitation_limbo', null, st) && e.id === 'story_cohabitation_ultimatum') boost *= 6.0;
+    if (isScenarioActive('infidelity_crisis', null, st) && e.id === 'story_partner_infidelity_confrontation') boost *= 6.0;
+    if (isScenarioActive('wavering_heart', null, st) && e.id === 'story_wavering_heart_resolution') boost *= 6.0;
+    if (isScenarioActive('premarital_pregnancy', null, st) && e.id === 'story_premarital_pregnancy_announcement') boost *= 7.0;
+
+    // 同棲中・長引く関係でのストーリー分岐トリガー
+    if (p?.cohabiting && !st.flags?.married) {
+      if (e.id === 'story_cohabitation_routine_rut' && !st.seen?.[e.id]) boost *= (3.5 * maturityBonus);
+      if (e.id === 'story_wavering_heart_temptation' && !st.seen?.[e.id]) boost *= 2.4;
+      if (e.id === 'story_partner_infidelity_suspicion' && !st.seen?.[e.id]) boost *= 2.4;
+    }
+    // 妊娠発覚ストーリー（適齢期・肉体関係あり・未婚）
+    if (st.gender === 'female' && p?.intimate && !st.flags?.married && st.age >= 20 && st.age <= 38 && !st.seen?.story_premarital_pregnancy_test) {
+      if (e.id === 'story_premarital_pregnancy_test') boost *= 2.8;
+    }
+
     if ((p?.affection ?? 50) >= 42 && (p?.trust ?? 45) >= 38) {
       if (['adult_future_together', 'adult_marriage_proposal', 'partner_anniversary_deep_love', 'positive_anniversary', 'partner_sex_mastered_pleasure', 'same_sex_society_bond'].includes(e.id)) {
         boost *= (3.2 * maturityBonus);
@@ -3255,11 +3342,18 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
       s.flags.engaged = false;
       s.flags.married = true;
       s.flags.cohabiting = true;
+      s.flags.living_alone = false;
       s.flags.had_first_kiss_with_partner = true;
       s.flags.had_first_intimacy_with_partner = true;
       advanceScenario('romance', 'married');
       completeScenario('romance');
+      completeScenario('independence');
+      completeScenario('cohabitation_limbo');
+      completeScenario('premarital_pregnancy');
+      completeScenario('infidelity_crisis');
+      completeScenario('wavering_heart');
       startScenario('marriage_life', 'newlywed', { partnerId: p.id, partnerName: p.name });
+      harmonizeScenarios(s);
       if (!alreadySpouse) {
         recordExperience('relationship', p.name + 'と生涯を誓い合い、婚姻関係を結んだ', p.id, { mutual: true });
         log(p.name + 'と結婚した。新しい家庭を築き、夫婦としての人生が始まる。', ageDiary(p.name + 'と婚姻の誓いを交わした。左手の薬指に輝く指輪の重みと温もりに、生涯を共にする実感が胸に満ちた。'));
@@ -3295,8 +3389,14 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
     if (sp) {
       sp.status = 'former'; sp.consent = false; updateBondRelation(sp, '離婚した元配偶者');
       s.flags.married = false; s.flags.divorced = true; s.flags.cohabiting = false;
+      s.flags.living_alone = true;
       failScenario('romance', 'divorce');
       failScenario('marriage_life', 'divorce');
+      failScenario('cohabitation_limbo', 'divorce');
+      failScenario('infidelity_crisis', 'divorce');
+      failScenario('wavering_heart', 'divorce');
+      startScenario('independence', 'living_alone');
+      harmonizeScenarios(s);
       recordExperience('breakup', sp.name + 'と離婚届を提出し、婚姻関係を解消した', sp.id);
       log(sp.name + 'と離婚した。夫婦としての生活に終止符を打った。');
     }
@@ -3307,6 +3407,14 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
     if (sp) {
       sp.status = 'widowed'; sp.consent = false; updateBondRelation(sp, '死別した最愛の伴侶');
       s.flags.married = false; s.flags.widowed = true; s.flags.cohabiting = false;
+      s.flags.living_alone = true;
+      failScenario('romance', 'bereavement');
+      failScenario('marriage_life', 'bereavement');
+      failScenario('cohabitation_limbo', 'bereavement');
+      failScenario('infidelity_crisis', 'bereavement');
+      failScenario('wavering_heart', 'bereavement');
+      startScenario('independence', 'living_alone');
+      harmonizeScenarios(s);
       recordExperience('bereavement', '最愛の伴侶 ' + sp.name + ' と永遠の死別を迎えた', sp.id);
       log(sp.name + 'が静かに息を引き取った。最愛の伴侶を見送り、深い悲しみに暮れた。');
     }
@@ -3430,7 +3538,23 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
   if (outcome === 'mutual_talk') { bond.trust = clamp(bond.trust + 4); bond.affection = clamp((bond.affection || 35) + 3); recordExperience('communication', bond.name + 'と希望や境界線について対話した', bond.id); log('互いの希望を話し合い、理解が少し深まった。'); return }
   if (outcome === 'boundary') { recordExperience('boundary', '望まないことを伝えた', bond.id); log('自分の境界線を伝えた。'); return }
   if (outcome === 'distance') { bond.affection = clamp(bond.affection - 8); log(bond.name + 'との距離を少し置いた。'); return }
-  if (outcome === 'breakup') { bond.status = 'former'; bond.consent = false; updateBondRelation(bond, '話し合いで別れた元恋人'); s.flags.cohabiting = false; failScenario('romance', 'breakup'); recordExperience('breakup', bond.name + 'との関係を終える選択をした', bond.id); log(bond.name + 'と話し合いの末、交際関係を終えた。'); return }
+  if (outcome === 'breakup') {
+    bond.status = 'former';
+    bond.consent = false;
+    updateBondRelation(bond, '話し合いで別れた元恋人');
+    s.flags.cohabiting = false;
+    s.flags.engaged = false;
+    s.flags.living_alone = true;
+    failScenario('romance', 'breakup');
+    failScenario('cohabitation_limbo', 'breakup');
+    failScenario('infidelity_crisis', 'breakup');
+    failScenario('wavering_heart', 'breakup');
+    startScenario('independence', 'living_alone');
+    harmonizeScenarios(s);
+    recordExperience('breakup', bond.name + 'との関係を終える選択をした', bond.id);
+    log(bond.name + 'と話し合いの末、交際関係を終えた。');
+    return;
+  }
   if (outcome === 'reflection' || outcome === 'privacy') recordExperience(outcome, '自分の価値観について考えた');
 }
 function eventProbability(e) {
@@ -3589,6 +3713,7 @@ function settle(event, index, continueYear = true) {
     s.flags.engaged = false;
     s.flags.married = true;
     s.flags.cohabiting = true;
+    s.flags.living_alone = false;
     s.flags.had_first_intimacy_with_partner = true;
     s.flags.had_first_kiss_with_partner = true;
     if (curPartner) {
@@ -3601,9 +3726,15 @@ function settle(event, index, continueYear = true) {
     }
     advanceScenario('romance', 'married');
     completeScenario('romance');
+    completeScenario('independence');
+    completeScenario('cohabitation_limbo');
+    completeScenario('premarital_pregnancy');
+    completeScenario('infidelity_crisis');
+    completeScenario('wavering_heart');
     if (curPartner) {
       startScenario('marriage_life', 'newlywed', { partnerId: curPartner.id, partnerName: curPartner.name });
     }
+    harmonizeScenarios(s);
   }
   if ((event.id === 'youth_first_apartment_hunt' || event.id === 'young_living_alone') && index === 0) {
     s.flags.living_alone = true;
@@ -3614,8 +3745,139 @@ function settle(event, index, continueYear = true) {
   }
   if (event.id === 'adult_future_together' && index === 0) {
     s.flags.cohabiting = true;
+    s.flags.living_alone = false;
     if (curPartner) curPartner.cohabiting = true;
     advanceScenario('romance', 'cohabiting');
+    completeScenario('independence');
+    harmonizeScenarios(s);
+  }
+
+  // === 結婚分岐ストーリー群の進行・解決処理 ===
+  if (event.id === 'story_cohabitation_routine_rut') {
+    if (index === 0) advanceScenario('cohabitation_limbo', 'marriage_avoidance');
+    else if (index === 1) startScenario('cohabitation_limbo', 'comfortable_rut');
+    else if (index === 2) {
+      startScenario('cohabitation_limbo', 'comfortable_rut');
+      if (curPartner) curPartner.intimate = true;
+    }
+  }
+  if (event.id === 'story_cohabitation_ultimatum') {
+    if (index === 0) {
+      completeScenario('cohabitation_limbo');
+      advanceScenario('romance', 'engaged');
+      s.flags.engaged = true;
+      if (curPartner) updateBondRelation(curPartner, '婚約中');
+      s.chains ??= [];
+      s.chains.push({ eventId: 'marriage_ceremony', targetAge: s.age, targetAgeMonths: (s.age_months || 0) + (3 + Math.floor(rng.next() * 3)), prob: 1.0 });
+    } else if (index === 1) {
+      failScenario('cohabitation_limbo', 'broken');
+      completeScenario('romance');
+      if (curPartner) {
+        curPartner.status = 'former';
+        curPartner.cohabiting = false;
+        updateBondRelation(curPartner, '同棲解消・元恋人');
+      }
+      s.flags.cohabiting = false;
+      s.flags.engaged = false;
+      s.flags.living_alone = true;
+      startScenario('independence', 'living_alone');
+      harmonizeScenarios(s);
+    } else if (index === 2) {
+      completeScenario('cohabitation_limbo');
+      s.flags.cohabitation_accepted = true;
+      if (curPartner) updateBondRelation(curPartner, '同棲パートナー');
+    }
+  }
+  if (event.id === 'story_partner_infidelity_suspicion') {
+    if (index === 0) {
+      startScenario('infidelity_crisis', 'suspicion');
+      s.flags.found_infidelity_evidence = true;
+    } else if (index === 1) {
+      startScenario('infidelity_crisis', 'suspicion');
+    } else if (index === 2) {
+      startScenario('infidelity_crisis', 'confrontation');
+    }
+  }
+  if (event.id === 'story_partner_infidelity_confrontation') {
+    if (index === 0) {
+      completeScenario('infidelity_crisis');
+      advanceScenario('romance', 'engaged');
+      s.flags.engaged = true;
+      if (curPartner) updateBondRelation(curPartner, '婚約中');
+      s.chains ??= [];
+      s.chains.push({ eventId: 'marriage_ceremony', targetAge: s.age, targetAgeMonths: (s.age_months || 0) + (4 + Math.floor(rng.next() * 3)), prob: 1.0 });
+    } else if (index === 1) {
+      failScenario('infidelity_crisis', 'broken');
+      completeScenario('romance');
+      completeScenario('cohabitation_limbo');
+      if (curPartner) {
+        curPartner.status = 'former';
+        curPartner.cohabiting = false;
+        updateBondRelation(curPartner, '浮気され破局した元恋人');
+      }
+      s.flags.cohabiting = false;
+      s.flags.engaged = false;
+      s.flags.living_alone = true;
+      startScenario('independence', 'living_alone');
+      harmonizeScenarios(s);
+    } else if (index === 2) {
+      completeScenario('infidelity_crisis');
+      if (curPartner) curPartner.intimate = true;
+    }
+  }
+  if (event.id === 'story_wavering_heart_temptation') {
+    if (index === 0) {
+      completeScenario('wavering_heart');
+    } else if (index === 1) {
+      startScenario('wavering_heart', 'secret_hesitation');
+      s.flags.wavering_stolen_kiss = true;
+    } else if (index === 2) {
+      startScenario('wavering_heart', 'temptation');
+      s.flags.secret_affair_started = true;
+    }
+  }
+  if (event.id === 'story_wavering_heart_resolution') {
+    if (index === 0) {
+      completeScenario('wavering_heart');
+      advanceScenario('romance', 'engaged');
+      s.flags.engaged = true;
+      if (curPartner) updateBondRelation(curPartner, '婚約中');
+      s.chains ??= [];
+      s.chains.push({ eventId: 'marriage_ceremony', targetAge: s.age, targetAgeMonths: (s.age_months || 0) + (3 + Math.floor(rng.next() * 3)), prob: 1.0 });
+    } else if (index === 1) {
+      completeScenario('wavering_heart');
+    } else if (index === 2) {
+      failScenario('wavering_heart', 'switch');
+      completeScenario('romance');
+      completeScenario('cohabitation_limbo');
+      if (curPartner) {
+        curPartner.status = 'former';
+        curPartner.cohabiting = false;
+        updateBondRelation(curPartner, '心変わりにより別れた元恋人');
+      }
+      s.flags.cohabiting = false;
+      s.flags.engaged = false;
+      s.flags.living_alone = true;
+      startScenario('independence', 'living_alone');
+      harmonizeScenarios(s);
+    }
+  }
+  if (event.id === 'story_premarital_pregnancy_test') {
+    startScenario('premarital_pregnancy', 'positive_test');
+    s.flags.pregnant = true;
+    s.flags.premarital_pregnant = true;
+  }
+  if (event.id === 'story_premarital_pregnancy_announcement') {
+    completeScenario('premarital_pregnancy');
+    completeScenario('cohabitation_limbo');
+    completeScenario('wavering_heart');
+    advanceScenario('romance', 'engaged');
+    s.flags.engaged = true;
+    s.flags.shotgun_wedding = true;
+    if (curPartner) updateBondRelation(curPartner, '婚約中（授かり婚）');
+    s.chains ??= [];
+    s.chains.push({ eventId: 'marriage_ceremony', targetAge: s.age, targetAgeMonths: (s.age_months || 0) + 2, prob: 1.0 });
+    harmonizeScenarios(s);
   }
   if (event.id === 'life_parenthood_question') {
     if (index === 0) s.flags.trying_for_baby = true;
@@ -3747,6 +4009,7 @@ function settle(event, index, continueYear = true) {
   s.activeVariationSubId = null;
   if (s.pending !== 'multiple_relationship') s.pending = null;
   if (continueYear && !s.pending) processYearEvents();
+  harmonizeScenarios(s);
   s.rngState = rng.state(); render();
   if (!s.pending && !s.finished && isAutoPlaying) scheduleNextAutoStep(800);
 }
@@ -3810,6 +4073,7 @@ function settleNarrative(rawEvent, continueYear = true) {
 
   if (s.pending === rawEvent.id) s.pending = null;
   if (continueYear && !s.pending) processYearEvents();
+  harmonizeScenarios(s);
   s.rngState = rng.state();
   render();
   if (!s.pending && !s.finished && isAutoPlaying) scheduleNextAutoStep(800);
@@ -4253,9 +4517,14 @@ function getPartnerSummary(st) {
 }
 
 function renderScenarioBoxHtml(st = s) {
+  harmonizeScenarios(st);
   const activeList = (st.scenarios || []).filter(x => x.status === 'active');
   const labels = {
     romance: { name: '恋愛', phases: { dating: '交際中', dating_active: 'デート', kissed: '初キス', intimate: '肉体関係', cohabiting: '同棲', engaged: '婚約中' } },
+    cohabitation_limbo: { name: '同棲の行方', phases: { comfortable_rut: '慣れ合い', marriage_avoidance: '結婚の膠着', ultimatum: '決断の時' } },
+    infidelity_crisis: { name: '浮気疑惑', phases: { suspicion: '疑念', confrontation: '修羅場', reconciled: '再構築' } },
+    wavering_heart: { name: '揺れる心', phases: { temptation: '秘密の誘惑', secret_hesitation: '背徳と葛藤', resolved: '決断' } },
+    premarital_pregnancy: { name: '授かり婚', phases: { positive_test: '妊娠発覚', wedding_rush: '入籍準備' } },
     marriage_life: { name: '夫婦生活', phases: { newlywed: '新婚' } },
     independence: { name: '自立', phases: { living_alone: '一人暮らし' } },
     career: { name: '仕事', phases: { job_hunting: '就職活動', employed: '社会人', established: '自立' } }

@@ -133,6 +133,7 @@ function settle(event, index, continueYear = true) {
       s.flags.had_first_intimacy_with_partner = true;
       s.flags.had_first_kiss_with_partner = true;
       s.flags.cohabiting = true;
+      s.flags.living_alone = false;
       if (curPartner) {
         curPartner.kissed = true;
         curPartner.intimate = true;
@@ -145,6 +146,7 @@ function settle(event, index, continueYear = true) {
   }
   if (event.id === 'adult_future_together' && index === 0) {
     s.flags.cohabiting = true;
+    s.flags.living_alone = false;
     if (curPartner) curPartner.cohabiting = true;
   }
   if (event.id === 'life_parenthood_question') {

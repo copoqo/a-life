@@ -2996,4 +2996,533 @@ window.defineEvent({
   ]
 });
 
+// ============================================================================
+// 結婚分岐ストーリー：ずるずると長引く同棲・浮気発覚・揺れる心・授かり婚
+// ============================================================================
+
+window.defineEvent({
+  "id": "story_cohabitation_routine_rut",
+  "title": "長引く同棲・すれ違う結婚のタイミング",
+  "age": [
+    22,
+    42
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "presets": [
+    "partnered"
+  ],
+  "requires": function (s) {
+    const p = getPrimaryPartner(s);
+    return !!(p && p.cohabiting && !s.flags?.married && !isScenarioActive('cohabitation_limbo', null, s));
+  },
+  "text": "休日の昼下がり。同棲を始めてから数年が経ち、同じベッドで目覚めて朝食を並んで食べる暮らしは、すっかり当たり前の日常になっていた。ソファに寝転がってスマートフォンを眺める{partner}の横顔。生活のリズムや家事の分担は完璧で、居心地の良さは何ものにも代えがたい。けれど、同年代の友人たちが次々と結婚し、SNSに並ぶ結婚式の写真を見るたび、私の胸の奥に冷たい焦りが差し込む。「結婚」という二文字を出そうとするたび、{partner}は「まだお金も貯まってないし」「今のままで十分幸せじゃん」とはぐらかす。家族のようになってしまった気楽さと、このままずるずると若さを浪費してしまうのではないかという底知れない不安が、重なり合って私を苛んでいた……。",
+  "choices": [
+    {
+      "id": "choice_ask_future",
+      "label": "「ねえ、私たちってこれからどうするの？」と結婚について真面目に切り出す",
+      "effects": {
+        "mood": -2,
+        "stress": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「ねえ、私たち……いつ結婚するの？」とお茶を淹れながら静かに問いかけると、{partner}は一瞬気まずそうに視線を泳がせ、「いや、もちろん考えてるよ。でももう少し仕事が落ち着いてから……」といつもの言い訳を口にした。その曖昧な言葉に、胸の奥が冷え切っていくのを感じた。",
+          "diary": "同棲中の{partner}に結婚の意志を尋ねたけれど、またはぐらかされてしまった。居心地の良さに甘えて、二人で未来から目を背けているのかもしれない。"
+        }
+      ]
+    },
+    {
+      "id": "choice_comfort_silence",
+      "label": "重い空気を避け、笑って美味しい夕飯の支度を始める",
+      "effects": {
+        "happiness": 2,
+        "stress": 1
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "問い詰めたい言葉を喉の奥に飲み込み、「今日の夜ご飯、何食べたい？」と明るく声をかけた。{partner}はほっとしたように笑顔を向け、私の頭を優しく撫でてくれた。この穏やかな日常を壊すのが怖くて、私はまた一歩、決断を先延ばしにしてしまった。",
+          "diary": "結婚の話を切り出せず、何事もなかったように笑って過ごした。今の幸せが壊れるのが怖くて、現実を直視できない自分が情けない。"
+        }
+      ]
+    },
+    {
+      "id": "choice_skinship_distraction",
+      "label": "{partner}の胸元に跨がり、言葉の代わりに熱い情欲で寂しさを埋め合わせる",
+      "effects": {
+        "intimacyNeed": 4,
+        "mood": 3,
+        "sexualEffects": {
+          "desire": 4,
+          "intimacy": 3
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "言葉で問い詰める代わりに、ソファに横たわる{partner}の腰に跨がり、部屋着の胸元をはだけさせて豊満な乳房を相手の胸板に押し当てた。驚く{partner}の唇を深いキスで塞ぎ、下着越しに硬く反り返るモノを秘肉に擦り付ける。言葉にならない焦りと情欲をぶつけ合うように、休日のリビングで激しく求め合った。",
+          "diary": "将来の不安を誤魔化すように、{partner}と昼間から激しく肌を重ねた。身体が満たされても、心のどこかに拭えない空虚さが残っている。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_cohabitation_ultimatum",
+  "title": "同棲の膠着・決断の最後通告",
+  "age": [
+    23,
+    44
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "presets": [
+    "partnered"
+  ],
+  "requires": function (s) {
+    return isScenarioActive('cohabitation_limbo', null, s) && !s.flags?.married;
+  },
+  "text": "ずるずると引き延ばされてきた同棲生活。時計の針が深夜一時を回り、静まり返ったリビングで二人、冷めかけたコーヒーを前に向かい合う。親からの催促の電話、実家からの心配する声。これ以上、恋人以上・夫婦未満の曖昧な関係に留まることはできない。「私、もう待てないよ」——私の震える声に、{partner}が息を呑んで視線を上げる。この部屋を出て別れるか、それとも一生を誓い合って結婚するか。二人の関係が、ついに逃げ場のない分岐点へと追い詰められていた……。",
+  "choices": [
+    {
+      "id": "choice_ultimatum_deadline",
+      "label": "「今年中に結婚しないなら、私この部屋を出ていく」と毅然と期限を切る",
+      "effects": {
+        "independence": 4,
+        "stress": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "私の真剣な瞳と覚悟を悟った{partner}は、しばらく黙り込んだ後、強く私の両手を握りしめてきた。「……分かった。ずっと甘えてて本当に悪かった。俺と結婚してください」。涙ぐむ相手の胸に飛び込み、長かった同棲の迷路を抜け出せた喜びに泣き崩れた。",
+          "diary": "同棲の行方に最後通告を突きつけた。真剣に向き合ってくれた{partner}からついにプロポーズされ、婚約を交わすことができた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_breakup_end_rut",
+      "label": "「もう疲れた……お互いのために、終わりにしよう」と別れを告げる",
+      "effects": {
+        "stress": 5,
+        "independence": 5,
+        "mood": -4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "優柔不断な相手の言い訳を聞くのも限界だった。「今までありがとう」と涙を拭って立ち上がり、スーツケースに自分の荷物を詰め始めた。すがりついて引き止める{partner}の腕を冷たく振りほどき、長年暮らした部屋のドアを固く閉ざした。",
+          "diary": "ずるずると続いていた同棲にピリオドを打った。愛していたけれど、自分の人生を大切にするために別れを選んだ。胸が引き裂かれるように痛い。"
+        }
+      ]
+    },
+    {
+      "id": "choice_accept_partnership_status_quo",
+      "label": "結婚という形にこだわらず、この人との今の絆を受け入れて同棲を続ける",
+      "effects": {
+        "happiness": 3,
+        "stress": -2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「形式なんてどうでもいい。ただ、あなたが隣にいてくれればいいよ」と微笑んで{partner}の手を握ると、相手は救われたように私の肩を抱き寄せ、何度も唇に熱いキスを落とした。法律上の夫婦という枠にとらわれず、自分たちだけの強い絆で歩む道を選んだ。",
+          "diary": "結婚という形に固執するのをやめ、{partner}との同棲生活を受け入れた。形式よりも、今ここにある愛のぬくもりを信じることに決めた。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_partner_infidelity_suspicion",
+  "title": "不穏な香りと深夜の通知・パートナーへの疑念",
+  "age": [
+    20,
+    48
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "presets": [
+    "partnered"
+  ],
+  "requires": function (s) {
+    const p = getPrimaryPartner(s);
+    return !!(p && !s.flags?.married && !isScenarioActive('infidelity_crisis', null, s));
+  },
+  "text": "最近、{partner}の帰りが遅い日が増えていた。「残業が長引いて」と疲れた顔で帰宅するものの、脱ぎ捨てられたジャケットから微かに漂う、私がつけていない甘い香水の匂い。深夜、お風呂に入っている{partner}のスマートフォンがテーブルの上で短く震える。画面に表示された見知らぬ名前と、「今日は楽しかったね♡ また会いたいな」というポップアップの通知。ドクン、と心臓が跳ね、手足の先から血の気が引いていく。ただの同僚の冗談か、それとも私の知らない誰かと肌を重ねているのか。疑心暗鬼の冷たい汗が、背筋を伝い落ちていった……。",
+  "choices": [
+    {
+      "id": "choice_check_evidence",
+      "label": "震える手でスマホを手に取り、決定的な浮気の証拠を確かめる",
+      "effects": {
+        "stress": 4,
+        "morality": -1
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "震える指先で画面をスワイプし、メッセージのやり取りを開いた。そこには親密な写真と、昨夜の逢瀬を匂わせる生々しい言葉の数々が並んでいた。信じていたパートナーの裏切りに、呼吸が止まりそうなほどの激痛が胸を貫いた。",
+          "diary": "{partner}のスマホを見てしまい、浮気の決定的な証拠を見つけてしまった。身体中が震えて、涙が止まらない。"
+        }
+      ]
+    },
+    {
+      "id": "choice_pretend_caress",
+      "label": "何食わぬ顔で湯上がりの相手を抱き寄せ、匂いと肌の熱を確かめる",
+      "effects": {
+        "intimacyNeed": 4,
+        "stress": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "スマホを伏せ、湯上がりの{partner}を玄関で迎え入れて首筋に抱きついた。微かに残る他人の匂いに胸が張り裂けそうになりながら、相手の耳元に唇を寄せ「誰にも渡さないから……」と強く爪を立てて抱きしめた。",
+          "diary": "{partner}への疑念が膨らむ中、強く抱きしめて匂いを確かめた。裏切られているかもしれない恐怖で、身体の奥が悲痛な疼きを訴えている。"
+        }
+      ]
+    },
+    {
+      "id": "choice_confront_directly_start",
+      "label": "「この通知、誰から？」とその場でスマホを突きつけて問い詰める",
+      "effects": {
+        "stress": 5,
+        "independence": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "お風呂から上がってきた{partner}の目の前に、光る画面をそのまま突きつけた。相手の顔から一瞬で血の気が失せ、リビングが凍りつくような沈黙に包まれた。",
+          "diary": "{partner}の目の前に怪しいスマホの通知を突きつけた。青ざめる相手の表情を見て、疑いが真実だと確信した。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_partner_infidelity_confrontation",
+  "title": "深夜の修羅場・暴かれた裏切りと涙の告白",
+  "age": [
+    20,
+    48
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "presets": [
+    "partnered"
+  ],
+  "requires": function (s) {
+    return isScenarioActive('infidelity_crisis', null, s);
+  },
+  "text": "深夜のリビング。暴かれた数々の証拠を前に、{partner}は床に膝をつき、額を擦りつけるようにして土下座していた。「魔が差したんだ……本当に一度だけなんだ！ 君を失いたくない、お願いだから許してほしい……！」必死にすがりつき、私の足首を掴んで泣きじゃくる{partner}。裏切られた怒りと悲しみ、悔しさ、そしてそれ以上に、他の身体を抱いていたこの手や唇への拭えない執着。愛憎の渦が胸の中で激しく渦巻き、私の身体は激しい怒りと背徳的な興奮に微熱を帯びて震えていた……。",
+  "choices": [
+    {
+      "id": "choice_forgive_demand_marriage",
+      "label": "「二度と裏切らないと誓うなら、結婚して一生責任を取って」と涙で迫る",
+      "effects": {
+        "happiness": 2,
+        "stress": 3,
+        "morality": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「口先だけの謝罪なんていらない。本当に後悔してるなら、結婚して一生私に尽くして」と涙を拭って見下ろすと、{partner}は涙で顔を濡らしながら「もちろん喜んで結婚する、命をかけて大切にする」と誓った。苦難と裏切りを乗り越え、二人は婚約へと歩みを進めた。",
+          "diary": "{partner}の浮気を激しく糾弾した末、結婚による一生の責任を取らせる約束を取り付けた。歪な形かもしれないけれど、私たちは婚約した。"
+        }
+      ]
+    },
+    {
+      "id": "choice_cut_betrayal_clean",
+      "label": "「汚らわしい……二度と私の前に現れないで」と平手打ちを食らわせて破局する",
+      "effects": {
+        "stress": 4,
+        "independence": 6,
+        "happiness": -2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "すがりつく相手の頬を思い切り叩きつけた。乾いた破裂音がリビングに響く。「私の信頼を踏みにじった人を、愛し続けることなんてできない」。冷たく言い放ち、荷物をまとめて夜明けの街へと足を踏み出した。",
+          "diary": "浮気をした{partner}に平手打ちを食らわせて関係を終わらせた。裏切られた傷は深いけれど、自分を安売りしない道を選べた自分を誇りたい。"
+        }
+      ]
+    },
+    {
+      "id": "choice_furious_hate_passion",
+      "label": "怒りと情欲を抑えきれず、相手を床に押し倒して激しい愛憎の情交に溺れる",
+      "effects": {
+        "intimacyNeed": 6,
+        "sexualEffects": {
+          "libido": 20,
+          "passion": 15
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「浮気したその手で、私を満足させてみなさいよ！」と相手を床に押し倒し、涙を流しながら衣服を引き裂いた。罪悪感に喘ぐ{partner}に貪るように乱暴に貫かれ、愛液と涙を床に撒き散らしながら、朝が来るまで理性を焼き切るような愛憎の交わりを続けた。",
+          "diary": "浮気の修羅場の最中、狂ったような情交に溺れてしまった。怒りと憎しみ、快楽がぐちゃぐちゃに混ざり合って、離れられない泥沼の絆を刻んでしまった。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_wavering_heart_temptation",
+  "title": "夜の帰り道、引き止められる手・本人の揺れる心",
+  "age": [
+    22,
+    42
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "presets": [
+    "partnered"
+  ],
+  "requires": function (s) {
+    const p = getPrimaryPartner(s);
+    return !!(p && !s.flags?.married && !isScenarioActive('wavering_heart', null, s));
+  },
+  "text": "歓送迎会の帰り道、夜風が火照った頬を撫でる。他の同僚たちがタクシーに乗り込んで解散する中、残った魅力的な知人に「少し夜風に当たって歩きませんか？」と呼び止められた。街灯の明かりが遠のく路地裏の並木道。ふと立ち止まった相手が、私の手首をそっと引き寄せる。「もうすぐ{partner}と結婚するって聞いたよ。……でも、僕はずっと君のことが好きだった」至近距離で見つめ合う瞳。至近距離から伝わる大人の色気と、強引に抱きすくめられそうな緊張感。{partner}の顔が脳裏に浮かびながらも、禁断のときめきに私の下腹は甘く疼き、息が熱く詰まっていた……。",
+  "choices": [
+    {
+      "id": "choice_resist_run_home",
+      "label": "「私には{partner}がいるから」と手を振りほどき、足早に家へ帰る",
+      "effects": {
+        "morality": 3,
+        "independence": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "相手の胸を押しのけて強く手を振りほどいた。「嬉しいけど、私には生涯を共にしたい人がいるの」。きっぱりと告げて背を向け、我が家で待つ{partner}の元へと走った。玄関を開けた時、迎えてくれた{partner}の笑顔を見て、自分の選択が正しかったと胸を撫で下ろした。",
+          "diary": "他の人から告白されて心が揺れかけたけれど、きっぱりと断って{partner}の元へ帰った。誘惑を乗り越えて、{partner}への愛の深さを再認識した。"
+        }
+      ]
+    },
+    {
+      "id": "choice_stolen_kiss_waver",
+      "label": "拒みきれず壁際に追い詰められ、暗がりの中で激しく唇を奪われてしまう",
+      "effects": {
+        "stress": 3,
+        "morality": -2,
+        "sexualEffects": {
+          "desire": 5
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "路地裏の壁に押しつけられ、奪うような熱烈な口づけに抗えなかった。絡み合う舌の生々しい湿り気と、衣服越しに撫でられる腰の熱さ。下着のクロッチがじわりと愛液で濡れていく屈辱と背徳の快感に、罪悪感を抱きながらも腰の力を抜いてしまった。",
+          "diary": "路地裏で他の男性に強引にキスを奪われ、身体が感じて濡れてしまった。{partner}に申し訳ないと思いながらも、激しい背徳の興奮に胸が疼いて止まらない。"
+        }
+      ]
+    },
+    {
+      "id": "choice_go_to_bar_hotel",
+      "label": "酔った勢いで相手の手を握り返し、二人きりの隠れ家バーへと消える",
+      "effects": {
+        "morality": -3,
+        "sexualEffects": {
+          "libido": 15,
+          "passion": 12
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "理性の糸がぷつりと切れ、相手の手を強く握り返した。薄暗いバーの個室で身体を寄せ合い、禁断の蜜月へと足を踏み入れた。",
+          "diary": "結婚前の最後の自由だと自分に言い訳をして、魅力的な相手と二人きりの夜を過ごしてしまった。甘い罪の蜜に溺れていく自分が怖い。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_wavering_heart_resolution",
+  "title": "罪悪感の夜と決意・本当に愛しているのは誰か",
+  "age": [
+    22,
+    42
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "presets": [
+    "partnered"
+  ],
+  "requires": function (s) {
+    return isScenarioActive('wavering_heart', null, s);
+  },
+  "text": "秘密の誘惑と罪悪感の熱に苛まれた日々。夜、鍵を開けて帰宅すると、キッチンからは美味しそうな湯気と、{partner}の鼻歌が聞こえていた。「おかえり！ 今日寒かったでしょ、温かいシチュー作ったよ」エプロン姿で駆け寄ってきて、冷えた私の手を両手で包み込んで温めてくれる{partner}の純粋な眼差し。その無垢な愛情に触れた瞬間、私の中にあった邪な迷いは跡形もなく吹き飛び、目頭が熱く潤んだ。私が本当に生涯を共にしたい人は、誰なのか。答えは最初から決まっていた……。",
+  "choices": [
+    {
+      "id": "choice_recommit_embrace",
+      "label": "{partner}を強く抱きしめ、涙を流しながら「ずっと一緒にいて」と誓う",
+      "effects": {
+        "happiness": 5,
+        "morality": 3,
+        "stress": -4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "シチューの匂いに包まれる台所で、{partner}の胸に顔を埋めて声を上げて泣いた。「私、あなたとずっと一緒に生きていきたい。結婚しよう」。驚きながらも優しく抱きしめ返してくれた{partner}の温もりに包まれ、迷いを断ち切って確かな婚約を結んだ。",
+          "diary": "{partner}の純粋な温もりに触れ、浮ついた迷いを完全に清算した。この人こそが私の運命の相手だと確信し、涙ながらに婚約を誓い合った。"
+        }
+      ]
+    },
+    {
+      "id": "choice_confess_guilt",
+      "label": "心が揺れてしまった罪悪感を正直に告白し、二人の関係を最初から築き直す",
+      "effects": {
+        "stress": 4,
+        "morality": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "他の人に誘われて心が揺れかけたことを、包み隠さず涙ながらに打ち明けた。{partner}はショックに唇を噛みしめながらも、「正直に話してくれてありがとう。俺ももっと君を大切にするよ」と受け止めてくれた。雨降って地固まるように、二人の絆はより強固になった。",
+          "diary": "迷いがあったことを{partner}に正直に告白した。痛みを分かち合い、許し合えたことで、以前よりもずっと深い信頼関係を築くことができた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_choose_new_partner",
+      "label": "{partner}への申し訳なさに耐えかね、別れを切り出して新しい恋へ踏み出す",
+      "effects": {
+        "independence": 5,
+        "stress": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「ごめんなさい、私……あなたの愛に相応しくない」と頭を下げて別れを切り出した。優しい{partner}をこれ以上裏切り続けないための、苦渋の決断だった。",
+          "diary": "{partner}の優しさに耐えきれず、別れを選んだ。新しい道を選ぶ罪深さを背負いながら、これからの人生を進んでいく。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_premarital_pregnancy_test",
+  "title": "遅れる生理と微熱・トイレの中の2本線",
+  "age": [
+    20,
+    38
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "presets": [
+    "partnered"
+  ],
+  "requires": function (s) {
+    return s.gender === 'female' && hasMalePartner(s) && !s.flags?.married && !isScenarioActive('premarital_pregnancy', null, s) && !s.flags?.pregnant;
+  },
+  "text": "予定日を十日過ぎても、毎月訪れるはずの生理が来ない。身体は微熱を帯びたように火照り、朝起きると胃の奥から込み上げるような微かな吐き気。胸の乳頭が下着に擦れるだけでツンと痛む。ドラッグストアで買い求めた小さな箱。震える手でトイレの個室に閉じこもり、尿をかけたスティックを握りしめて待った三分間。判定窓にじんわりと浮かび上がってきたのは、疑いようのない鮮やかな紅い二本線。「……本当に、できちゃったんだ」まだ結婚も決まっていない中、私のお腹の奥深くに小さな新しい命が宿ったという事実に、目眩がするほどの動揺と、言いようのない愛おしさが全身を貫いた……。",
+  "choices": [
+    {
+      "id": "choice_hold_belly_tears",
+      "label": "お腹にそっと手のひらを当て、芽生えた命の温もりに涙をこぼす",
+      "effects": {
+        "happiness": 4,
+        "stress": 2,
+        "morality": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "トイレの冷たい便座の上で、下腹にそっと両手を重ねた。まだ形もわからない小さな命の鼓動が、手のひらを通して伝わってくるようだった。「私が、この子のお母さんになるんだ……」。恐怖と歓びの涙が、検査薬の上にポタポタと零れ落ちた。",
+          "diary": "生理が遅れていたので検査薬を試したら、くっきりと陽性が出た。結婚前の予期せぬ妊娠に震えたけれど、お腹の命がたまらなく愛おしい。"
+        }
+      ]
+    },
+    {
+      "id": "choice_worry_partner_reaction",
+      "label": "{partner}が喜んでくれるか、激しい不安に駆られながら検査薬を握りしめる",
+      "effects": {
+        "stress": 4,
+        "mood": -2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「なんて言われるだろう……困らせてしまうんじゃないか」。彼が逃げ出したらどうしようという暗い妄想が頭を駆け巡り、激しい動悸に胸が苦しくなった。けれど、どんな未来になってもこの子は守り抜くと、お腹を抱きしめた。",
+          "diary": "妊娠が判明した。嬉しい気持ちと同じくらい、{partner}にどう打ち明けるべきか不安で押し潰されそうになる。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_premarital_pregnancy_announcement",
+  "title": "ふたりきりの告白・「俺たち、結婚しよう！」",
+  "age": [
+    20,
+    39
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "presets": [
+    "partnered"
+  ],
+  "requires": function (s) {
+    return isScenarioActive('premarital_pregnancy', null, s) && !s.flags?.married;
+  },
+  "text": "夕食の後片付けを終えた静かな夜。二人並んで座るリビングのローテーブルに、私は意を決して小さな布のポーチから検査薬を取り出し、そっと差し出した。「……実はね、赤ちゃんができたみたい」息を呑むような沈黙。判定窓の二本線を見つめる{partner}の瞳が大きく見開かれ、時間が止まったかのような数秒間が流れる。不安に押し潰されそうになり、私が唇を噛みしめて俯いた、その瞬間——。強い力で引き寄せられ、{partner}の逞しい腕の中にきつくきつく抱きしめられた。「ありがとう……！ 本当に嬉しい！ 俺たち、今すぐ結婚しよう。絶対に二人を幸せにするから！」耳元で震える{partner}の声と、私の肩を濡らす温かい涙。すべての迷いと不安が、歓喜の光の中に溶け去っていった……！",
+  "choices": [
+    {
+      "id": "choice_shotgun_wedding_embrace",
+      "label": "涙を流して抱きしめ返し、「ふたりで良いお父さんとお母さんになろうね」と誓う",
+      "effects": {
+        "happiness": 8,
+        "stress": -5,
+        "morality": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "{partner}の胸の中で声を上げて泣きじゃくった。「うん、一緒に育てようね……！」。曖昧だった将来の迷いは一瞬で吹き飛び、授かり婚としての入籍と両家への挨拶に向けて、二人の足取りは希望に満ちて動き出した。",
+          "diary": "{partner}に妊娠を打ち明けると、涙を流して喜んでプロポーズしてくれた。赤ちゃんと三人で新しい家族になる。世界で一番幸せな瞬間だった。"
+        }
+      ]
+    },
+    {
+      "id": "choice_passionate_reassurance_night",
+      "label": "喜びを分かち合い、新しい命を宿した身体を慈しむように優しく抱きしめ合って愛を確かめる",
+      "effects": {
+        "happiness": 7,
+        "intimacyNeed": 6,
+        "sexualEffects": {
+          "intimacy": 15,
+          "libido": 10
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "ベッドの中で、{partner}の温かい手のひらがお腹の上へと滑り込んできた。いつもより何倍も優しく、壊れ物を扱うように全身に愛撫を施され、溢れ出る愛液と母性の喜びに身を震わせながら、深く深く愛を確かめ合った。",
+          "diary": "婚約の夜、{partner}にお腹を優しく撫でられながら抱かれた。父と母になる自覚と深い愛情に包まれ、至福の眠りについた。"
+        }
+      ]
+    }
+  ]
+});
+
+
 
