@@ -3524,5 +3524,60 @@ window.defineEvent({
   ]
 });
 
-
-
+window.defineEvent({
+  "id": "story_marriage_third_anniversary",
+  "title": "結婚3年目・落ち着いた日常と深まる愛",
+  "age": [
+    20,
+    60
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "presets": [
+    "partnered"
+  ],
+  "requires": function (s) {
+    const sp = s.bonds.find(b => b.status === 'spouse');
+    return !!(sp && (s.age - (sp.marriedAge || s.age)) >= 3 && !s.flags?.marriage_3rd_anniversary_done && isScenarioActive('marriage_life', null, s));
+  },
+  "text": "結婚してから3年の月日が流れた記念日の夜。新婚当初のどこか落ち着かない緊張感や甘ったるい興奮は、日々の暮らしの中で、当たり前のように隣にいる穏やかで深い信頼へと形を変えていた。テーブルには少し贅沢な料理とワイン。{partner}が愛おしそうに私の手を取り、左手薬指の指輪をそっと撫でる。「もう3年か……毎日一緒にいてくれて本当にありがとう。これからもずっとよろしくね」。肌に染み付いた相手の匂いと温もりに包まれ、二人の歴史が確かに積み重なっている喜びに胸が満たされた。",
+  "choices": [
+    {
+      "id": "choice_anniversary_passion",
+      "label": "新婚の頃の甘い熱情を思い出し、互いの素肌を貪るように激しく求め合う",
+      "effects": {
+        "happiness": 6,
+        "passion": 4,
+        "sexualEffects": {
+          "intimacy": 15,
+          "libido": 12,
+          "desire": 5
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "ベッドへと雪崩れ込み、溢れる想いをぶつけるように熱く唇を重ねた。慣れ親しんだはずの身体が、指先が触れ合うたびに激しく疼き、蜜を溢れさせていく。奥深くまで貫かれ、シーツを握りしめて激しく喘ぎながら、変わらない熱い愛を身体の芯まで刻みつけられた。",
+          "diary": "結婚3年目の記念日、{partner}と新婚の頃のように激しく肌を重ねて愛を確かめ合った。年数を重ねるごとに、相手への愛しさと身体の結びつきが深まっているのを感じる。"
+        }
+      ]
+    },
+    {
+      "id": "choice_anniversary_warmth",
+      "label": "寄り添ってグラスを傾け、これからの二人三脚の人生を語り合う",
+      "effects": {
+        "happiness": 5,
+        "stress": -3,
+        "morality": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "ソファに深く身を沈め、{partner}の胸に頭を預けてこれまでの3年間を振り返った。喧嘩やすれ違いも乗り越えてきたからこそ、今の強い絆がある。二人でこれからの暮らしの夢を語り合い、穏やかで幸福な夜が更けていった。",
+          "diary": "結婚3年目を迎え、{partner}と二人でゆっくりと語り合った。新婚の初々しさを経て、何にも代え難い人生の伴侶としての絆がしっかりと結ばれていることを実感した。"
+        }
+      ]
+    }
+  ]
+});

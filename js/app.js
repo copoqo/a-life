@@ -1250,8 +1250,41 @@ function harmonizeScenarios(st = s) {
       completeScenario('wavering_heart', st);
     }
     // 夫婦生活ストーリーがまだなければ開始
-    if (!getScenario('marriage_life', st) && spouse) {
-      startScenario('marriage_life', 'newlywed', { partnerId: spouse.id, partnerName: spouse.name }, st);
+    let mlSc = getScenario('marriage_life', st);
+    if (!mlSc && spouse) {
+      mlSc = startScenario('marriage_life', 'newlywed', { partnerId: spouse.id, partnerName: spouse.name }, st);
+    }
+    // 「新婚（newlywed）」は長くても3年で次のストーリーへ遷移
+    if (mlSc && mlSc.status === 'active') {
+      const marriedAge = spouse?.marriedAge ?? mlSc.startedAge ?? st.age;
+      const marriedYears = Math.max(0, (st.age ?? 0) - marriedAge);
+      const hasChildren = !!(st.flags?.has_children || st.flags?.child_born || st.children?.length);
+
+      if (mlSc.phase === 'newlywed') {
+        if (hasChildren) {
+          advanceScenario('marriage_life', 'parenting', {}, st);
+        } else if (marriedYears >= 3) {
+          advanceScenario('marriage_life', 'settled', {}, st);
+        }
+      } else if (mlSc.phase === 'settled') {
+        if (hasChildren) {
+          advanceScenario('marriage_life', 'parenting', {}, st);
+        } else if (st.age >= 65) {
+          advanceScenario('marriage_life', 'silver', {}, st);
+        } else if (marriedYears >= 10) {
+          advanceScenario('marriage_life', 'mature', {}, st);
+        }
+      } else if (mlSc.phase === 'parenting') {
+        if (st.age >= 65) {
+          advanceScenario('marriage_life', 'silver', {}, st);
+        } else if (marriedYears >= 15) {
+          advanceScenario('marriage_life', 'mature', {}, st);
+        }
+      } else if (mlSc.phase === 'mature') {
+        if (st.age >= 65) {
+          advanceScenario('marriage_life', 'silver', {}, st);
+        }
+      }
     }
   }
 
@@ -2228,7 +2261,7 @@ function getEventNarrativeConflictGroup(e) {
 function isStoryEvent(e) {
   if (!e) return false;
   if (e.is_major || e.classification === 'major') return true;
-  if (['adult_marriage_proposal', 'marriage_ceremony', 'adult_future_together', 'youth_first_apartment_hunt', 'young_living_alone', 'confessed_to', 'first_kiss_milestone', 'same_sex_first_kiss', 'first_intimacy_milestone', 'partner_first_intimacy_experienced', 'first_date_milestone', 'adult_first_date', 'youth_job_hunting_suit', 'youth_first_paycheck_parents', 'story_cohabitation_routine_rut', 'story_cohabitation_ultimatum', 'story_partner_infidelity_suspicion', 'story_partner_infidelity_confrontation', 'story_wavering_heart_temptation', 'story_wavering_heart_resolution', 'story_premarital_pregnancy_test', 'story_premarital_pregnancy_announcement'].includes(e.id)) return true;
+  if (['adult_marriage_proposal', 'marriage_ceremony', 'adult_future_together', 'youth_first_apartment_hunt', 'young_living_alone', 'confessed_to', 'first_kiss_milestone', 'same_sex_first_kiss', 'first_intimacy_milestone', 'partner_first_intimacy_experienced', 'first_date_milestone', 'adult_first_date', 'youth_job_hunting_suit', 'youth_first_paycheck_parents', 'story_cohabitation_routine_rut', 'story_cohabitation_ultimatum', 'story_partner_infidelity_suspicion', 'story_partner_infidelity_confrontation', 'story_wavering_heart_temptation', 'story_wavering_heart_resolution', 'story_premarital_pregnancy_test', 'story_premarital_pregnancy_announcement', 'story_marriage_third_anniversary'].includes(e.id)) return true;
   return false;
 }
 
@@ -2281,6 +2314,7 @@ function getStoryArcBoost(e, st = s) {
     }
   } else if (stage === 5) {
     if (e.id === 'marriage_ceremony' && !st.seen?.marriage_ceremony) boost *= 5.0;
+    else if (e.id === 'story_marriage_third_anniversary' && !st.seen?.story_marriage_third_anniversary) boost *= 4.0;
     else if (['marital_life_intimacy', 'marital_cooking_together', 'marital_living_room_cuddle', 'marital_bedtime_whisper', 'marital_holiday_stroll', 'marital_affection_skinship', 'life_household', 'life_parenthood_question'].includes(e.id)) boost *= 2.2;
   }
 
@@ -3879,6 +3913,11 @@ function settle(event, index, continueYear = true) {
     s.chains.push({ eventId: 'marriage_ceremony', targetAge: s.age, targetAgeMonths: (s.age_months || 0) + 2, prob: 1.0 });
     harmonizeScenarios(s);
   }
+  if (event.id === 'story_marriage_third_anniversary') {
+    s.flags.marriage_3rd_anniversary_done = true;
+    advanceScenario('marriage_life', 'settled');
+    harmonizeScenarios(s);
+  }
   if (event.id === 'life_parenthood_question') {
     if (index === 0) s.flags.trying_for_baby = true;
     else if (index === 1) s.flags.childfree_chosen = true;
@@ -4525,7 +4564,7 @@ function renderScenarioBoxHtml(st = s) {
     infidelity_crisis: { name: '浮気疑惑', phases: { suspicion: '疑念', confrontation: '修羅場', reconciled: '再構築' } },
     wavering_heart: { name: '揺れる心', phases: { temptation: '秘密の誘惑', secret_hesitation: '背徳と葛藤', resolved: '決断' } },
     premarital_pregnancy: { name: '授かり婚', phases: { positive_test: '妊娠発覚', wedding_rush: '入籍準備' } },
-    marriage_life: { name: '夫婦生活', phases: { newlywed: '新婚' } },
+    marriage_life: { name: '夫婦生活', phases: { newlywed: '新婚', settled: '安定期', parenting: '子育て期', mature: '円熟期', silver: '寄り添う老後' } },
     independence: { name: '自立', phases: { living_alone: '一人暮らし' } },
     career: { name: '仕事', phases: { job_hunting: '就職活動', employed: '社会人', established: '自立' } }
   };
