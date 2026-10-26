@@ -5,7 +5,7 @@
     "historyLen": 228,
     "bonds": 9,
     "stateHash": "a96bac6f15192c5d",
-    "htmlHash": "3b7a4d4d6a72ce81",
+    "htmlHash": "c409c68989a57a26",
     "errors": 0
   },
   "auto:42": {
@@ -14,7 +14,7 @@
     "historyLen": 148,
     "bonds": 18,
     "stateHash": "4b144f79548cb6e7",
-    "htmlHash": "0b1e4c825a50045c",
+    "htmlHash": "269266017333e357",
     "errors": 0
   },
   "auto:20261025": {
@@ -23,7 +23,7 @@
     "historyLen": 241,
     "bonds": 11,
     "stateHash": "9375229b8775700c",
-    "htmlHash": "74d9ed1e2678432e",
+    "htmlHash": "5980d8d4ccb571ce",
     "errors": 0
   },
   "auto:987654321": {
@@ -32,7 +32,7 @@
     "historyLen": 234,
     "bonds": 8,
     "stateHash": "46f379ecc537aea4",
-    "htmlHash": "d4054c9207de8c3c",
+    "htmlHash": "291bfcb27f0e2891",
     "errors": 0
   },
   "choice:1": {
@@ -41,7 +41,7 @@
     "historyLen": 240,
     "bonds": 8,
     "stateHash": "1e14b122165a703d",
-    "htmlHash": "c0c256579e1b9016",
+    "htmlHash": "8d82e9e3dca5dcfe",
     "errors": 0
   },
   "choice:42": {
@@ -50,7 +50,7 @@
     "historyLen": 214,
     "bonds": 10,
     "stateHash": "3a6ab951a33eec87",
-    "htmlHash": "c9caac74eb0e29a3",
+    "htmlHash": "4fb9325499c69580",
     "errors": 0
   },
   "choice:20261025": {
@@ -59,7 +59,7 @@
     "historyLen": 185,
     "bonds": 10,
     "stateHash": "885a9f0dd25f767f",
-    "htmlHash": "f6ec82972cecee6e",
+    "htmlHash": "d7c0a02093e80cde",
     "errors": 0
   },
   "choice:987654321": {
@@ -68,7 +68,7 @@
     "historyLen": 242,
     "bonds": 9,
     "stateHash": "39fd4764c9220347",
-    "htmlHash": "80c741a7b770835c",
+    "htmlHash": "17b0ad7c0258e031",
     "errors": 0
   }
 }

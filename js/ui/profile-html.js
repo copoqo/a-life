@@ -39,13 +39,13 @@ function getPersonality(st) {
     const modesty = traits.baseline_modesty?.current ?? 0;
     const maso = traits.masochistic_preference?.current ?? 0;
     if (libido >= 25) {
-      if (maso >= 12) return 'いじめられると悦び覚える';
-      if (modesty >= 12) return '体の疼きを耐える純情';
-      return '歓びを知った体';
+      if (maso >= 12) return 'いじめられ願望';
+      if (modesty >= 12) return '疼きを秘めた純情';
+      return '歓びに目覚めた身体';
     }
     if (libido >= 12) {
-      if (modesty >= 10) return '身体の火照りに戸惑';
-      return '自分でさわって息を荒げる';
+      if (modesty >= 10) return '身体の火照りに戸惑う';
+      return '密かな疼きへの好奇心';
     }
     const ext = (traits.extraversion?.current ?? 0) + (display.sociability ?? 0);
     if (ext >= 15) return '多感で活発な少女';
@@ -53,7 +53,7 @@ function getPersonality(st) {
     return '多感でおだやか';
   }
 
-  // 15歳以上（青年期・成人：下品・猥雑・赤裸々な性的欲望の描写）
+  // 15歳以上（青年期・成人：洗練された性的欲望・情熱の描写）
   const morality = abilities.morality ?? st.morality ?? 10;
   const libido = (states.current_libido ?? 0) + (traits.baseline_libido?.current ?? 0) + (sexuality.desire ?? 0) * 0.5 + (display.sexual_desire ?? 0) * 0.4;
   const modesty = traits.baseline_modesty?.current ?? 0;
@@ -68,69 +68,69 @@ function getPersonality(st) {
   // 性的欲望・性癖の候補
   const carnalList = [];
 
-  // 1. 被虐・ドM（乱暴に突き上げられたい、犯されて歓喜）
+  // 1. 被虐・受容気質
   if (maso >= 10) {
     carnalList.push({
-      text: maso >= 20 ? '乱暴にされたいM体質' : '辱められたい被虐気質',
+      text: maso >= 20 ? '翻弄されたい被虐性' : '受け身な受容気質',
       score: maso * 2.2 + libido * 0.6
     });
   }
 
-  // 2. 加虐・淫虐サド（男を支配・搾り取る）
+  // 2. 加虐・能動気質
   if (sado >= 10) {
     carnalList.push({
-      text: sado >= 20 ? '男を支配して弄ぶ淫虐女王' : '男を貪る肉食系',
+      text: sado >= 20 ? '支配を好む加虐性' : '能動的な主導気質',
       score: sado * 2.2 + libido * 0.6
     });
   }
 
-  // 3. 低モラル×高性欲（肉便器・淫売・男喰い・見境なし）
+  // 3. 奔放・快楽耽溺（低モラル×高性欲）
   if (morality <= 8 && libido >= 15) {
-    let t = '誰にでも股を開く';
-    if (morality <= 5 && libido >= 30) t = '見境なく咥え込む発情期';
-    else if (morality <= 6) t = '男の精液を欲しがる淫売体質';
-    else t = '貞操観念ゼロの淫乱';
+    let t = '快楽に素直な身体';
+    if (morality <= 5 && libido >= 30) t = '奔放な快楽主義';
+    else if (morality <= 6) t = '情欲に溺れやすい性';
+    else t = '自由で奔放な情欲';
     carnalList.push({ text: t, score: (14 - morality) * 3.5 + libido * 1.2 });
   }
 
-  // 4. 高恥じらい×高性欲（下唇を噛んで耐える・むっつりスケベ・奥をヒクつかせる）
+  // 4. 高恥じらい×高性欲（葛藤・秘めた情欲）
   if (modesty >= 8 && libido >= 15) {
-    let t = '疼きに耐える女体';
-    if (modesty >= 18 && libido >= 35) t = '羞恥に震えながら期待する';
-    else if (modesty >= 15) t = '拒みながらも悦ぶ敏感体質';
-    else t = '恥じらいつつも欲しがる';
+    let t = '秘めた疼きと熱情';
+    if (modesty >= 18 && libido >= 35) t = '羞恥に秘めた熱情';
+    else if (modesty >= 15) t = '快楽と恥じらいの葛藤';
+    else t = '恥じらいつつも敏感';
     carnalList.push({ text: t, score: modesty * 2.2 + libido * 1.0 });
   }
 
-  // 5. 超高リビドー・絶え間ない発情（男の肉棒に飢えた発情牝・淫乱肉穴）
+  // 5. 超高リビドー・絶え間ない熱情
   if (libido >= 30) {
     if (libido >= 50) {
-      carnalList.push({ text: '常に快楽を求める淫乱', score: libido * 1.5 });
-      carnalList.push({ text: '快楽に飢えた発情期', score: libido * 1.35 });
+      carnalList.push({ text: '尽きない濃密な情欲', score: libido * 1.5 });
+      carnalList.push({ text: '快楽に溺れる身体', score: libido * 1.35 });
     } else if (libido >= 40) {
-      carnalList.push({ text: '女体の疼きに従順な淫乱', score: libido * 1.5 });
-      carnalList.push({ text: '快楽に飢えた発情期', score: libido * 1.35 });
+      carnalList.push({ text: '快楽に素直な素肌', score: libido * 1.5 });
+      carnalList.push({ text: '満たされぬ強い情熱', score: libido * 1.35 });
     } else {
-      carnalList.push({ text: '快楽に飢えた発情期', score: libido * 1.4 });
-      carnalList.push({ text: '女体の歓びに目覚めた', score: libido * 1.25 });
+      carnalList.push({ text: '歓びに目覚めた身体', score: libido * 1.4 });
+      carnalList.push({ text: '疼きやすい熱情', score: libido * 1.25 });
     }
   }
 
-  // 6. 積極的・痴女・露出・変態的好奇心
+  // 6. 積極的・探求・背徳的なスリル
   if (initiative >= 12 || risk >= 16 || modesty <= -12) {
-    let t = '自ら男を誘惑する痴女気質';
-    if (risk >= 18 && modesty <= -10) t = '人目につく場所で濡れる露出気質';
-    else if (initiative >= 15) t = '未知の快楽に疼く好奇心';
+    let t = '能動的な誘惑気質';
+    if (risk >= 18 && modesty <= -10) t = '背徳のスリル嗜好';
+    else if (initiative >= 15) t = '未知の快楽への好奇心';
     carnalList.push({ text: t, score: (initiative + risk - modesty) * 1.2 });
   }
 
   // 7. 中〜通常のリビドー
   if (libido >= 12 && libido < 35) {
-    carnalList.push({ text: '男の温もりに反応する身体', score: libido * 0.9 });
+    carnalList.push({ text: '温もりに敏感な身体', score: libido * 0.9 });
   } else if (libido < 12) {
-    // 低リビドー・処女
-    if (modesty >= 10) carnalList.push({ text: '男の影を恐れつつも微かに疼く体', score: 14 });
-    else carnalList.push({ text: '男を知らない未開の処女', score: 12 });
+    // 低リビドー・未経験
+    if (modesty >= 10) carnalList.push({ text: '初々しく控えめ', score: 14 });
+    else carnalList.push({ text: '愛に無垢な身体', score: 12 });
   }
 
   carnalList.sort((a, b) => b.score - a.score);
@@ -180,7 +180,7 @@ function getInterests(st) {
       return '恋心・逢瀬への憧れ';
     }
     if (/自慰|オナニー|秘所|身体を慰め|疼き|秘密/.test(text) && st.age >= 6) {
-      if (st.age >= 15) return '秘所の疼き・愛液まみれの自慰';
+      if (st.age >= 15) return '甘やかな疼き・密やかな自慰';
       return '身体の探求・秘密の一人遊び';
     }
     if (/勉強|学習|学校|試験|テスト|読書|本|授業|受験|大学|知識|学問/.test(text)) {
