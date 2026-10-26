@@ -382,6 +382,18 @@ function settle(event, index, continueYear = true) {
     advanceScenario('marriage_life', 'parenting');
     harmonizeScenarios(s);
   }
+  if (event.id === 'story_parenting_rare_caught_intimacy_glance' && index === 0) {
+    s.flags.caught_perverse_climax_experienced = true;
+    s.chains ??= [];
+    if (!s.chains.some(c => c.eventId === 'story_parenting_rare_aftermath_child_gaze')) {
+      s.chains.push({
+        eventId: 'story_parenting_rare_aftermath_child_gaze',
+        targetAge: s.age,
+        targetAgeMonths: (s.age_months || 0) + (2 + Math.floor(rng.next() * 3)),
+        prob: 1.0
+      });
+    }
+  }
   if (event.id === 'life_parenthood_question') {
     if (index === 0) s.flags.trying_for_baby = true;
     else if (index === 1) s.flags.childfree_chosen = true;

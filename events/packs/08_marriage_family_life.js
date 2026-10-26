@@ -840,12 +840,12 @@ window.defineEvent({
   "choices": [
     {
       "id": "choice_0",
-      "label": "{partner}となった相手に激しく身を委ねる",
+      "label": "伴侶となった{partner}に激しく身を委ねる",
       "outcomes": [
         {
           "id": "outcome_0",
           "weight": 1,
-          "description": "純白のベールを脱ぎ捨て、{partner}となった相手に激しく身を委ねる。",
+          "description": "純白のベールを脱ぎ捨て、伴侶となった{partner}に激しく身を委ねる。",
           "effects": [
             {
               "path": "state.mood",
@@ -900,7 +900,7 @@ window.defineEvent({
       "text": "祝福の拍手と華やかな花びらに包まれ、純白のドレスで歩くバージンロード。披露宴を終えたホテルのスイートルームで、{partner}の手でドレスのファスナーをゆっくりと下ろされ、夫婦となって初めての熱い素肌を重ねる……。",
       "choices": [
         [
-          "純白のベールを脱ぎ捨て、{partner}となった相手に激しく身を委ねる",
+          "純白のベールを脱ぎ捨て、伴侶となった{partner}に激しく身を委ねる",
           {
             "happiness": 6,
             "trust": 4,
@@ -917,7 +917,7 @@ window.defineEvent({
         ]
       ],
       "diary": [
-        "ドレスを脱がされ、素肌を晒したときの恥じらいと高揚感。{partner}となった人の逞しい腕に抱かれ、奥深くまで貫かれた瞬間の痺れるような快感は、生涯忘れられない夜になった。",
+        "ドレスを脱がされ、素肌を晒したときの恥じらいと高揚感。伴侶となった{partner}の逞しい腕に抱かれ、奥深くまで貫かれた瞬間の痺れるような快感は、生涯忘れられない夜になった。",
         "たくさんの人に祝福された一日が終わった。疲れた身体を寄せ合い、同じ苗字になった実感に包まれながら穏やかに眠りについた。"
       ]
     },
@@ -3777,4 +3777,2256 @@ window.defineEvent({
     }
   ]
 });
+
+window.defineEvent({
+  "id": "story_parenting_first_steps",
+  "title": "初めての一歩と家族の温もり・小さな成長の奇跡",
+  "age": [
+    21,
+    52
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "general",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 1 && childAge <= 3);
+  },
+  "weight": 35,
+  "once": true,
+  "text": "リビングの柔らかな日差しの中、畳に手をついて立ち上がった我が子。小さくぷくぷくとした両手を広げ、ふらつきながらも前へと小さな足を一歩、また一歩と踏み出す。向かい側で両手を広げてしゃがむ{partner}と、息を呑んで見守る私。「おいで、上手だよ！」。満面の笑顔でバランスを崩しながら私の腕の中へと倒れ込んできた我が子の、甘いミルクと汗の混ざった匂い。小さな背中をきつく抱きしめると、成長の眩しさに胸の奥が熱く潤んだ。",
+  "choices": [
+    {
+      "id": "choice_parenting_first_steps_hug",
+      "label": "我が子を高く抱き上げ、{partner}と顔を見合わせて歓喜の涙を零す",
+      "effects": {
+        "happiness": 7,
+        "stress": -3,
+        "morality": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "我が子を高く抱き上げると、鈴を転がすような笑い声をあげて喜んだ。隣に並んだ{partner}が二人ごと包み込むように大きな腕を回してくれ、家族がひとつになった確かな幸福に包まれた。",
+          "diary": "我が子が初めて自分の足で歩いた！ よちよち歩きで胸に飛び込んできたときの温もりと重み。家族みんなで大はしゃぎした、一生の思い出の一日。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_first_steps_bath",
+      "label": "お風呂上がり、バスタオルに包んだ我が子を慈しみながら夫と成長を語り合う",
+      "effects": {
+        "happiness": 6,
+        "intimacyNeed": 3,
+        "selfKnowledge": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "お風呂上がりの温かな湯気の中、パウダーの香る柔らかな肌を丁寧に拭いて服を着せる。すやすやと寝息を立て始めた後、{partner}と並んで温かいお茶を飲み、「大きくなったね」と微笑み合った。",
+          "diary": "子どもの成長は本当にあっという間。一歩一歩進んでいく小さな背中を見つめながら、母親としての愛情と誇りが日増しに深まっている。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_nursery_morning",
+  "title": "初めての登園と小さな背中・離れる寂しさと母の誇り",
+  "age": [
+    23,
+    55
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "general",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 3 && childAge <= 5);
+  },
+  "weight": 32,
+  "once": true,
+  "text": "桜のつぼみがほころぶ春の朝。身体よりも少し大きな通園リュックを背負い、真新しい名札をつけた我が子。園の玄関前まで来ると、急に不安になったのか私のスカートの裾をぎゅっと握りしめて離さず、大きな瞳に涙をいっぱいためた。「ママ、いかないで……」。しゃがんで小さな両手を包み込み、優しく涙を拭う。いつまでも胸に抱きとめておきたい愛おしさと、外の世界へと羽ばたいていく背中を見守る親の覚悟が交錯する。",
+  "choices": [
+    {
+      "id": "choice_parenting_nursery_encourage",
+      "label": "膝をついてぎゅっと抱きしめ、「夕方一番に迎えに来るね」と笑顔で送り出す",
+      "effects": {
+        "happiness": 6,
+        "selfEfficacy": 3,
+        "stress": -2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「今日はいっぱいお友達と遊んでおいでね」。優しく頭を撫でて送り出すと、我が子は涙を拭って小さく手を振って園舎へと入っていった。夕方、門をくぐると満面の笑みで走って抱きついてきた我が子の温かさに、目頭が熱くなった。",
+          "diary": "初めての集団生活への第一歩。涙をこらえて園へと入っていく我が子の後ろ姿に、胸が締めつけられるような愛おしさと誇らしさを覚えた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_nursery_couple_walk",
+      "label": "{partner}と手を繋いで帰り道を歩き、少しずつ手が離れていく切なさを分かち合う",
+      "effects": {
+        "happiness": 5,
+        "passion": 2,
+        "morality": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "園からの帰り道、久しぶりに{partner}と二人きりで並んで歩いた。「あんなに小さかったのにな」と呟く夫の手が私の指をそっと握りしめる。子育ての節目を共に越えてきた夫婦の絆が、じんわりと胸に染み渡った。",
+          "diary": "子どもの登園を見届けた後、{partner}と二人でしみじみと語り合った。親としての役割が増えても、こうして寄り添い合えるパートナーがいることの尊さを実感する。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_fever_midnight",
+  "title": "真夜中の急な高熱と冷たい氷枕・夫婦で祈り明かす夜",
+  "age": [
+    22,
+    58
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "general",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 1 && childAge <= 8);
+  },
+  "weight": 30,
+  "once": true,
+  "text": "深夜、荒い呼吸とぐずる声で跳ね起きる。寝室の布団に横たわる我が子の額に手を当てると、火のように熱く、首筋には冷たい汗がびっしりと滲んでいた。体温計の数字は39度を超えている。夜間救急の案内を調べ、氷枕や冷たいタオルを用意する私の手は、心配のあまり小刻みに震えていた。「大丈夫、僕がタオルを替えるよ。君は身体を冷やしてあげて」。起きてきた{partner}が落ち着いた声で声をかけ、素早く看病の体制を整えてくれた……。",
+  "choices": [
+    {
+      "id": "choice_parenting_fever_hold_hand",
+      "label": "朝まで小さな手を握り締め、母としての深い祈りを込めて看病を続ける",
+      "effects": {
+        "happiness": 4,
+        "stress": -2,
+        "morality": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "冷たいタオルをこまめに替え、枕元で子守唄を小さく口ずさみながら手を握り続けた。明け方、ようやく熱が下がって穏やかな呼吸に戻った我が子の寝顔を見て、全身の力が抜けて涙がこぼれ落ちた。",
+          "diary": "急な高熱に慌てた夜だったけれど、無事に平熱に戻ってホッとした。代わってあげられない苦しさを思うと胸が張り裂けそうだった。健康のありがたさを痛感。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_fever_couple_support",
+      "label": "{partner}と交代で看病し合い、支え合える家族の強さを噛み締める",
+      "effects": {
+        "happiness": 5,
+        "passion": 3,
+        "selfEfficacy": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "{partner}が温かい飲み物を淹れて私の肩にブランケットを掛けてくれた。二人で手を取り合い、夜明けの光が部屋に差し込むまで寄り添いながら我が子を守り抜いた。この人と一緒だからこそ乗り越えられると強く確信した。",
+          "diary": "夜通しの看病で疲れたけれど、{partner}の頼もしさと優しさに心から救われた。家族全員で助け合って生きていく実感がある。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_elementary_sports_day",
+  "title": "砂埃の運動会とお弁当・トラックを駆け抜ける小さな背中",
+  "age": [
+    26,
+    60
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "general",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 6 && childAge <= 10);
+  },
+  "weight": 30,
+  "once": true,
+  "text": "青空に万国旗がたなびく秋の小学校の校庭。早朝から唐揚げや甘い卵焼きを重箱に詰め、家族みんなで出かけた運動会。トラックの白線の前、体操着のゼッケンをつけた我が子が、緊張で唇を引き結びながらスタートの合図を待っている。ピストルの号音とともに、砂埃を上げて力いっぱい地面を蹴る我が子。「行けーっ！ 頑張れ！」。隣の{partner}と声を揃えて叫び、無我夢中で手を振り続ける。",
+  "choices": [
+    {
+      "id": "choice_parenting_sports_day_cheer",
+      "label": "ゴールまで走り抜いた我が子に駆け寄り、抱きしめて健闘を称える",
+      "effects": {
+        "happiness": 8,
+        "stress": -3,
+        "selfEfficacy": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "汗びっしょりで走り切った我が子が、満面の笑みで胸に飛び込んできた。「見ててくれた！？」。誇らしげに胸を張る我が子の頭を両手で撫で、目頭を熱くさせながら最高の一日を分かち合った。",
+          "diary": "小学校の運動会。転んでも諦めずに最後まで走り切った我が子の姿に、思わず涙が出そうになった。お弁当を美味しそうに平らげる笑顔が眩しい。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_sports_day_lunch",
+      "label": "{partner}とレジャーシートで肩を並べ、家族で囲むお昼の団らんを満喫する",
+      "effects": {
+        "happiness": 7,
+        "passion": 2,
+        "morality": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "木陰のレジャーシートで家族三人車座になってお弁当を広げた。我が子の頑張りを笑顔で褒め称え合う{partner}の瞳の優しさに、かけがえのない温かな日常の幸福を噛み締めた。",
+          "diary": "晴天の運動会、家族みんなでお弁当を囲んだひとときは宝物。子どもがもたらしてくれる彩りと笑顔の多さに、感謝が尽きない。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_couple_reconnect",
+  "title": "子供が眠りについた寝室と・母から女へと戻る密やかな夜",
+  "age": [
+    24,
+    50
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children",
+    "partnered"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 2 && childAge <= 12);
+  },
+  "weight": 28,
+  "text": "一日中走り回り、絵本を読み聞かせてようやく安らかな寝息を立てた子供部屋。明かりを消してそっと引き戸を閉め、薄暗いリビングへと戻ると、{partner}がソファに腰掛けて待っていた。「お疲れ様、今日も一日頑張ったね」。背後からそっと抱き寄せられ、首筋に触れる熱い吐息と唇。昼間の「お母さん」としての気を張り詰めた日常から、一人の愛される「女」へと解き放たれていく甘美な弛緩。子供の気配がすぐ近くにある背徳感と、飢えていた素肌の熱情が下腹の奥をじわりと濡らし始める……。",
+  "choices": [
+    {
+      "id": "choice_parenting_couple_secret_passion",
+      "label": "声を押し殺しながら{partner}に身を委ね、濃密な愛撫と熱情に溺れる",
+      "effects": {
+        "happiness": 7,
+        "intimacyNeed": 5,
+        "sexualEffects": {
+          "intimacy": 12,
+          "libido": 8
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "隣の部屋に声が漏れないよう、{partner}の肩に口唇を押し当てて激しい快感を呑み込んだ。奥深くまで愛液で満たされ、夫婦として、そして男と女として求め合える悦びに、爪先まで甘く痺れる絶頂を迎えた。",
+          "diary": "子供が眠った後の密やかな逢瀬。母としての責任を忘れ、女として夫に愛される時間の濃厚な甘さに、身体の芯まで満たされた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_couple_quiet_wine",
+      "label": "二人で静かにワインを傾け、親としての労いと夫婦の愛を確かめ合う",
+      "effects": {
+        "happiness": 6,
+        "stress": -4,
+        "morality": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "グラスを小さく合わせ、今日あった子供の可愛い仕草を語り合いながら笑い合った。優しく手を握り合い、肌の温もりを分かち合いながら眠りにつく時間は、何ものにも代え難い安らぎだった。",
+          "diary": "夜の静寂の中で{partner}と二人でゆっくり晩酌。忙しい育児の日々の中でも、お互いを思いやり慈しむ時間を大切にしていきたい。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_puberty_conflict",
+  "title": "閉ざされた部屋のドアと背丈比べ・思春期の葛藤を見守る祈り",
+  "age": [
+    32,
+    65
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "general",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 12 && childAge <= 16);
+  },
+  "weight": 30,
+  "once": true,
+  "text": "いつの間にか私の背丈を追い越し、見上げるほどに大きくなった我が子。かつてのように甘えてくることはなくなり、「うるさいな、ノックくらいしてよ！」と乱暴に部屋のドアを閉められることが増えた。リビングに残された静けさの中、柱に残る幼い頃の背比べの傷跡をそっと撫でる。親の手を振りほどいて自立しようともがく我が子の痛みと、手を離していかなければならない母としての寂しさに、胸の奥がきゅっと疼く。",
+  "choices": [
+    {
+      "id": "choice_parenting_puberty_snack",
+      "label": "無理に踏み込まず、好物の夜食を作ってドアの前にそっと届ける",
+      "effects": {
+        "happiness": 5,
+        "morality": 4,
+        "selfEfficacy": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "温かいおにぎりとスープをお盆に乗せ、部屋の前に静かに置いた。翌朝、綺麗に空になったお皿と「ごちそうさま」の小さなメモを見つけ、言葉には出せない不器用な優しさに涙が滲んだ。",
+          "diary": "思春期真っ只中の我が子。ぶつかることも多いけれど、距離を保ちながら信じて見守ることが今の私の役目なのだと言い聞かせている。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_puberty_couple_talk",
+      "label": "{partner}と夜遅くまで相談し、子供の自立を夫婦で支える覚悟を固める",
+      "effects": {
+        "happiness": 5,
+        "passion": 3,
+        "stress": -2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "リビングで{partner}が温かい紅茶を淹れてくれ、夫婦で向き合って話をした。「あいつも自分と戦ってるんだよ。焦らず見守ろう」。頼もしい夫の言葉に、張り詰めていた心がすっと軽くなった。",
+          "diary": "我が子の反抗期に戸惑う日々だが、{partner}がしっかりと話を聞いて支えてくれる。夫婦でチームとして子供の成長を支えている実感がある。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_exam_gratitude",
+  "title": "春の旅立ちと卒業証書・食卓に置かれた『ありがとう』",
+  "age": [
+    36,
+    68
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "general",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 17 && childAge <= 19);
+  },
+  "weight": 32,
+  "once": true,
+  "text": "長かった受験や進路の試練を乗り越え、満開の桜の下で迎えた卒業式。大人びた表情で式服を着こなし、晴れやかな笑顔で帰宅した我が子。家族で囲む祝いの食卓の片隅で、少し照れくさそうに一通の封筒を差し出された。「これ……お父さんとお母さんに」。震える手で開いた便箋には、幼い頃の思い出と、反抗してしまった日の謝罪、そして『今まで育ててくれて、本当にありがとう』の文字。これまでの長い年月、眠れぬ夜や数々の苦労が、温かな涙となって一気に洗い流されていく。",
+  "choices": [
+    {
+      "id": "choice_parenting_exam_gratitude_embrace",
+      "label": "溢れ出る涙を拭いながら我が子を抱きしめ、旅立つ未来を心から祝福する",
+      "effects": {
+        "happiness": 10,
+        "stress": -5,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「立派に育ってくれてありがとう……」。手紙を胸に抱きしめ、涙を流しながら我が子の肩を抱いた。あんなに小さかった手のひらが、今は逞しく温かく、親としての役目を果たした歓喜に満たされた。",
+          "diary": "我が子の卒業と進路決定。感謝の手紙を受け取った瞬間、涙が止まらなかった。命をかけて育ててきた時間は、私の人生の何よりの宝物。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_exam_gratitude_toast",
+      "label": "{partner}と肩を寄せ合って祝杯をあげ、二人で紡いできた子育ての軌跡を称え合う",
+      "effects": {
+        "happiness": 9,
+        "passion": 4,
+        "morality": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "我が子が眠りについた後、{partner}と二人で特別なワインを開けた。「本当によくやってくれたね、お疲れ様」とグラスを合わせ、寄り添い合う夫婦の絆は、誰よりも深く固いものになっていた。",
+          "diary": "我が子の巣立ちを前に、{partner}と二人で祝杯を交わした。二人で手を取り合って駆け抜けた子育ての歳月。この人と家族になれて本当に良かった。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_first_words",
+  "title": "初めて呼んでくれた日・「ママ」の甘い響きと胸の震え",
+  "age": [
+    21,
+    52
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "general",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 1 && childAge <= 2);
+  },
+  "weight": 32,
+  "once": true,
+  "text": "ぽかぽかと暖かい日差しが差し込むリビング。おもちゃで遊んでいた我が子が、ふと私のスカートを引っ張り、見上げてきた。小さく湿った唇を一生懸命に尖らせ、たどたどしく放たれた声——「ま……まま！」。その瞬間、全身に電流が走ったように心臓が跳ね上がり、胸の奥から熱いものがこみ上げて涙で視界が滲んだ。世界でたった一つの、私を母親と呼ぶ愛おしい声。",
+  "choices": [
+    {
+      "id": "choice_parenting_first_words_embrace",
+      "label": "我が子を胸にかき抱き、「そうだよ、ママだよ」と涙ぐみながら応える",
+      "effects": {
+        "happiness": 8,
+        "stress": -4,
+        "selfKnowledge": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "小さな身体を抱きしめると、我が子は嬉しそうに「まま！ まま！」と何度も繰り返して私の首に小さな腕を回してくれた。命を懸けて産んだ我が子と心が完全に結ばれた喜びに、いつまでも涙が止まらなかった。",
+          "diary": "我が子が初めて「ママ」と呼んでくれた！ 澄んだ小さな声で呼ばれた瞬間、胸が震えて涙が溢れた。母親になれた幸せを全身で噛み締めた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_first_words_husband_share",
+      "label": "{partner}を慌てて呼び、「パパも呼んでみて！」と家族みんなで大はしゃぎする",
+      "effects": {
+        "happiness": 7,
+        "passion": 3,
+        "morality": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "仕事部屋から飛んできた{partner}が「パパは！？ パパって言える！？」と必死でアピールし、我が子が不思議そうに首を傾げて笑い声がリビングに響き渡った。家族のあたたかい絆が満ちていた。",
+          "diary": "我が子の初めてのおしゃべりに、夫婦二人で大興奮した一日。家族三人で笑い転げたこの時間を、生涯ずっと忘れたくない。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_weaning_night",
+  "title": "卒乳の夜と張る乳房・赤ちゃんを卒業する寂しさと夫の労い",
+  "age": [
+    21,
+    53
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children",
+    "partnered"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 1 && childAge <= 2);
+  },
+  "weight": 30,
+  "once": true,
+  "text": "我が子の卒乳を決意した夜。おっぱいを欲しがって泣き叫ぶ我が子を抱きしめ、トントンと背中を叩き続けてようやく寝かしつけた。だが私の身体はまだ母乳を作り続け、乳房はカチカチに張って熱を持ち、下着が擦れるだけでズキズキと痛む。赤ちゃんを卒業していく我が子の成長への誇らしさと、もう二度とおっぱいを吸ってもらえない猛烈な寂しさ。暗い寝室で一人涙をこぼしていると、{partner}が冷たいタオルを持って静かに寄り添ってくれた……。",
+  "choices": [
+    {
+      "id": "choice_parenting_weaning_husband_care",
+      "label": "{partner}の大きな手で熱く張る胸を冷やしてもらい、労いの抱擁に身を預ける",
+      "effects": {
+        "happiness": 7,
+        "intimacyNeed": 4,
+        "stress": -3,
+        "sexualEffects": {
+          "intimacy": 8
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "{partner}が冷たいタオルを優しく私の張った胸に当て、痛む身体を慈しむように包み込んでくれた。「本当によく頑張ったね、ありがとう」。夫の逞しい胸元で泣きじゃくるうちに、母としての激闘を称えられた充足感が胸に広がった。",
+          "diary": "卒乳の夜。張って痛む胸を{partner}が優しく冷やして抱きしめてくれた。授乳の日々が終わる寂しさと、支えてくれた夫への感謝が入り混じる忘れられない夜。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_weaning_watch_sleeping",
+      "label": "涙を拭ってすやすや眠る我が子の額を撫で、健やかな自立を祝福する",
+      "effects": {
+        "happiness": 6,
+        "selfKnowledge": 3,
+        "morality": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "泣き疲れて満足そうに息を吐く我が子の小さな寝顔を見つめた。私の母乳でここまで大きくなってくれた小さな身体。母としての役割が一つ次のステージへ進んだ誇らしさに、静かに手を合わせた。",
+          "diary": "卒乳という親子の大きな節目。自分の身体から命を育てる時期を終え、一歩ずつ自立していく我が子の背中を頼もしく思う。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_terrible_twos",
+  "title": "床に突っ伏すイヤイヤ期・途方に暮れる夕暮れと夫婦の連携",
+  "age": [
+    22,
+    54
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "general",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 2 && childAge <= 3);
+  },
+  "weight": 28,
+  "once": true,
+  "text": "「いや！ いやっ！ ぜんぶだめ！」。スーパーの買い物帰り、歩道で突然始まったイヤイヤの嵐。靴を脱ぎ捨てて地面に突っ伏し、何を言っても泣き喚いて手足をバタつかせる我が子。周囲の通行人の視線が突き刺さり、抱き上げようとしてもエビ反りになって抵抗される。心身ともに疲弊し、路上で思わず立ち尽くして泣きそうになったその時、駆けつけてくれた{partner}が我が子を軽々と抱き上げてくれた……。",
+  "choices": [
+    {
+      "id": "choice_parenting_terrible_twos_husband_support",
+      "label": "{partner}に我が子を任せて深呼吸し、一人で抱え込まない大切さを学ぶ",
+      "effects": {
+        "happiness": 6,
+        "stress": -4,
+        "selfEfficacy": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "{partner}が「お母さん疲れちゃったぞ、今日はパパが抱っこマンだ」とおどけて我が子をあやすと、子供も拍子抜けしたように泣き止んだ。「大丈夫、君は十分頑張ってるよ」という夫の言葉に、肩の荷がふっと軽くなった。",
+          "diary": "激しいイヤイヤ期に心が折れかけたけれど、{partner}が救ってくれた。完璧な親になろうと焦らず、二人で支え合って乗り越えていけばいいと思えた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_terrible_twos_patient_hug",
+      "label": "しゃがんで子どもの目線に立ち、気持ちを受け止めてぎゅっと抱きしめる",
+      "effects": {
+        "happiness": 5,
+        "morality": 4,
+        "selfKnowledge": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "地面にしゃがみ、「思い通りにならなくて悔しかったね」と優しく抱きしめ続けた。やがて落ち着いてしがみついてきた我が子の温もりに、自分の自我を主張できるようになった成長の証なのだと愛おしさが湧いた。",
+          "diary": "感情をぶつけてくる我が子に根気強く寄り添った。思い通りにならない苦しさと向き合うことも、親子の尊い成長の過程なのだと実感。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_shichigosan",
+  "title": "七五三の晴れ着と千歳飴・健やかな成長を祈る神社の杜",
+  "age": [
+    24,
+    57
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "general",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && (childAge === 3 || childAge === 5 || childAge === 7));
+  },
+  "weight": 30,
+  "once": true,
+  "text": "秋晴れの澄んだ青空の下、神社の境内を彩る鮮やかな紅葉。慣れない着物や袴を身にまとい、少し緊張した面持ちで砂利道を歩く我が子。小さな手には長細い千歳飴の袋。朱塗りの鳥居をくぐり、手を清めて拝殿へと進む。生まれた日の小さかった我が子の姿が脳裏をよぎり、こうして晴れ着を着て元気に歩いている奇跡に胸が熱くなる。",
+  "choices": [
+    {
+      "id": "choice_parenting_shichigosan_photo_pray",
+      "label": "{partner}と並んで柏手を打ち、我が子の無病息災と幸福を心から祈願する",
+      "effects": {
+        "happiness": 8,
+        "stress": -3,
+        "morality": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「元気に大きくなってくれてありがとう」。{partner}と二人で深く頭を下げ、神前に感謝を捧げた。境内での家族写真には、千歳飴を掲げて満面の笑顔を浮かべる我が子と、幸せそうに寄り添う私たちの姿が鮮やかに残った。",
+          "diary": "七五三の参拝。晴れ着姿の我が子の眩しさに涙が出そうになった。ここまで大きな病気もなく育ってくれたことに心から感謝した。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_shichigosan_praise_kimono",
+      "label": "着物の乱れを優しく直しながら、「世界で一番似合ってるよ」と褒めちぎる",
+      "effects": {
+        "happiness": 7,
+        "selfEfficacy": 3,
+        "intimacyNeed": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "我が子の帯を整えて髪飾りを直してあげると、照れくさそうに「お姫様（お殿様）みたい？」と微笑んだ。その誇らしげな笑顔に、家族みんなの心が温かい光で満たされた。",
+          "diary": "晴れ着を着ておすまし顔の我が子が本当に愛らしかった。伝統の節目を迎えるたびに、家族の絆が一段と深まっていくのを感じる。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_bedtime_story",
+  "title": "薄明かりの絵本の時間・小さな指先が握る手のひらのぬくもり",
+  "age": [
+    23,
+    58
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "general",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 3 && childAge <= 7);
+  },
+  "weight": 26,
+  "text": "間接照明の温かいオレンジ色の光が照らす寝室。布団に並んで横たわり、広げた絵本を穏やかな声で読み聞かせる。物語が進むにつれて我が子のまぶたが次第にとろりと重くなり、小さな指先が私のパジャマの袖や指をぎゅっと握りしめてくる。やがて本を閉じると、規則正しいすやすやという寝息。小さな胸の上下を見つめながら、この無防備な命を全身全霊で守り抜く誓いを新たにする。",
+  "choices": [
+    {
+      "id": "choice_parenting_bedtime_kiss",
+      "label": "我が子の額にそっと唇を寄せ、優しい夢を見るよう祈って寝かしつける",
+      "effects": {
+        "happiness": 6,
+        "stress": -4,
+        "selfKnowledge": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "柔らかな髪に優しく口づけを落とし、布団を肩まで掛け直した。小さな温もりが手のひらに残る静寂の夜、母としての穏やかで揺るぎない幸福に心が洗われた。",
+          "diary": "絵本を読み聞かせながら寝かしつけた夜。私の手をぎゅっと握ったまま眠る我が子のぬくもりに、日中の疲れがすべて溶けていくようだった。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_bedtime_whisper_couple",
+      "label": "寝室をそっと抜け出し、リビングで待つ{partner}と今日の子どもの可愛い仕草を語り合う",
+      "effects": {
+        "happiness": 7,
+        "passion": 3,
+        "intimacyNeed": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "明かりを落としたリビングへ行くと、{partner}が温かいハーブティーを差し出してくれた。「寝た？」「うん、ぐっすり」。二人で声を潜めながら子供の愛らしい姿を語り合い、肩を寄せて心を通わせた。",
+          "diary": "子供が寝静まった後の静かなリビングで{partner}とお茶を飲んだ。日々の小さな成長を二人で喜び合えるパートナーがいる幸せを噛み締める。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_summer_sea",
+  "title": "初めての海と寄せる白波・波打ち際の笑い声と夏の記憶",
+  "age": [
+    25,
+    60
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "general",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 4 && childAge <= 10);
+  },
+  "weight": 28,
+  "once": true,
+  "text": "どこまでも広がる真っ青な海と白い雲。浮き輪を大事そうに抱え、寄せる白波に恐る恐る小さな足を浸す我が子。「つめたい！ でも気持ちいい！」。波が引くたびに砂に足を取られて大笑いし、{partner}の逞しい肩の上に担ぎ上げられて水しぶきを浴びてはしゃぐ。潮風の匂い、肌にじんわりと残る心地よい日焼けの熱、家族みんなの弾けるような笑顔が、夏の光の中にきらきらと輝いていた。",
+  "choices": [
+    {
+      "id": "choice_parenting_summer_sea_play",
+      "label": "家族三人で手を繋いで波打ち際を駆け回り、水しぶきをかけ合って遊ぶ",
+      "effects": {
+        "happiness": 8,
+        "stress": -5,
+        "morality": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "三人で手を繋いで大きな波をジャンプして飛び越えた。帰りの車の中、後部座席で貝殻を握りしめたまま泥のように眠る我が子の寝顔を見て、最高の家族の夏休みに胸が満たされた。",
+          "diary": "家族みんなで行った夏の海。波と戯れる我が子の輝く笑顔が忘れられない。家族で作る思い出の一つ一つが、人生のかけがえのない宝物。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_summer_sea_shade_rest",
+      "label": "パラソルの下で{partner}と冷たい飲み物を分け合い、我が子の遊ぶ姿を見守る",
+      "effects": {
+        "happiness": 7,
+        "passion": 3,
+        "selfEfficacy": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "砂浜のパラソルの下、{partner}と肩を並べて冷たいサイダーを飲んだ。砂のお城作りに熱中する我が子を見守りながら、「いつかこの子も大きくなって海に来るのかな」としみじみ語り合った。",
+          "diary": "青い海と砂浜で過ごした穏やかな休日。波音を聴きながら家族の温もりに包まれ、日々の忙しさを忘れて心身ともに深く癒やされた。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_recital_stage",
+  "title": "舞台のスポットライトと胸の鼓動・我が子の晴れ舞台を見守る客席",
+  "age": [
+    26,
+    62
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "general",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 5 && childAge <= 12);
+  },
+  "weight": 28,
+  "once": true,
+  "text": "市民ホールの薄暗い客席。スポットライトが照らすステージの上、少し大きめの衣装に身を包み、緊張で顔を強張らせて立つ我が子。毎日のように家で練習し、時には泣きながら鍵盤に向かっていた日々。客席で膝の上で祈るように指を組む私の手を、隣の{partner}がそっと包み込んでくれた。深呼吸の後、我が子の小さな指先が音を奏で始める——。",
+  "choices": [
+    {
+      "id": "choice_parenting_recital_applause",
+      "label": "演奏が終わった瞬間、客席から身を乗り出して割れんばかりの拍手を送る",
+      "effects": {
+        "happiness": 8,
+        "selfEfficacy": 4,
+        "stress": -3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "最後の音がホールに響き渡り、我が子が客席に向かって深々とお辞儀をした。万雷の拍手の中、客席の私たちを見つけてパッと笑顔を咲かせた我が子の姿に、涙が頬を伝って止まらなかった。",
+          "diary": "子どもの発表会。緊張に打ち勝って堂々とやり遂げた我が子の勇姿に感動した。努力が実を結ぶ瞬間に立ち会えたことは、親として無上の喜び。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_recital_bouquet_hug",
+      "label": "ロビーで駆け寄ってきた我が子に小さな花束を手渡し、誇らしく抱きしめる",
+      "effects": {
+        "happiness": 7,
+        "morality": 3,
+        "passion": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「すっごく緊張した！」と飛び込んできた我が子を力いっぱい抱きしめ、花束を手渡した。{partner}も頭をくしゃくしゃに撫で回し、家族みんなで努力の成果を讃え合った。",
+          "diary": "発表会を終えた我が子の誇らしげな笑顔。ひとつの壁を乗り越えて自信をつけた小さな背中が、また一回り大きく見えた。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_school_visit",
+  "title": "教室の後ろからの授業参観・何度も振り返る照れくさそうな瞳",
+  "age": [
+    27,
+    63
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "general",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 7 && childAge <= 11);
+  },
+  "weight": 26,
+  "text": "小学校の廊下に漂うワックスとチョークの懐かしい匂い。教室の後ろに保護者が並ぶ授業参観日。先生の問いかけに、我が子は周りを伺いながら恐る恐る手を挙げる。黒板を向きながらも、こちらが来ているか気になってチラチラと振り返る我が子。目が合うとパッと照れくさそうに前を向き直して背筋を伸ばす姿に、家庭とはまた違う社会の中で頑張っている愛おしさがこみ上げる。",
+  "choices": [
+    {
+      "id": "choice_parenting_school_visit_nod",
+      "label": "目が合った瞬間に優しく微笑んで小さく頷き、安心感とエールを送る",
+      "effects": {
+        "happiness": 6,
+        "stress": -2,
+        "selfKnowledge": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "私が小さく手を振ると、我が子は嬉しそうに口元を緩め、次の質問では元気よく手を挙げて発表した。外の世界で一生懸命自分の場所を作っている我が子の頼もしさに、胸がじんわり温かくなった。",
+          "diary": "授業参観へ行ってきた。教室で友達と並んで学ぶ我が子の姿に、親の目の届かないところでも着実に成長している姿を実感できて嬉しかった。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_school_visit_parents_talk",
+      "label": "参観の後、廊下で他の保護者たちと子育ての悩みや情報を共有し合う",
+      "effects": {
+        "happiness": 5,
+        "selfEfficacy": 3,
+        "morality": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "クラスの保護者たちと挨拶を交わし、「最近反抗して大変ですよね」などと笑い合いながら共感し合った。同じ年頃の子を持つ親同士の温かなコミュニティに勇気をもらった。",
+          "diary": "参観日を通じて他の保護者の方々とも親交を深めた。みんな同じように悩みながら子育てに向き合っているのだと分かり、とても心強かった。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_child_away_night",
+  "title": "子供の林間学校と静まり返った家・新婚の夜のように貪り合うふたり",
+  "age": [
+    28,
+    64
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children",
+    "partnered"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 8 && childAge <= 15);
+  },
+  "weight": 28,
+  "text": "子供が林間学校に出かけ、数日ぶりに夫婦二人きりになった夜。いつもは賑やかな足音やお喋りで満ちている家の中が、信じられないほど静まり返っている。夕食を終え、ソファで隣り合うと、{partner}が私の腰を引き寄せ、熱い吐息とともに首筋に唇を這わせてきた。「ずっと、こうして二人きりになりたかった……」。普段は子供の目を気にして押し殺していた情熱が堰を切ったように溢れ出し、昼間の「お母さん」の殻を脱ぎ捨てた素肌が激しく疼き始める……。",
+  "choices": [
+    {
+      "id": "choice_parenting_child_away_passion",
+      "label": "声も憚らず{partner}に身を委ね、新婚の頃のように激しく貪り合う",
+      "effects": {
+        "happiness": 8,
+        "intimacyNeed": 6,
+        "stress": -4,
+        "sexualEffects": {
+          "intimacy": 15,
+          "libido": 10
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "静まり返ったリビングから寝室へと押し倒され、服を引き裂くような激しさで素肌を重ね合った。子供の気配のない解放感の中、名前を呼び合いながら声を限りに啼き、互いの熱い愛液と汗にまみれて幾度も絶頂に達した。",
+          "diary": "子供が泊まりがけの行事で不在の夜。{partner}と新婚時代に戻ったように激しく愛し合った。親である前に、私たちは今も深く求め合う男と女なのだと肌で実感した。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_child_away_date_night",
+      "label": "久しぶりに少しお洒落をして夜の街へ二人で食事に出かけ、恋人気分を味わう",
+      "effects": {
+        "happiness": 7,
+        "passion": 4,
+        "morality": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "お気に入りのワンピースを着て{partner}と手を繋ぎ、静かなレストランでワインを飲んだ。子供のいない夜の街を並んで歩く時間は、まるで付き合い始めた頃のような甘いときめきに満ちていた。",
+          "diary": "子供が不在の夜、{partner}と久しぶりのディナーデート。手を繋いで夜風に吹かれながら、二人の原点にある愛しさを再確認した素敵な夜。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_future_dreams",
+  "title": "夜更けの進路相談とマグカップ・大人の階段を登る我が子との対話",
+  "age": [
+    34,
+    66
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "general",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 14 && childAge <= 17);
+  },
+  "weight": 28,
+  "once": true,
+  "text": "深夜一時。試験勉強を続ける我が子の部屋のドアをノックし、温かいココアのマグカップを差し入れた。机に向かっていた我が子がふとペンを置き、「ねえ、お母さん……私、将来進みたい道があるんだ」と真剣な眼差しで切り出してきた。自分の将来への不安、挑戦したい夢、親に心配をかけたくないという葛藤。いつの間にか一人の独立した大人として物事を深く考えるようになった我が子の横顔を見つめ、胸が熱くなる。",
+  "choices": [
+    {
+      "id": "choice_parenting_future_dreams_support",
+      "label": "「あなたの選ぶ道を全力で応援するよ」と優しく微笑んで背中を押す",
+      "effects": {
+        "happiness": 7,
+        "morality": 4,
+        "selfKnowledge": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "我が子の手を両手で包み、「どんな道を選んでも、お母さんはあなたの味方だから」と伝えた。我が子はホッとしたように瞳を潤ませて笑顔を見せ、親子の深い信頼が固く結ばれた。",
+          "diary": "夜更けに我が子と将来の夢についてじっくり語り合った。自分の頭で考え、未来を切り拓こうとする我が子の姿に、親としての大きな誇りを感じた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_future_dreams_family_counsel",
+      "label": "{partner}も呼んでリビングで語り合い、家族みんなで未来へのステップを話し合う",
+      "effects": {
+        "happiness": 6,
+        "selfEfficacy": 3,
+        "passion": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "{partner}も交えて三人で食卓を囲み、現実的な進路や学費、夢への道筋を真摯に語り合った。「家族みんなで支えるから心配するな」という夫の言葉に、我が子も力強く頷いていた。",
+          "diary": "我が子の進路について家族三人で膝を突き合わせて話し合った。大人の階段を一歩ずつ登っていく我が子を、夫婦でしっかりと支えていきたい。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_kitchen_embrace",
+  "title": "夕暮れの台所とエプロンの紐・すぐ傍に我が子がいる甘い緊張感",
+  "age": [
+    23,
+    50
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children",
+    "partnered"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 2 && childAge <= 12);
+  },
+  "weight": 28,
+  "text": "夕暮れのキッチン。リビングでは子供がテレビのアニメに夢中になり、楽しげな笑い声をあげている。煮物の湯気が立ち上るコンロの前、エプロン姿で包丁を握る私の背後に、すっと気配が忍び寄ってきた。腰に回されたたくましい両腕。耳元に吹きかけられる熱い吐息とともに、{partner}の指先がエプロンのリボンを音もなく解いていく。「だめ……すぐそこにいるのよ」と声を潜めて身悶えるが、スカートを捲り上げられ、ショーツの隙間から滑り込んできた熱い指先が濡れた秘唇を直に割り開く。換気扇の低い唸り音にかき消される水音と、下腹からとろりと溢れ出す蜜の熱さに、膝がガクガクと震え出す……。",
+  "choices": [
+    {
+      "id": "choice_parenting_kitchen_surrender",
+      "label": "換気扇の音に紛れて息を殺し、台所カウンターに手をついて夫の指先に乱される",
+      "effects": {
+        "happiness": 7,
+        "intimacyNeed": 5,
+        "stress": -3,
+        "sexualEffects": {
+          "intimacy": 14,
+          "libido": 10
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "流し台の縁をぎゅっと握りしめ、声が出ないよう唇を噛み締めて夫の激しい指使いを受け止めた。執拗にクリトリスを弾かれ、奥深くまで指を沈められるたび、すぐ向こうに子供がいる背徳の興奮で膣肉がきゅうきゅうと痙攣し、エプロンを濡らすほど潮を吹いて絶頂した。",
+          "diary": "夕飯の支度中、台所で{partner}に悪戯された。子供の笑い声が聞こえるすぐ傍で愛撫される極限の緊張感に、我を忘れるほど激しく感じてしまった。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_kitchen_whisper_promise",
+      "label": "頬を紅潮させて振り返り、「子供が寝たらね」と耳元で甘く約束して焦らす",
+      "effects": {
+        "happiness": 6,
+        "passion": 4,
+        "selfKnowledge": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "熱く火照った顔で夫の首に手を回し、濡れた瞳で唇を重ねた。「あとで、たっぷりね」。耳元で甘く囁くと、{partner}は苦笑しながら名残惜しそうに手を引き、夜への期待に下腹がじんじんと疼き続けた。",
+          "diary": "夕方の台所での密やかなスキンシップ。子供の前では見せない夫の男の顔にドキドキさせられ、夜が待ち遠しくてたまらなくなった。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_late_bath_whisper",
+  "title": "深夜のバスルームと白い湯気・疲れた身体を癒やす濃密な素肌",
+  "age": [
+    23,
+    50
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children",
+    "partnered"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 1 && childAge <= 14);
+  },
+  "weight": 28,
+  "text": "子供たちを寝かしつけ、深夜一時を回った静まり返る浴室。白く立ち込める温かい湯気の中、一人で湯船に浸かって育児の疲れた足を伸ばしていると、すりガラスの扉が静かに開いた。「お疲れ様。背中、流そうか」。脱衣所から入ってきた{partner}が、石鹸の豊かな泡を手にとり、私の肩から首筋、そして張りのある豊かな乳房へと滑らせていく。ぬめりを帯びた大きな手のひらが肌を這うたび、疲労感がとろけるような快楽へと変貌し、狭いバスタブの中で二人、濡れた素肌を密着させて湯を波打たせる……。",
+  "choices": [
+    {
+      "id": "choice_parenting_bath_intimacy",
+      "label": "狭い湯船の中で夫の逞しい太ももの上に跨がり、湯気の奥で深く結ばれる",
+      "effects": {
+        "happiness": 8,
+        "intimacyNeed": 6,
+        "stress": -4,
+        "sexualEffects": {
+          "intimacy": 15,
+          "libido": 12
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "温かいお湯の中で絡み合う二人の肉体。濡れそぼる秘肉を押し広げ、{partner}の太い熱塊が奥深くまで滑り込んでくる。湯の浮力とお互いの汗が混ざり合い、声が外に漏れないよう夫の肩に歯を立てながら、身体の芯が溶け崩れるような深い絶頂に二人で沈んでいった。",
+          "diary": "深夜のお風呂場で{partner}と二人きりで重なり合った。白く煙る湯気の中、育児の疲れも日常の喧騒もすべて洗い流されるような至福のひととき。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_bath_wash_care",
+      "label": "お互いの身体を隅々まで優しく洗い合い、温もりを確かめ合って抱き合う",
+      "effects": {
+        "happiness": 7,
+        "passion": 3,
+        "morality": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "夫の広い背中を流し、私の疲れた腰や肩を優しく揉みほぐしてもらった。湯船から上がった後、バスタオルでお互いを包み込み、日々の奮闘を心から称え合う温かな愛に満たされた。",
+          "diary": "夜遅くのバスタイムで{partner}とゆっくりスキンシップ。優しく肌を触れ合わせるだけで、親として戦う毎日に温かいエネルギーが湧いてくる。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_morning_quick_intimacy",
+  "title": "幼子の寝息が聞こえる早朝・掛け布団の下で貪り合う肌の熱",
+  "age": [
+    24,
+    50
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children",
+    "partnered"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 2 && childAge <= 10);
+  },
+  "weight": 26,
+  "text": "休日のまだ薄暗い早朝。隣の子供用ベッドからは、すやすやと小さな寝息が聞こえている。冷え込んだ朝の空気の中、温かい羽毛布団の中でふと目を覚ますと、背後から{partner}がぴったりと腰を押し当ててきていた。パジャマ越しでも分かる朝の硬く熱い存在。パジャマのズボンの中に滑り込んできた手が、寝起きの無防備な秘所をまさぐり始める。「まだ起きないよ……少しだけ……」。耳元で甘くねだる夫の荒い息遣いに、私の身体も抗えず、じっとりと愛液を滲ませてしまう……。",
+  "choices": [
+    {
+      "id": "choice_parenting_morning_quick_passion",
+      "label": "掛け布団を頭まで被り、声を押さえ込んで朝の熱い結合に溺れる",
+      "effects": {
+        "happiness": 8,
+        "intimacyNeed": 5,
+        "stress": -3,
+        "sexualEffects": {
+          "intimacy": 14,
+          "libido": 10
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "布団の中でショーツを下ろされ、背後から音もなく熱い塊がぬちりと肉腔へと沈められた。隣で眠る子供が寝返りを打つたびにヒヤリと心臓が跳ね上がり、その極限の恐怖と快感に膣肉が激しく吸い付き、枕に顔を埋めて喘ぎ声を呑みながら何度も達した。",
+          "diary": "子供が起きる前の早朝、布団の中で{partner}と息を潜めて愛し合った。背徳的なスリルと朝の熱い素肌の温もりに、目が覚めるほど満たされた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_morning_snuggle_sleep",
+      "label": "パジャマの上から抱きしめ合い、二度寝のまどろみの中で温もりを分かち合う",
+      "effects": {
+        "happiness": 6,
+        "stress": -4,
+        "passion": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「起きたら困るでしょ」と笑いながら夫の胸元に顔を埋め、固くなった存在を手で優しく宥めた。朝陽がカーテンを白く染めるまで、素肌をぴったりと重ねてまどろむ時間は至福だった。",
+          "diary": "早朝の布団の中で{partner}と抱き合って過ごした。何気ない朝のスキンシップが、慌ただしい育児の日々の中で一番の心のオアシスになっている。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_living_room_floor",
+  "title": "子供のお昼寝とレースのカーテン・陽だまりのリビングに落ちる衣服",
+  "age": [
+    22,
+    48
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children",
+    "partnered"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 1 && childAge <= 5);
+  },
+  "weight": 28,
+  "text": "日曜日の午後。隣の和室で、遊び疲れた子供が安らかな寝息を立ててお昼寝に落ちた。レースのカーテン越しに柔らかな陽光が注ぐリビング。洗濯物を畳んでいた私の手首を、休日で家にいた{partner}がふと握りしめて引き倒した。ふかふかの絨毯の上に倒れ込む私。「ずっと我慢してた……少しだけ、僕だけの時間にして」。普段の優しい父親の顔から、飢えた男の目へと変わった夫の視線。いつ起き出すか分からない昼下がりの家の中、衣服が次々と絨毯の上へと脱ぎ捨てられていく……。",
+  "choices": [
+    {
+      "id": "choice_parenting_living_floor_surrender",
+      "label": "陽だまりの絨毯の上で{partner}を迎え入れ、昼下がりの背徳に身を焦がす",
+      "effects": {
+        "happiness": 8,
+        "intimacyNeed": 5,
+        "stress": -4,
+        "sexualEffects": {
+          "intimacy": 15,
+          "libido": 12
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "明るい部屋の中で素肌を晒す恥じらいと、いつ子供が襖を開けるか分からないスリル。剥き出しの太ももを割られ、ぐちゅりと濡れた最奥まで貫かれた瞬間、あまりの快感に背筋が弓なりになった。時計の秒針の音を聴きながら、声を押し殺して濃厚に貪り合った。",
+          "diary": "子供がお昼寝中のリビングで、{partner}と絨毯の上で愛し合った。明るい昼の光の中で肌を重ねる背徳感と熱狂は、忘れられない記憶になった。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_living_floor_gentle_kiss",
+      "label": "服の上から優しく抱きしめ合い、畳んだ洗濯物の香りに包まれてキスを交わす",
+      "effects": {
+        "happiness": 6,
+        "passion": 3,
+        "selfKnowledge": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「起きたら大変だから」と笑って夫の頬を両手で包み、幾度も深い口づけを交わした。陽だまりの中で息を整えながら寄り添う時間は、平穏で温かな幸福に満ちていた。",
+          "diary": "午後の静寂の中で{partner}と二人きりの甘いスキンシップ。忙しい日常の隙間に見つける二人だけの時間が、夫婦の愛をいつも新鮮に保ってくれる。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_car_backseat_stolen",
+  "title": "ドライブの帰り道と雨宿り・後部座席で眠る我が子と密やかな手遊び",
+  "age": [
+    25,
+    50
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children",
+    "partnered"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 3 && childAge <= 10);
+  },
+  "weight": 26,
+  "text": "家族ドライブの帰り道、急な夕立に降られて立ち寄った高速道路のパーキングエリア。スモークガラス越しに雨粒が流れる薄暗い車内。後部座席のチャイルドシートでは、遊び疲れた子供がすっかり熟睡して規則正しい寝息を立てている。エンジンを切り、静まり返った車内。運転席の{partner}が助手席の私のシートを倒し、自分の上着を私の膝掛け代わりに被せると、その下から大きな手が太ももの内側へと滑り込んできた。「誰も見てないよ……触らせて……」。すぐ背後に我が子がいる異常な状況に、下腹の奥がじわりと熱く湿り出す……。",
+  "choices": [
+    {
+      "id": "choice_parenting_car_stolen_pleasure",
+      "label": "上着の下でショーツをずらされ、雨音に紛れて夫の指先に震えて啼く",
+      "effects": {
+        "happiness": 7,
+        "intimacyNeed": 5,
+        "stress": -3,
+        "sexualEffects": {
+          "intimacy": 14,
+          "libido": 12
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "ガラスを叩く雨音にかき消される、ぬちぬちとした湿った水音。上着で手元を隠しながら、{partner}の指先が敏感な突起を執拗に転がし、奥を掻き回す。すぐ後ろに我が子がいる恐怖と倒錯の興奮で、シートの革を握りしめながら声も出せずに絶頂を迎えた。",
+          "diary": "雨のパーキングエリアの車内。子供が後ろで眠る中、{partner}に上着の下で密かにまさぐられた。非日常のスリルに身体の奥が激しく疼いた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_car_stolen_stop_tease",
+      "label": "夫の手を上着の上からぎゅっと握って止め、「家に着くまでお預け」と微笑む",
+      "effects": {
+        "happiness": 6,
+        "passion": 3,
+        "selfEfficacy": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "夫の悪戯な手を握りしめ、人差し指を唇に当てて「しーっ」と窘めた。残念そうに笑う夫の瞳に宿る情熱に、帰宅後の夜への期待が胸いっぱいに膨らんだ。",
+          "diary": "車内での夫からの不意の誘惑を甘く焦らした。親としての立場と、惹かれ合う男女としての熱い視線が交差する甘酸っぱい帰り道。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_hotel_stay_together",
+  "title": "家族旅行の温泉宿・襖一枚隔てて眠る我が子と布団の上の忍び声",
+  "age": [
+    24,
+    50
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children",
+    "partnered"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 3 && childAge <= 14);
+  },
+  "weight": 28,
+  "text": "家族旅行で訪れた山あいの温泉旅館。ご馳走と温泉を満喫し、隣の次の間の布団で子供はすっかり泥のように眠りについている。深夜、かすかに硫黄の匂いと虫の音が漂う和室。敷かれた布団の上、浴衣の帯を解き合う{partner}と私。襖一枚隔てたすぐ向こうに我が子がいるという極限の緊張感。浴衣の胸元を押し広げられ、温泉の湯上がりで火照った乳房に熱い舌先が這わされた瞬間、喉の奥から甘い吐息が零れそうになり、慌てて夫の肩口に顔を埋めた……。",
+  "choices": [
+    {
+      "id": "choice_parenting_hotel_tatami_passion",
+      "label": "浴衣を乱して畳の上で絡み合い、息を殺して夜明け前まで貪り合う",
+      "effects": {
+        "happiness": 9,
+        "intimacyNeed": 6,
+        "stress": -5,
+        "sexualEffects": {
+          "intimacy": 16,
+          "libido": 12
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "浴衣の裾を大きく捲り上げられ、畳の上で腰を密着させた。襖の向こうに物音がしないか耳を澄ませながら、{partner}の逞しい腰の突き上げを受け止める。声を出せない苦しさと温泉の熱気が淫乱な興奮を高め、互いの体液でシーツを汚しながら激しくイッてしまった。",
+          "diary": "温泉旅館の夜、子供が眠る隣の部屋で{partner}と激しく肌を重ねた。旅先の解放感と密やかな背徳が混ざり合う、甘く濃密な一夜。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_hotel_moonlight_whisper",
+      "label": "縁側に出て夜風に当たりながら、肩を抱き合って家族の幸せを噛み締める",
+      "effects": {
+        "happiness": 7,
+        "passion": 3,
+        "morality": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "火照った身体を浴衣で整え、縁側で月を見上げながら{partner}の肩に寄り添った。「子供もすごく喜んでたね」「連れてきて良かったよ」。寄り添い合う夫婦の深い絆に心が洗われた。",
+          "diary": "温泉宿の静かな夜、{partner}と縁側で語り合った。家族の笑顔と夫の深い愛情に包まれて、これ以上の幸せはないと思える旅になった。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_rare_child_brings_lover",
+  "title": "閉ざされた子供部屋と見知らぬ靴・思春期の生々しい気配",
+  "age": [
+    35,
+    65
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 14 && childAge <= 19);
+  },
+  "weight": 10,
+  "once": true,
+  "text": "夕暮れ、スーパーの買い物袋を提げて玄関を開けた瞬間、たたきに見慣れない異性のスニーカーが脱ぎ捨てられているのが目に留まった。静まり返る廊下。忍び足で階段を上がると、子供部屋のドアは固く閉ざされ、鍵がかけられている。薄いドアの隙間から漏れ聞こえてくる、ヒソヒソとした甘い話し声、微かな衣擦れの音、そしてギシ……と鈍く軋むベッドのスプリング。「ちょっと、音出るってば……っ」。息を呑み、ドアの前で立ち尽くす私。あんなに無垢だった我が子が、部屋に異性を連れ込み、身体を求め合っているという強烈な衝撃。動揺とともに、自分自身の若い日の衝動がフラッシュバックし、下腹の奥が熱く疼いてしまう……。",
+  "choices": [
+    {
+      "id": "choice_parenting_child_lover_knock",
+      "label": "動揺を押し隠してドアをノックし、「お茶入ったわよ」と声をかけて牽制する",
+      "effects": {
+        "happiness": 5,
+        "morality": 5,
+        "selfKnowledge": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「お茶持ってきたわよ」。声をかけると、部屋の中からガタガタと慌てて衣服を整える物音が響き、真っ赤な顔をした我が子が気まずそうにドアを少しだけ開けた。親としての大人の節度を保ちながらも、確実に大人の階段を登り始めた我が子の現実に胸がざわめいた。",
+          "diary": "我が子が部屋に異性を連れ込んでいる気配に遭遇した。慌てる二人の様子に親としての威厳を保ったものの、あの子も一人前に愛欲を知る年頃になったのだと知って複雑な動悸が止まらなかった。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_child_lover_pretend_ignore",
+      "label": "気づかないふりをしてそっと階段を降り、我が子の性に激しく乱される",
+      "effects": {
+        "happiness": 4,
+        "stress": 3,
+        "sexualEffects": {
+          "libido": 12
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "息を殺してそっと階下へと戻り、キッチンのカウンターに手をついて荒い呼吸を整えた。あの閉ざされた扉の奥で繰り広げられているであろう若い二人の情交を想像してしまい、恥ずかしさと罪悪感で下腹がキュンと甘く疼いて、ショーツをじんわりと湿らせてしまった。",
+          "diary": "子供部屋から漏れてきた甘い吐息と衣擦れの音。見てはいけないものに触れてしまった後ろめたさと、我が子の生々しい性への目覚めに、自分自身の身体まで熱く火照ってしまった。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_rare_caught_intimacy_glance",
+  "title": "わずかに開いた寝室のドア・夜の情交と覗かれた影の予感",
+  "age": [
+    25,
+    52
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children",
+    "partnered"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 5 && childAge <= 16);
+  },
+  "weight": 10,
+  "once": true,
+  "text": "深夜二時。寝室で{partner}に背後から組み敷かれ、シーツを掻きむしりながら激しく腰を揺らされていた。熱く太い塊が奥深くまで抉り込むたび、快感に耐えかねて喉から啼き声が零れかける。その時——ふと視界の端、数センチだけ隙間が開いていた寝室の引き戸の暗がりに、小さな影が佇み、息を潜めてこちらを見つめていたような気配が走った。全身の血が凍りつくような戦慄。「どうしたの？」と腰を動かし続ける夫の背にしがみつき、慌てて戸を見るが、そこにはもう誰もいない。見られたのか、それとも幻だったのか……親としての恐怖と罪悪感、そして覗かれていたかもしれないという狂おしいほどの背徳感が、身体の芯を雷のように貫く……。",
+  "choices": [
+    {
+      "id": "choice_parenting_caught_perverse_climax",
+      "label": "見られたかもしれない恐怖と背徳の倒錯に激しく締めつけ、狂ったように絶頂する",
+      "effects": {
+        "happiness": 6,
+        "stress": 4,
+        "intimacyNeed": 5,
+        "sexualEffects": {
+          "intimacy": 15,
+          "libido": 15
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "覗かれていたかもしれないという異常な興奮に我を忘れ、膣肉が狂ったように夫の剛直を締め上げた。夫の首筋に必死で歯を立てて絶叫を呑み込みながら、下腹の奥が激しく痙攣して潮を吹き、かつてないほど強烈な背徳の快楽に沈んで果ててしまった。",
+          "diary": "夜の営みの最中、子供に見られたような気がした。恐怖と罪悪感に震えながらも、その倒錯的な背徳感にかつてないほど激しく感じて絶頂してしまった。恐ろしくも忘れられない夜。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_caught_panic_check",
+      "label": "慌てて夫の動きを制止して衣服を整え、子供部屋の様子を青ざめて確かめに行く",
+      "effects": {
+        "happiness": 5,
+        "stress": -2,
+        "morality": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「待って、誰かいた！」と夫を突き飛ばすように押し留め、浴衣をかき集めて子供部屋へと走った。子供は布団の中で静かに寝息を立てていたが、掛け布団の位置が少しずれていたような気がして、胸の動悸がおさまるまで枕元で立ち尽くした。",
+          "diary": "夫婦の行為を子供に見られた気がして血の気が引いた。部屋を見に行くと眠っていたが、本当に気づかれなかったのか……親としての迂闊さを深く反省した。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_secret_date",
+  "title": "ほのかに香るコロンと上気した頬・娘の背中に蘇るかつての自分",
+  "age": [
+    35,
+    65
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 14 && childAge <= 19);
+  },
+  "weight": 26,
+  "once": true,
+  "text": "休日の昼下がり、「友達とカフェに行ってくるね」と出かけていく娘。だが、普段着けない淡い色のリップ、念入りにアイロンをあてたプリーツスカート、そして玄関先にふわりと漂う甘いコロンの香り。明らかに同性の女友達相手ではない特別な気合に、母親としての直感が走る。夕暮れ時、「ただいま」と帰宅した娘の横顔。耳たぶまでほんのりと上気した紅潮、わずかに乱れた襟元と、どこか放心したように潤んだ瞳。誰かに熱い視線を注がれ、初めて素肌を触れ合われた時にしか宿らないあの甘美な匂いと体温。かつて自分が同じように親に嘘をつき、恋人と身体を重ねて火照った身体で帰宅した遠い日の記憶が鮮烈にフラッシュバックし、下腹の奥がきゅうと甘く疼いてしまう……。",
+  "choices": [
+    {
+      "id": "choice_parenting_daughter_date_warm_smile",
+      "label": "「楽しかった？」と優しく微笑んで迎え、娘の小さな秘密を胸にしまって見守る",
+      "effects": {
+        "happiness": 6,
+        "morality": 4,
+        "selfKnowledge": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「楽しかった？」と優しく声をかけると、娘はハッと我に返ったように頬を真っ赤に染め、「うん……すっごく美味しかった！」とぎこちなく笑って部屋へと駆け上がっていった。階段を見上げる私の胸に、娘が自分の人生を歩み始めた切なさと誇らしさが温かく満ちていた。",
+          "diary": "友達と遊ぶと言っておめかしして出かけた娘。帰ってきたときの紅潮した横顔と潤んだ瞳に、大人の女性としての目覚めを感じた。詮索はせず、あの子の輝く季節をそっと見守りたい。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_daughter_date_past_echo",
+      "label": "娘の去った玄関で一人立ち尽くし、かつて男に乱された自らの青春の疼きに息を呑む",
+      "effects": {
+        "happiness": 5,
+        "stress": 2,
+        "sexualEffects": {
+          "intimacy": 8,
+          "libido": 12
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "娘が通り過ぎた後の廊下に残る、甘酸っぱい熱情の残り香。かつて誰かに無我夢中で愛され、唇を奪われ、身体の芯まで熱く痺れていた若い日の記憶が胸を突き上げ、キッチンの壁に手をついて荒い吐息を漏らした。母親としての仮面の下で、抑えきれない女としての疼きが下腹を満たしていった。",
+          "diary": "恋をして帰ってきた娘の姿に、昔の自分自身を強烈に重ねてしまった。誰かに熱く求められることの甘美な記憶が蘇り、身体の奥が疼いて胸の鼓動がおさまらなかった。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_morning_return",
+  "title": "朝帰りの足音と微かな煙草の残り香・大人の女へ変わっていく娘",
+  "age": [
+    36,
+    68
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 16 && childAge <= 21);
+  },
+  "weight": 24,
+  "once": true,
+  "text": "「友達の家でテスト勉強してお泊まりするから」と昨夜出ていった娘。朝露が草木を濡らす日曜の早朝六時、静かに鍵が回り、忍び足で玄関ドアが開く音が響いた。リビングのドアの隙間から伺うと、昨日の服のまま、少し足取りをふらつかせながらそっと部屋へ上がろうとする娘の姿。すれ違いざま、微かに鼻腔を掠めた見知らぬ男の香水と煙草の匂い、そして肌の奥から立ち上る、男と一晩中激しく素肌を重ね合った後の生々しい熱と愛液の残り香。首筋には、髪で必死に隠そうとした赤紫色の鬱血の痕——キスマーク。一線を越え、子供から完全に「女」へと変貌してしまった娘の現実に心臓が激しく早鐘を打つ。咎めるべき母親としての理性と、女としてすべてを悟ってしまうやるせなさが交錯する……。",
+  "choices": [
+    {
+      "id": "choice_parenting_daughter_morning_breakfast",
+      "label": "咎めずに温かいお味噌汁を差し出し、「身体は大切にしなさいね」と母として静かに諭す",
+      "effects": {
+        "happiness": 6,
+        "morality": 5,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "台所から温かいお椀を差し出すと、娘はびくっと肩を跳ねさせ、首筋を手で隠しながら視線を泳がせた。「お母さん……」「温かいもの飲んで、少し寝なさい。自分の身体は、誰よりも自分が大切にするのよ」。母の静かな眼差しに、娘は泣きそうな顔でこくりと頷いた。",
+          "diary": "友達の家に泊まると言って朝帰りした娘。首筋のキスマークと大人の匂いに動揺したけれど、怒鳴るのではなく静かに諭した。一人の大人の女性として、自分の身体と命の重みを知ってほしい。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_daughter_morning_secret_turmoil",
+      "label": "首筋の痕を見て見ぬふりをしながら、かつて自分も同じ熱狂の中にいた記憶に激しく乱される",
+      "effects": {
+        "happiness": 4,
+        "stress": 4,
+        "sexualEffects": {
+          "intimacy": 10,
+          "libido": 14
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「お帰り」とだけ声をかけ、娘の首筋に刻まれた生々しい愛の痕跡から目をそらした。部屋へ消えていく娘の背中を見送りながら、自分自身もかつて愛欲に狂い、朝帰りした日のシーツの匂いや男の重みを鮮烈に思い起こしてしまい、下腹の奥がきゅうきゅうと痙攣して膝が震えた。",
+          "diary": "朝帰りした娘の首筋にキスマークを見つけてしまった。親としてのショックとともに、自分も通ってきた激しい愛欲の記憶が生々しくフラッシュバックし、胸の動悸と身体の火照りが抑えられなかった。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_rare_aftermath_child_gaze",
+  "title": "朝食の食卓と我が子の視線・見られたかもしれない秘密の残り香",
+  "age": [
+    25,
+    53
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children",
+    "partnered"
+  ],
+  "requires": function (s) {
+    return !!s.flags?.caught_perverse_climax_experienced;
+  },
+  "weight": 20,
+  "once": true,
+  "text": "あの深夜、覗かれたかもしれない恐怖と倒錯の絶頂に溺れてから数日が過ぎた。休日の朝食の食卓。いつもなら「お母さん！」と屈託なく笑いかけてくるはずの我が子が、なぜか一度も私と目を合わせようとせず、俯きがちにトーストを齧っている。そして、ふとした瞬間に首筋や胸元へと注がれる、好奇心と怯えが入り混じった湿った視線。夫が立ち上がり私の肩にぽんと手を置いた瞬間、我が子はビクッと敏感に肩を跳ねさせ、気まずそうに目を逸らした。——あの子は、あの夜の光景を確かに目撃していたのだ。「お母さん……昨日の夜、痛そうだった……？」。台所で食器を洗う私の背後に立ち、ぽつりと落とされた小さな一言。全身の血が凍りつき、心臓が早鐘のように破裂しそうになる。母親としての仮面が粉々に砕け散る猛烈な恥辱。だが、その極限の羞恥の中で、あの夜覗かれながら狂ったようにイッてしまった子宮の奥が甘く熱く疼き出し、下腹の奥から蜜が溢れてショーツを濡らしてしまう……。",
+  "choices": [
+    {
+      "id": "choice_parenting_aftermath_cover_up",
+      "label": "「悪い夢でも見たのよ」と顔を赤らめて言い繕い、母親の威厳を必死で保つ",
+      "effects": {
+        "happiness": 4,
+        "stress": 3,
+        "morality": 5,
+        "selfKnowledge": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "震える指先で蛇口を止め、振り返って無理に笑顔を作った。「何でもないのよ、お父さんと少しお話ししてただけ。心配いらないわ」。我が子は何か言いたげな瞳でじっと私を見つめた後、小さく頷いてリビングへと戻っていった。母親としての体面を辛うじて守り抜いた安堵と、嘘をついてしまった罪悪感で、冷や汗が背筋を伝った。",
+          "diary": "あの夜の行為について、子供から核心を突くような質問をされて頭が真っ白になった。必死で誤魔化したものの、子供の鋭い視線に母親としての体面が激しく揺らいだ。もう二度とあんな隙を見せてはいけないと心に誓った。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_aftermath_surrender_shame",
+      "label": "全てを見られた羞恥と背徳の熱に身体を震わせ、女としての罪深い疼きに屈服する",
+      "effects": {
+        "happiness": 6,
+        "stress": 5,
+        "sexualEffects": {
+          "intimacy": 16,
+          "libido": 18
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「痛くなかったの……大人になるとね、あんな風に仲良くすることもあるのよ」。声をかすれさせ、火照る耳たぶを手で隠しながら、自白のような言葉を漏らしてしまった。我が子の動揺した瞳に見つめられながら、母である自分が女として暴かれてしまった背徳感に下腹がきゅうきゅうと痙攣し、恥辱と快楽の倒錯に身体が甘く痺れて立っていられなくなった。",
+          "diary": "あの夜の情交を確かに見られていた。母親としての仮面が剥ぎ取られた恥辱の中で、あろうことか身体の奥が激しく疼き、快楽に屈してしまう自分自身の業の深さに戦慄した。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_laundry_secrets",
+  "title": "洗濯カゴの奥のレースの下着・娘の引き出しに潜む大人の秘密",
+  "age": [
+    35,
+    66
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 15 && childAge <= 20);
+  },
+  "weight": 24,
+  "once": true,
+  "text": "休日の朝、溜まった洗濯物を仕分けていた時のこと。娘の洗濯ネットの奥から、普段の清楚な綿の下着とはまるで違う、黒い繊細な総レースのランジェリーが零れ落ちた。母親に隠れて買ったのであろう、艶やかな透け感と細いサイドの紐。そして手洗いのために広げた瞬間、クロッチ部分に微かに残る、男と激しく愛し合った後にしか生じない特有の粘り気のある乾いた愛液のシミ。誰かの前で脱ぐために身に着け、誰かの指先で剥ぎ取られた証拠。娘の身体の聖域に触れてしまった後ろめたさと、一人の成熟した雌として男を受け入れているという生々しい事実に、指先が微かに震え、下腹の奥が熱く疼き出す……。",
+  "choices": [
+    {
+      "id": "choice_parenting_daughter_laundry_protect",
+      "label": "見なかったふりをして丁寧に手洗いし、大人の女性への脱皮を静かに見守る",
+      "effects": {
+        "happiness": 6,
+        "morality": 4,
+        "selfKnowledge": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "レースを傷めないよう優しく泡立てて洗い、乾いた後に娘の引き出しの奥へとそっと戻した。あの子もまた、誰かを愛し、身体を許す年頃になったのだという感慨が、胸にじんわりと広がっていった。",
+          "diary": "洗濯物の中から娘の大人のレース下着を見つけてしまった。親には見せない秘密の世界を大切に守ってあげようと思う。無垢な子供から大人の女性へと育っていく眩しさを噛み締めた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_daughter_laundry_past_longing",
+      "label": "レースの手触りと蜜の痕跡に息を呑み、かつて勝負下着で逢瀬を重ねた過去に身を焦がす",
+      "effects": {
+        "happiness": 5,
+        "stress": 3,
+        "sexualEffects": {
+          "intimacy": 10,
+          "libido": 14
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "透けるレースを指先でなぞりながら、かつて自分が同じように男のために特別な下着を選び、シーツの上で貪り合われた若い日の記憶が生々しく蘇った。洗面所の鏡に映る自分の成熟した顔を見つめながら、母親としての理性の下で、抑えがたい女の疼きに身体を熱く濡らしてしまった。",
+          "diary": "娘の下着に残された愛欲の痕跡に、自分自身の若き日の情熱が生々しくフラッシュバックした。誰かに狂おしく求められていたあの頃の感覚が蘇り、身体の芯が切なく疼いて止まらなかった。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_curfew_rain",
+  "title": "門限破りのヘッドライトと傘・見知らぬ車の中で交わされる別れの口づけ",
+  "age": [
+    35,
+    65
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 15 && childAge <= 20);
+  },
+  "weight": 24,
+  "once": true,
+  "text": "激しい雨がアスファルトを叩く夜十時。門限をとっくに過ぎても帰らない娘を案じ、傘を手に玄関先に立った私。そこへ水しぶきをあげて路肩に静かに停まった、見知らぬセダン。ワイパーが往復するフロントガラス越し、助手席のシートベルトを外した娘の姿が見える。運転席の男が娘の引き寄せ、二人は傘の死角で名残惜しそうに長い口づけを交わしていた。やがてドアが開き、小走りで玄関ポーチへと駆け込んできた娘。激しく上下する胸、熱く上気した耳たぶ、そして口紅が赤く滲み、ぽってりと腫れ上がった濡れた唇。男の荒い愛撫をたっぷりと受け取ってきた直後の生々しい熱気に、息が詰まる……。",
+  "choices": [
+    {
+      "id": "choice_parenting_curfew_rain_towel",
+      "label": "何も言わずにタオルを手渡し、「風邪引かないようにね」と温かく包み込む",
+      "effects": {
+        "happiness": 6,
+        "morality": 5,
+        "selfKnowledge": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「お母さん……待っててくれたの？」。バツの悪そうに唇を手で隠す娘の肩にタオルをかけ、優しく髪を拭ってやった。「雨に濡れて寒かったでしょ、すぐお風呂に入りなさい」。娘は安心したように瞳を潤ませ、小さく頷いた。",
+          "diary": "雨の夜、見知らぬ車で送られてきた娘。腫れた唇と濡れた瞳がすべてを物語っていたけれど、厳しく叱るのではなく優しく迎えた。恋を知り、大人になっていく娘の背中に母としての慈愛を注ぎたい。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_curfew_rain_sensual_echo",
+      "label": "滲んだ口紅と荒い息遣いを間近で見つめ、かつて雨宿りの車内で乱れた記憶に溺れる",
+      "effects": {
+        "happiness": 5,
+        "stress": 3,
+        "sexualEffects": {
+          "intimacy": 10,
+          "libido": 15
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "すれ違いざまに鼻をかすめた、雨の匂いと男のコロン、そして娘の肌から放たれる淫靡な愛の熱気。かつて自分も同じように密閉された車内で服を乱され、口唇を塞がれて啼いていた記憶が雷のように脳裏を貫き、玄関で一人立ち尽くしたまま下腹がきゅうと収縮して蜜を垂らしてしまった。",
+          "diary": "車内で別れのキスをして帰ってきた娘の姿に、激しい動悸が襲った。男の熱を受け止めて帰ってきた女の匂いが漂い、自分の中の眠っていた淫らな記憶が呼び覚まされてしまった。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_phone_call_night",
+  "title": "深夜二時の微かな話し声・壁一枚隔てた娘の甘美な吐息",
+  "age": [
+    34,
+    64
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 14 && childAge <= 18);
+  },
+  "weight": 26,
+  "once": true,
+  "text": "喉の渇きを覚えて目を覚ました深夜二時。静まり返った薄暗い廊下を歩いていると、娘の部屋のドアの隙間から、かすかに漏れる話し声に足が止まった。布団の中に潜り込んでスマホを耳に当てている娘。「……もう、恥ずかしいから言わないでよ……そんなとこ、見たいの？」。普段のぶっきらぼうな態度とは別人のような、蕩けるように甘ったるい囁き声。衣擦れの音とともに漏れる「んっ……あっ……」という熱い吐息。親の前では決して見せない、愛する男にだけ見せるあられもない雌の顔。壁一枚隔てた先の生々しい熱気に、廊下で立ち尽くした私の下腹の奥がじわりと熱く潤んでいく……。",
+  "choices": [
+    {
+      "id": "choice_parenting_phone_call_sneak_away",
+      "label": "ノックはせず静かに足音を消して寝室へ戻り、娘の熱い青春に微笑む",
+      "effects": {
+        "happiness": 6,
+        "morality": 4,
+        "selfKnowledge": 2
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "そっと廊下を後にし、寝室へ戻って布団に入った。誰かを狂おしいほど好きになり、夜通し声を聴いていたいと願う娘の無我夢中な恋心に、母としての切なくも温かな愛おしさがこみ上げた。",
+          "diary": "夜中に娘が恋人と甘く電話している声を偶然聞いてしまった。普段は見せないあんなに蕩けた声。恋の熱病に浮かされる娘の姿に、懐かしい青春の眩しさを感じた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_phone_call_flushed_bedroom",
+      "label": "漏れ聞こえる甘い喘ぎ声に身体を火照らせ、寝室で待つ夫の胸に顔を埋める",
+      "effects": {
+        "happiness": 7,
+        "intimacyNeed": 5,
+        "sexualEffects": {
+          "intimacy": 14,
+          "libido": 16
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "寝室へ戻ると、眠っていた{partner}の腕の中に滑り込んだ。娘の生々しい吐息に当てられ、熱く火照った太ももを夫の足に絡ませる。「起きてたの？」と眠たげに抱き寄せてくれる夫の首筋に唇を吸い付け、愛液でぐっしょりと濡れた身体を密着させて夜明けまで求め合った。",
+          "diary": "壁の向こうから漏れてきた娘の恋の熱気に、自分自身の身体までどうしようもなく疼いてしまった。寝室で夫に抱きつき、濃密な愛撫に身を委ねて火照りを鎮めた。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_contraception_talk",
+  "title": "ドレッサーから落ちた小さな四角い小袋・母と娘の覚悟と真実の対話",
+  "age": [
+    36,
+    68
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 16 && childAge <= 21);
+  },
+  "weight": 22,
+  "once": true,
+  "text": "娘の留守中、乾いた洗濯物を畳んで部屋のドレッサーに置こうとした瞬間。ポーチの金具が引っかかり、床へと転がり落ちた手のひら大の四角い銀色の小袋——コンドーム。静まり返る部屋に、パサリと落ちた小さな音。ちょうどそこへ「ただいまー」と帰宅した娘が部屋に入ってきた。床の小袋と私を見比べ、瞬時に顔面蒼白になって震え出す娘。「お母さん……ち、違うの、これは……」。恥辱と恐怖で泣き出しそうな瞳。母親として、そして同じ女性として、この小さなゴムの袋が意味する重みをどう受け止めるべきか……。",
+  "choices": [
+    {
+      "id": "choice_parenting_contraception_reassure_talk",
+      "label": "震える娘の手を両手で包み、「自分の身体を守ることは正しいのよ」と真摯に諭す",
+      "effects": {
+        "happiness": 7,
+        "morality": 5,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "ベッドに並んで座り、震える娘の手をぎゅっと握った。「怒ってないわ。自分の身体と未来を守るために用意したんでしょう？ それはとても立派で大切なことよ」。母の温かい言葉に、娘は緊張が解けたように私の胸に顔を埋めてポロポロと涙を流した。",
+          "diary": "娘の持ち物から避妊具を見つけ、二人でじっくりと話し合った。叱るのではなく、女性として身体を守る責任と愛の尊さを伝えられた。娘との信頼関係がより深いものになった。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_contraception_past_weight",
+      "label": "小袋をそっとポーチに戻しながら、かつて男と結ばれた日の自分の記憶に胸を焦がす",
+      "effects": {
+        "happiness": 5,
+        "stress": 3,
+        "sexualEffects": {
+          "intimacy": 8,
+          "libido": 12
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「何も言わなくていいわ」と小袋を拾い、ポーチの奥へと戻してチャックを閉めた。かつて自分も同じように小さな小袋を胸の奥に忍ばせ、激しい愛欲と恐怖に身を震わせながら男に処女を捧げた日の記憶が胸に迫り、母と女の狭間で激しく動揺した。",
+          "diary": "娘の避妊具を見て、かつて自分が初めて男性を受け入れた日の生々しい記憶が蘇った。一人の自立した女性としての一歩を踏み出している娘の姿に、胸の鼓動がおさまらなかった。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_after_party_hangover",
+  "title": "始発電車と崩れたメイク・夜の熱狂をまとう娘の生々しい気怠さ",
+  "age": [
+    38,
+    70
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 18 && childAge <= 22);
+  },
+  "weight": 24,
+  "once": true,
+  "text": "日曜日の早朝、始発電車の走る音が遠くに響くリビング。玄関のドアが開き、靴を脱ぎ散らかしてへたり込む娘。大学のサークルやバイトの打ち上げから朝帰りした姿。わずかに浮いたファンデーション、滲んだマスカラ、衣服から漂う煙草と強いアルコールの混ざった匂い。シャワーを浴びてバスローブ一枚でリビングのソファに倒れ込み、「お母さん……お水……頭ガンガンする……」と気怠そうに手足を投げ出す娘。濡れた黒髪から立ち上る生々しい熱気と、大人の夜の熱狂を肌にまとった無防備な色香に、昔の自分の無茶な若さが鮮烈に重なる……。",
+  "choices": [
+    {
+      "id": "choice_parenting_hangover_water_care",
+      "label": "冷たい水と胃薬を差し出し、「無茶しすぎよ」と苦笑しながら濡れ髪を拭いてやる",
+      "effects": {
+        "happiness": 6,
+        "stress": -2,
+        "morality": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "氷水を手渡し、ソファでぐったりする娘の濡れた髪を乾いたタオルで優しく拭ってやった。「もう若くないんだから……って、まだ若いか」。苦笑する私に、娘は「お母さん、ありがと……」と甘えるように頭を預けてきた。",
+          "diary": "お酒の席から始発で朝帰りした娘の介抱をした。気怠そうに甘えてくる姿に幼い頃の面影を感じつつ、大人の世界へ羽ばたいた娘の成長を眩しく思う。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_hangover_reminisce_youth",
+      "label": "脱ぎ捨てられた服の残り香に息を呑み、かつて夜の街で奔放に溺れた自らの熱狂を回想する",
+      "effects": {
+        "happiness": 5,
+        "stress": 2,
+        "sexualEffects": {
+          "intimacy": 8,
+          "libido": 14
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "脱衣所に脱ぎ捨てられた娘の衣服から立ち上る、夜の男たちの煙草と汗、そして強い香水の混ざった生々しい残り香。かつて自分も夜の街で男たちに囲まれ、奔放に身体を熱く焦がしていた狂乱の記憶が呼び覚まされ、洗濯機の前で一人、下腹の奥に甘い痺れを覚えてしまった。",
+          "diary": "夜遊びから帰った娘の衣服に残る大人の匂い。かつて自分も同じように夜の街で熱狂に身を任せていたことを思い出し、身体の奥底が懐かしい火照りに包まれた。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_oversized_hoodie",
+  "title": "借り物のぶかぶかなパーカーと濡れた髪・男の匂いに包まれて帰る娘",
+  "age": [
+    36,
+    68
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 16 && childAge <= 21);
+  },
+  "weight": 24,
+  "once": true,
+  "text": "日曜日の早朝七時。玄関の鍵が開き、そろそろと忍び足で入ってきた娘の姿に息を呑む。昨夜出かけた時の可愛らしいブラウスではなく、膝上まで届く見慣れないグレーのダボダボなメンズパーカー。裾から伸びる細い生足、洗いたての濡れた髪から漂うホテルや男の部屋の甘いシャンプーの匂い。ファスナーを鎖骨の下まで下げた胸元には、昨夜の激しい情交を物語る赤紫色のキスマークが覗いている。明らかに男の服を身にまとい、所有され愛された証を隠すこともなく帰ってきた娘の生々しい現実に、全身の血がざわめき立つ……。",
+  "choices": [
+    {
+      "id": "choice_parenting_hoodie_warm_tea",
+      "label": "「彼の服？」と微笑んで温かいお茶を差し出し、大人の恋を包み込む",
+      "effects": {
+        "happiness": 6,
+        "morality": 4,
+        "selfKnowledge": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "温かいマグカップを差し出しながら、「素敵なパーカーね」と優しく声をかけた。娘はビクッと肩を跳ねさせて顔を真っ赤に染め、「……うん、借りちゃった」と照れくさそうに微笑んだ。誰かに心も身体も愛されている娘の柔らかな表情に、母としての温かな安堵が広がった。",
+          "diary": "男物の大きなパーカーを着て朝帰りした娘。昨夜の甘い時間が伝わってくるような姿に動揺しつつも、温かく受け止めた。恋をして綺麗になっていく我が子の成長を見守りたい。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_hoodie_past_sweet_shame",
+      "label": "男物の服に包まれた娘の無防備な色香を見つめ、かつて恋人の服を借りて帰った甘美な記憶に疼く",
+      "effects": {
+        "happiness": 5,
+        "stress": 3,
+        "sexualEffects": {
+          "intimacy": 10,
+          "libido": 15
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "ダボダボのパーカーから漂う見知らぬ男の体温と残り香に、かつて自分も同じように恋人の部屋で朝を迎え、彼のシャツを羽織って火照った身体で帰宅した若き日の記憶が生々しくフラッシュバックした。愛欲の余韻をまとった娘の艶めかしさに当てられ、下腹の奥がきゅうと甘く疼いて熱を帯びてしまった。",
+          "diary": "彼の服を着て朝帰りした娘の姿に、昔の自分の甘美な記憶が重なった。男に愛され、その温もりに包まれて帰る時のあの独特の誇らしさと気怠さを思い出し、身体の芯が切なく熱くなった。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_broken_stockings",
+  "title": "伝線した黒タイツと歩きにくそうな素足・ホテル街の残り香をまとう朝",
+  "age": [
+    36,
+    68
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 17 && childAge <= 21);
+  },
+  "weight": 22,
+  "once": true,
+  "text": "日曜の朝六時半、そっと開いた玄関ドア。靴擦れで足が痛むのか、高いヒールを脱いで手に持ち、裸足に近いおぼつかない足取りで上がってきた娘。その太ももを包む薄い黒ストッキングは無残に大きく裂け、指先で引き裂かれたような生々しい伝線が白肌を晒している。バッグの隙間からは、ホテル特有の小さな使い捨て歯ブラシの小袋が覗いていた。洗面台へ向かい、うがいをして鏡を見つめる娘の放心したような横顔。愛欲の嵐に巻き込まれ、身体の奥深くまで貪り尽くされて戻ってきた娘の痛々しくも生々しい色香に、胸が締めつけられる……。",
+  "choices": [
+    {
+      "id": "choice_parenting_stockings_first_aid",
+      "label": "絆創膏とスリッパを差し出し、「無理しちゃダメよ」と痛む身体を労る",
+      "effects": {
+        "happiness": 6,
+        "morality": 5,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "洗面所に駆け寄り、靴擦れで皮の剥けたかかとに優しく絆創膏を貼ってやった。「お母さん……」「靴擦れ、痛かったでしょ。お風呂沸いてるから、ゆっくり浸かりなさい」。娘は泣きそうな瞳で私の肩に顔を埋め、親の無言の慈愛に救われたように吐息を漏らした。",
+          "diary": "伝線したタイツと靴擦れの足で朝帰りした娘。身体を投げ出して恋に溺れた後の疲弊した姿を優しく介抱した。傷つきながらも大人の階段を一歩ずつ登っていく娘を守ってあげたい。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_stockings_perverse_sympathy",
+      "label": "引き裂かれた黒レースの隙間から覗く白肌に息を呑み、激しい情交の残滓に身を震わせる",
+      "effects": {
+        "happiness": 4,
+        "stress": 4,
+        "sexualEffects": {
+          "intimacy": 8,
+          "libido": 16
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "伝線したタイツの内側に微かに滲む赤い肌の擦れ跡と、ホテル街の生々しい残り香。かつて自分も男に衣服を引き裂かれるほどの激情で貪られ、足腰をガタガタと震わせながら朝帰りの道を歩いた記憶が鮮烈に脳裏を焼き、激しい羞恥と興奮でショーツを蜜で濡らしてしまった。",
+          "diary": "激しい逢瀬の痕跡を生々しく残して朝帰りした娘。女としての性を激しく暴かれて戻ってきた我が子の姿に、自分自身の過去の淫らな熱狂が呼び覚まされ、動悸と身体の火照りが止まらなかった。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_morning_bath_washing",
+  "title": "朝帰りの足音と直行するシャワー・扉の向こうから立ち上る愛欲の湯気",
+  "age": [
+    36,
+    68
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 16 && childAge <= 21);
+  },
+  "weight": 24,
+  "once": true,
+  "text": "早朝、玄関の鍵が開いたと思ったら、足音はリビングへ向かわず脱衣所へと一直線に消え、カチャリと内鍵が閉められた。すぐに勢いよく響き渡るシャワーの水音。着替えのバスタオルを届けようと脱衣所の前を通った時、脱ぎ散らかされたカゴの衣服から、濃厚に蒸れた愛液と男の生々しい匂いが鼻腔を突いた。浴室のすりガラスの向こう、身体の奥深くまで念入りに洗い流すような水音と、かすかに漏れる「はぁ……」という深い吐息。男のすべてを受け止め、その汚れを洗い落とそうとする娘の生々しい気配に、胸の鼓動が激しく早鐘を打つ……。",
+  "choices": [
+    {
+      "id": "choice_parenting_bath_towel_care",
+      "label": "脱衣所のドアノブに清潔なバスタオルと着替えを掛け、静かに立ち去る",
+      "effects": {
+        "happiness": 6,
+        "morality": 4,
+        "selfKnowledge": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "ふかふかの清潔なバスタオルとパジャマをドアノブにそっと掛け、「お風呂から上がったら温かいお茶あるからね」と小さく声をかけて立ち去った。お風呂から出てきた娘は、清潔なタオルを胸に抱きしめ、母親の細やかな気遣いに感謝するように微笑んだ。",
+          "diary": "朝帰りしてすぐお風呂場へ駆け込んだ娘。何も言わずに温かいタオルと着替えを用意してあげた。全てを洗い流して自分を取り戻そうとする娘のプライドを大切にしてあげたい。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_bath_steamy_scent_turmoil",
+      "label": "脱ぎ捨てられた下着から立ち上る淫臭に息を呑み、男に汚された日の記憶に下腹を濡らす",
+      "effects": {
+        "happiness": 5,
+        "stress": 3,
+        "sexualEffects": {
+          "intimacy": 12,
+          "libido": 16
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "脱衣所に漂う生々しい男女の交わりの残り香と、シャワーの湯気の熱気。かつて自分も一晩中激しく注ぎ込まれた男の痕跡を、朝のシャワーで洗い流しながら身体の痺れを噛み締めていた記憶が全身を駆け抜け、脱衣所の前で膝を震わせながらショーツを熱く湿らせてしまった。",
+          "diary": "朝帰りの娘が浴びるシャワーの音と、脱ぎ捨てられた衣服から香る愛欲の匂いに、自分自身の淫らな過去が蘇ってしまった。女として身体の奥が激しく疼き、抗えない動悸に苛まれた。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_morning_tears_embrace",
+  "title": "朝露の玄関に崩れ落ちる娘の涙・早すぎた一線と母の抱擁",
+  "age": [
+    36,
+    68
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 15 && childAge <= 19);
+  },
+  "weight": 22,
+  "once": true,
+  "text": "早朝、玄関ドアが開く音とともに、バタンと崩れ落ちるような重い物音が響いた。慌てて玄関へ駆けつけると、靴を脱ぎかけたままの娘がたたきにしゃがみ込み、両手で顔を覆ってボロボロと大粒の涙を流していた。「お母さん……私、どうしよう……バカなことしちゃった……」。乱れた髪、首筋に赤く残る噛み跡、身体の痛みに震える我が子。愛された喜びよりも、早すぎた一線への恐怖と、流されてしまった後悔に打ちひしがれている。目の前で震える我が子を見つめ、母としての全身全霊の愛が激しく湧き上がる……。",
+  "choices": [
+    {
+      "id": "choice_parenting_tears_tight_hug",
+      "label": "たたきに膝をついて娘を力いっぱい抱きしめ、「大丈夫、お母さんがいるよ」と涙を拭う",
+      "effects": {
+        "happiness": 7,
+        "stress": -4,
+        "morality": 5,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "冷たい床に膝をつき、震える娘を全身で抱きしめた。「大丈夫よ、何も心配いらない。お母さんが全部受け止めてあげる」。私の胸で声を上げて泣きじゃくる娘の背中を、落ち着くまで何度も優しくさすり続けた。母娘の絆がかつてなく強く結ばれた朝。",
+          "diary": "朝帰りした娘が玄関で泣き崩れた。後悔と痛みに震える我が子を力いっぱい抱きしめた。どんな過ちがあっても、世界中が敵になっても、私はこの子の母として絶対に味方であり続ける。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_tears_painful_reminisce",
+      "label": "娘を抱きしめながら、かつて自分も若気の至りで傷つき泣いた朝の痛みに胸を締めつける",
+      "effects": {
+        "happiness": 5,
+        "stress": 2,
+        "selfKnowledge": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "娘を抱き寄せながら、かつて自分も男の都合のいい言葉に流され、身体を許した後に一人で泣きながら帰宅した遠い日の傷が生々しく疼いた。「泣かないで、あなたの価値は何も減ったりしないわ」。自分自身の過去を癒やすように、娘の涙を優しく拭ってやった。",
+          "diary": "傷ついて朝帰りした娘を抱きしめた。自分も通ってきた若さゆえの過ちと痛みが胸に刺さり、涙が止まらなかった。この痛みを乗り越えて、どうか強い女性になってほしい。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_confident_woman",
+  "title": "朝陽の中で淹れる二人分の珈琲・一人の女として向き合う娘の瞳",
+  "age": [
+    37,
+    70
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 18 && childAge <= 22);
+  },
+  "weight": 24,
+  "once": true,
+  "text": "日曜日の朝陽が燦々と差し込むキッチン。カチャリと玄関の鍵が開き、「お母さん、おはよう」と落ち着いた声が響いた。朝帰りでありながら、俯くこともなく晴れやかな笑顔で入ってきた娘。昨夜の服を綺麗に着こなし、髪を整え、その瞳にはどこか大人の女としての深い艶と自信が宿っている。娘はエプロンを手に取り、慣れた手つきで二人分の珈琲を淹れ始めた。「お母さん、珈琲飲むでしょ？ ……私ね、大好きな人ができたの。昨日の夜、ちゃんとお互いの気持ちを確かめ合ってきたんだ」。一人の自立した女性として、まっすぐに母を見つめる娘の瞳に、眩しい世代交代の瞬間を見る……。",
+  "choices": [
+    {
+      "id": "choice_parenting_confident_toast_coffee",
+      "label": "珈琲を受け取って微笑み、「今度、彼を家に連れてきなさいね」と大人の祝福を贈る",
+      "effects": {
+        "happiness": 8,
+        "morality": 4,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "温かいマグカップを合わせ、「おめでとう。今度、その素敵な彼を家に連れてらっしゃい」と微笑んだ。娘は嬉しそうに瞳を輝かせ、「うん、絶対に連れてくる！」と笑った。親子の枠を超え、一人の自立した女性同士として認め合えた至福の朝。",
+          "diary": "朝帰りした娘が、堂々と愛する人との絆を報告してくれた。少女から完全に大人の女性へと脱皮した娘の眩しい瞳に、親としての最高の達成感と幸福感を覚えた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_confident_reminisce_bloom",
+      "label": "女として美しく開花した娘の輝きに息を呑み、恋に満たされていた自らの黄金期を懐かしむ",
+      "effects": {
+        "happiness": 7,
+        "passion": 4,
+        "sexualEffects": {
+          "intimacy": 10,
+          "libido": 12
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "珈琲を飲みながら娘の艶やかな肌と潤んだ瞳を見つめた。本気で愛し合い、愛された女だけが放つ圧倒的な輝き。かつて自分も男と深く愛し合って全身が幸福に満たされていた黄金の季節を思い起こし、母としても女としても誇らしく胸が満たされた。",
+          "diary": "恋をして美しく花開いた娘の姿。誰かと深く結ばれた女の誇らしげな輝きに、自分自身の若き日の愛の軌跡が重なり、温かい幸福感に包まれた。"
+        }
+      ]
+    }
+  ]
+});
+
+
+
+
+
+
+
+
 

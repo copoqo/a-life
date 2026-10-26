@@ -141,7 +141,9 @@ function getStoryArcBoost(e, st = s) {
   } else if (stage === 5) {
     if (e.id === 'marriage_ceremony' && !st.seen?.marriage_ceremony) boost *= 5.0;
     else if (st.flags?.pregnant && e.id === 'story_childbirth_miracle') boost *= 8.0;
-    else if (st.flags?.hasChildren && e.id === 'story_parenting_tender_days' && !st.seen?.story_parenting_tender_days) boost *= 5.0;
+    else if (st.flags?.hasChildren && e.id?.startsWith('story_parenting_')) {
+      boost *= (e.once && st.seen?.[e.id]) ? 1.0 : 4.5;
+    }
     else if (!st.flags?.hasChildren && !st.flags?.pregnant && e.id === 'story_pregnancy_discovery' && !st.seen?.story_pregnancy_discovery) {
       boost *= st.flags?.trying_for_baby ? 4.5 : 2.8;
     }
