@@ -6022,6 +6022,883 @@ window.defineEvent({
   ]
 });
 
+window.defineEvent({
+  "id": "story_parenting_daughter_pill_sheet",
+  "title": "ポーチの底の銀色のピルシート・自分の身体を自ら守る娘の決意",
+  "age": [
+    36,
+    68
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 16 && childAge <= 22);
+  },
+  "weight": 24,
+  "once": true,
+  "text": "娘から頼まれてバッグからハンドクリームを取り出そうとした際、小分けポケットの奥から銀色の小さなブリスターパックが指先に触れた。取り出すと、曜日と数字が丁寧に印刷された28錠の低用量ピルのシート。毎日決まった時間にきちんと飲まれている丸い錠剤の列。男任せにせず、自らの意志で産婦人科を受診し、自分の未来と身体をコントロールしようとする娘の成熟した責任感。かつて男性側の都合に流され、怯えながら過ごした若き日の自分を思い返し、娘の確かな自立に胸が打たれる……。",
+  "choices": [
+    {
+      "id": "choice_parenting_pill_sheet_praise",
+      "label": "娘の自立心と身体への責任感を誇らしく思い、定期検診のサポートを約束する",
+      "effects": {
+        "happiness": 7,
+        "morality": 5,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "シートをそっと戻し、後でお茶を飲みながら「ピル飲んでるのね。副作用はない？ 病院代、お母さんも出してあげるからね」と優しく伝えた。娘は驚いて赤面した後、「ありがとう……自分でちゃんと決めたんだ」と誇らしげに微笑んだ。母娘の深い信頼が結ばれた瞬間。",
+          "diary": "娘の持ち物から低用量ピルのシートを見つけた。男任せにせず自分の身体を自分で守る娘の自立心を誇りに思う。母として身体のケアを全面的に支えてあげたい。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_pill_sheet_reminisce_helpless",
+      "label": "ピルを飲む娘の強さに感銘を受けつつ、かつて無防備に男に翻弄されていた自分を省みる",
+      "effects": {
+        "happiness": 5,
+        "stress": 2,
+        "selfKnowledge": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "規則正しく飲まれているピルを見つめながら、かつて自分が避妊の知識も乏しいまま男の情欲に身を委ね、毎月生理が来るか冷や汗を流して祈っていた過去を思い起こした。時代の変化とともに、強く賢く生きる娘の姿に胸を打たれた。",
+          "diary": "自らピルを服用して身体をコントロールしている娘の姿。かつて男性に主導権を握られて怯えていた昔の自分と比べ、娘のたくましさと聡明さに深い感慨を覚えた。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_pregnancy_test_scare",
+  "title": "洗面所のゴミ箱に沈む白いスティック・青ざめる娘と祈るような陰性",
+  "age": [
+    36,
+    68
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 16 && childAge <= 21);
+  },
+  "weight": 22,
+  "once": true,
+  "text": "深夜、洗面所のゴミ箱のゴミ袋を替えようとした時のこと。ティッシュで何重にも厳重に包まれた細長い塊。不審に思って開くと、現れたのは使用済みの妊娠検査薬。判定窓には、くっきりと一本の青い線——陰性。そこへ青ざめた顔で忍び足でやってきた娘。ゴミ箱の前で立ち尽くす私と目が合った瞬間、娘は膝から崩れ落ちて震え出した。「お母さん……生理が二週間も来なくて……本当に怖かった……っ」。生きた心地のしなかった娘の恐怖と、陰性の安堵。避妊に絶対はないという現実を前に、震える我が子を前にして母としての胸が締めつけられる……。",
+  "choices": [
+    {
+      "id": "choice_parenting_pregnancy_scare_embrace",
+      "label": "床に座り込んで娘をぎゅっと抱きしめ、「怖かったね、一人で抱えなくていいの」と涙を拭う",
+      "effects": {
+        "happiness": 7,
+        "stress": -4,
+        "morality": 5,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "震える娘を抱き寄せ、冷たくなった背中を力いっぱい温めた。「陰性でよかった……本当に怖かったわね。でも次は絶対に一人で悩まないで。お母さんがいつでも味方だから」。娘は私の胸で声を押し殺して泣きじゃくり、心の底から救われたように息を吐いた。",
+          "diary": "洗面所のゴミ箱から娘の妊娠検査薬を見つけた。陰性の結果に安堵しつつ、一人で恐怖に耐えていた娘を強く抱きしめた。避妊の責任と身体の重みを二人でしっかりと噛み締めた夜。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_pregnancy_scare_past_terror",
+      "label": "陰性のスティックを見つめ、かつて自分も冷や汗を流して検査薬を握りしめた記憶に動悸する",
+      "effects": {
+        "happiness": 5,
+        "stress": 3,
+        "sexualEffects": {
+          "intimacy": 8,
+          "libido": 12
+        }
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "娘の肩を抱きながら、かつて自分も激しい愛欲の果てに生理が遅れ、震える指先で検査薬の結果を待っていた若き日の恐怖と生々しい記憶がフラッシュバックした。女性として避けて通れない性の重圧と熱情の代償に、母と女の両面で心が激しく揺さぶられた。",
+          "diary": "娘の妊娠の不安に直面し、かつて自分も同じように震えていた若い日の恐怖が鮮烈に蘇った。快楽の裏にある命の重みと責任を、母娘で痛感した。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_morning_after_pill",
+  "title": "破れたゴムと日曜日・娘の手を引いて駆け込む産婦人科クリニック",
+  "age": [
+    36,
+    68
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 16 && childAge <= 21);
+  },
+  "weight": 20,
+  "once": true,
+  "text": "日曜日の早朝、真っ青な顔をした娘が私の寝室のドアをノックした。「お母さん……どうしよう……昨日の夜、避妊具が破れちゃって……」。72時間以内の緊急避妊薬（アフターピル）のタイムリミット。休日に開いているレディースクリニックを即座にスマホで検索し、「着替えて、すぐ行くわよ！」と娘の手を引いて車に飛び乗った。クリニックの待合室、恥ずかしさと不安で震える娘の氷のような手を強く握りしめる。「大丈夫。お母さんが全部ついてるから」。男の無責任さに胸の奥で怒りを燃やしながら、娘の身体と人生を守るため、母として全力で盾となる……。",
+  "choices": [
+    {
+      "id": "choice_parenting_after_pill_protect",
+      "label": "診察室で娘の手を握り締め、薬の服用を見届けて母として全力で守り抜く",
+      "effects": {
+        "happiness": 7,
+        "morality": 5,
+        "selfEfficacy": 4,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "女医さんの前で娘に寄り添い、処方された緊急避妊薬をクリニックのウォーターサーバーですぐに飲ませた。「よくすぐにお母さんに話してくれたわね」と医師に褒められ、娘は安堵の涙を零した。帰りの車の中、娘の未来を確実に守り切った母としての達成感に胸が震えた。",
+          "diary": "避妊失敗でパニックになった娘を連れて休日のクリニックへ駆け込み、アフターピルを処方してもらった。娘が隠さず頼ってくれたこと、迅速に守れたことに母としての誇りを感じた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_after_pill_bitter_past",
+      "label": "待合室の空気と内診台に、かつて男の快楽のツケを背負わされそうになった苦い過去を噛み締める",
+      "effects": {
+        "happiness": 5,
+        "stress": 3,
+        "selfKnowledge": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "待合室の独特の消毒液の匂いの中、かつて自分も男の「大丈夫だから」という無責任な言葉を信じて傷つき、一人で産婦人科の門をくぐった過去の痛みが疼いた。女だけが身体のリスクを背負わされる理不尽さを娘と共有し、より賢く強い女性へと導く決意を固めた。",
+          "diary": "娘のアフターピル受診に付き添い、女として生きることの身体的責任と理不尽さを改めて痛感した。苦い経験を乗り越え、娘には自分の尊厳を何よりも大切にしてほしい。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_gynecology_first_visit",
+  "title": "初めてのレディースクリニック・母から娘へと手渡す身体のお守り",
+  "age": [
+    36,
+    68
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "general",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 16 && childAge <= 22);
+  },
+  "weight": 24,
+  "once": true,
+  "text": "性経験を始めた娘のために、「一度、ちゃんとした婦人科検診に行っておこうか」と提案し、二人で訪れた信頼できるレディースクリニック。清潔なアロマの香る待合室。子宮頸がん検診や生理痛の相談、性感染症の検査。緊張で唇を引き結ぶ娘の背中を優しくさすり、「恥ずかしいことなんて何もないのよ。自分の身体を大切にするための健診なんだから」。検査を終え、医師から「どこも異常ありませんよ」と告げられた娘のホッとした笑顔。母から娘へと手渡す、一生モノの身体への慈しみと知識のバトン。",
+  "choices": [
+    {
+      "id": "choice_parenting_gynecology_cafe_toast",
+      "label": "検診の後、お気に入りのカフェでケーキを食べながら女性の身体について語り合う",
+      "effects": {
+        "happiness": 8,
+        "morality": 4,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "クリニックの帰り道、おしゃれなカフェで二人で紅茶とタルトを囲んだ。「検診、思ったより怖くなかった！ 連れてきてくれてありがとう」。笑顔で話す娘と、生理や避妊、将来の身体のことをざっくばらんに語り合い、大人の女性同士の温かな絆を深めた。",
+          "diary": "娘と一緒に初めての婦人科検診へ。自分の身体を慈しみ、定期的にメンテナンスする大切さを伝えられた。カフェで笑い合った時間は、母娘のかけがえのない思い出。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_gynecology_mature_pride",
+      "label": "真摯に自分の身体と向き合う娘の横顔に、一人の成熟した女性として頼もしさを覚える",
+      "effects": {
+        "happiness": 7,
+        "selfEfficacy": 4,
+        "selfKnowledge": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "医師の問診にしっかりと受け答えする娘の横顔を見つめた。かつて手を引いて歩いていた幼子が、今は立派に自分の肉体と健康に責任を持つ一人の女性として立っている。母としての役目を一つ果たしたような、誇らしい充足感に包まれた。",
+          "diary": "婦人科の問診に堂々と答える娘の姿を見て、確かな成長を感じた。無知ゆえに傷つくことなく、自分の身体の主権者として歩んでいく娘を心から誇らしく思う。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_condom_talk_with_boyfriend",
+  "title": "「彼が生で着けたくないって言うの」・愛と自尊心の境界線を教える母の言葉",
+  "age": [
+    36,
+    68
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 15 && childAge <= 20);
+  },
+  "weight": 22,
+  "once": true,
+  "text": "夕食後、リビングで二人きりになった時、娘が伏し目がちにぽつりと相談してきた。「お母さん……相談があるの。彼がね、生の方が気持ちいいからゴムを着けたくないって言ってくるの。断ると不機嫌になるし、嫌われたくなくて……」。娘の唇の震えを見た瞬間、胸の奥で激しい怒りと痛烈な悲しみが渦巻いた。娘の両手をしっかりと握り、その瞳をまっすぐに見つめる。「いい、よく聞いて。あなたの身体と命を天秤にかけてまで自分の快楽を優先する男なんて、本当の愛じゃないのよ」。母として、女として、決して譲ってはならない尊厳の境界線を伝える……。",
+  "choices": [
+    {
+      "id": "choice_parenting_condom_talk_dignity",
+      "label": "「NOと言えない関係は愛じゃないわ」と毅然と導き、自分を安売りしない自尊心を叩き込む",
+      "effects": {
+        "happiness": 7,
+        "morality": 5,
+        "selfKnowledge": 5
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「避妊を拒否されたら、その場ですぐ服を着て帰りなさい。あなたを大切にできない男に、あなたの美しい身体を触る資格なんてないの」。母の凛とした眼差しと魂の言葉に、娘はハッと目を覚ましたように涙を拭い、「うん……私、ちゃんと断る！」と力強く頷いた。",
+          "diary": "避妊を嫌がる彼氏に悩む娘に、毅然として自尊心の大切さを教えた。愛されるために自分を犠牲にしてはいけない。強い女性として自分の尊厳を守る勇気を持ってくれた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_condom_talk_past_regret",
+      "label": "かつて自分も男の甘い言葉に流されそうになった苦い経験を打ち明け、後悔のない選択を促す",
+      "effects": {
+        "happiness": 6,
+        "morality": 4,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「実はお母さんもね、昔同じようなことを言われて泣いたことがあるのよ」。自分の若き日の失敗と傷を正直に打ち明けると、娘は驚きながらも真剣に耳を傾けてくれた。「同じ痛みをあなたには味わってほしくないの」。母の生々しい告白が、娘の心に深く刻まれた。",
+          "diary": "昔の自分の過ちを娘に打ち明け、避妊を拒む男の身勝手さを諭した。綺麗事ではなく一人の女としての真実を話したことで、娘も深く納得してくれた。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_first_time_gait_and_scent",
+  "title": "ぎこちない歩調と甘い体熱・娘が初めてを捧げた日の帰宅",
+  "age": [
+    35,
+    65
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 15 && childAge <= 20);
+  },
+  "weight": 22,
+  "once": true,
+  "text": "日曜の夕暮れ、デートから帰ってきた娘を出迎えた玄関先。靴を脱ぐ動作に、内股を庇うようなごく僅かなぎこちなさがあった。廊下ですれ違った瞬間、いつもの柑橘系の香水とは違う、男のムスクの残り香と、蒸れた皮膚から立ち上る生々しく甘い体熱の匂いが鼻腔をかすめた。頬は朱に染まり、目を合わせようとせずうつむく娘。女の直感が電撃のように確信させた——今日、この子は処女を失い、大人の階段を一歩踏み出したのだ……。",
+  "choices": [
+    {
+      "id": "choice_parenting_first_time_warm_bath",
+      "label": "何も詮索せず「お風呂沸いてるから、ゆっくり温まってきなさい」と優しく背中を押す",
+      "effects": {
+        "happiness": 7,
+        "stress": -3,
+        "morality": 5,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "余計な言葉は呑み込み、疲れて強張った娘の肩をそっと撫でて湯船を勧めた。娘はほっと息を吐き、「うん、ありがとう……」と脱衣所へ急いだ。多くを語らずとも受け止めてあげる優しさが、親子の信頼を深めた。",
+          "diary": "ぎこちない足取りと男の匂いで帰宅した娘。処女を失ったのだと直感したが、あえて何も言わず温かいお風呂を勧めた。大人の女への第一歩を静かに見守りたい。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_first_time_reminisce_innocence_lost",
+      "label": "初体験の痛痒と陶酔に揺れる娘の背中を見送り、かつての自分の「あの瞬間」に胸を疼かせる",
+      "effects": {
+        "happiness": 5,
+        "stress": 2,
+        "tabooAwareness": 4,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "おぼつかない足取りで自室へ向かう娘の後ろ姿を見つめながら、かつて自分が初めて男の肉体を受け入れた日の痛快と、下腹部に残る甘い痺れを昨日のことのように思い出した。少女の殻を破った娘の官能的な気配に、自らの肌の奥までもがじんわりと熱を帯びるのを感じた。",
+          "diary": "初めて男を知って帰ってきた娘の姿に、遠い昔の自分の初体験の生々しい感触が重なった。女としての感覚に目覚めた我が子に、複雑で甘美な共鳴を覚えた。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_first_time_laundry_blood_faint",
+  "title": "洗濯カゴのショーツ・下着の奥に滲むわずかな純潔の証",
+  "age": [
+    35,
+    65
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 15 && childAge <= 20);
+  },
+  "weight": 22,
+  "once": true,
+  "text": "休日の朝、洗濯物を仕分けていた脱衣所でのこと。娘の脱衣カゴに入っていた綿のショーツを取り上げたとき、クロッチの布地に目を奪われた。洗面所で慌てて水洗いしたのか湿り気を帯びており、念入りに擦り洗いされた繊維の奥に、うっすらと指先ほどの淡い薄紅色の染みが残っていた。生理の経血とは明らかに違う、初めて裂かれた粘膜が流した純潔の血痕。娘の密やかな秘密が手の中で湿っぽく伝わり、息が止まるような動悸に襲われた……。",
+  "choices": [
+    {
+      "id": "choice_parenting_laundry_blood_clean_silently",
+      "label": "娘の恥じらいを思い、漂白剤で丁寧に染みを落として何事もなかったように干す",
+      "effects": {
+        "happiness": 6,
+        "stress": -2,
+        "morality": 4,
+        "selfKnowledge": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "娘が必死に隠そうとして落としきれなかった秘密。気づかないふりをして専用の洗剤で綺麗に洗い流し、真っ白に戻して風の通るベランダに干した。母として娘の恥じらいとプライバシーを静かに守り抜いた。",
+          "diary": "洗濯カゴのショーツに残された微かな処女喪失の染み。娘の必死の隠蔽を察し、何も言わずに綺麗に洗い落として干した。母にできる無言の庇護だった。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_laundry_blood_sweet_pain_resonance",
+      "label": "染みの残る布地を掌でそっと包み、無垢な少女から女へと生まれ変わった奇跡に胸を詰まらせる",
+      "effects": {
+        "happiness": 5,
+        "stress": 1,
+        "tabooAwareness": 3,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "手のひらの中の冷たい布地を見つめながら、あの小さかった赤ん坊が、いまや一人の男を受け入れる成熟した肉体を持ち、痛みを伴いながら女になった事実に目眩がした。神聖でありながらどこか生々しい背徳の気配に、胸の奥が熱く疼いた。",
+          "diary": "娘のショーツに残るわずかな血痕を見つめ、娘が一人の女として結ばれた現実を噛み締めた。身体の成熟と神秘に深い感慨と熱い疼きを覚えた。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_first_time_bath_hickey_glance",
+  "title": "湯上がりのうなじ・鎖骨に残された紅い鬱血痕と潤んだ眼差し",
+  "age": [
+    35,
+    65
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 15 && childAge <= 20);
+  },
+  "weight": 22,
+  "once": true,
+  "text": "帰宅後すぐさま一時間近くシャワーを浴びていた娘。濡れた髪をタオルで拭きながらリビングに現れた娘に、ドライヤーをかけてあげようと背後に回った。襟足をかき上げた瞬間、目に飛び込んできたのは、うなじから鎖骨のくぼみにかけて刻まれた、いくつもの鮮やかな紅いキスマーク。鏡越しに目が合うと、娘の瞳はこれまでの少女の無垢な光ではなく、情欲を貪られ男の熱に溺れた女特有の、濡れたような艶を湛えていた……。",
+  "choices": [
+    {
+      "id": "choice_parenting_bath_hickey_gentle_whisper",
+      "label": "髪を梳かしながら「首筋、髪でちゃんと隠しなさいね」と悪戯っぽく耳元で囁く",
+      "effects": {
+        "happiness": 8,
+        "morality": 3,
+        "selfKnowledge": 5
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "ドライヤーの風を当てながら耳元で優しく囁くと、娘は顔中を真っ赤にして両手で首元を押さえた。「お母さん、気づいてたの……っ」「当たり前でしょ、私も女なんだから」。恥ずかしそうに身をよじる娘の頭を撫でると、秘密を共有した共犯者のような微笑みがこぼれた。",
+          "diary": "湯上がりの娘の首筋に残された生々しいキスマーク。からかい半分に髪で隠すよう囁くと、娘は真っ赤になって照れていた。母娘でありながら同じ女同士の親密な時間が流れた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_bath_hickey_protect_health",
+      "label": "身体の痛みや違和感がないかさりげなく尋ね、女性特有の体調変化を気遣う",
+      "effects": {
+        "happiness": 6,
+        "stress": -3,
+        "morality": 5,
+        "selfKnowledge": 3
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「下腹部とか、痛いところはない？ 大丈夫？」と温かいココアを渡しながら小声で尋ねると、娘は小さく驚きながらも「うん……ちょっと重いけど平気。心配してくれてありがとう」と素直に頷いた。無防備になりがちな身体の変化をしっかりケアできた。",
+          "diary": "キスマークをつけた娘の身体を気遣い、下腹部の痛みや違和感がないか尋ねた。初めての行為による肉体の負担に寄り添い、安心感を与えることができた。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_first_time_bed_afternoon_daze",
+  "title": "休日の自室のベッド・下腹部を抱えて恍惚の余韻を反芻する娘",
+  "age": [
+    35,
+    65
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 15 && childAge <= 20);
+  },
+  "weight": 22,
+  "once": true,
+  "text": "洗濯物を取り込もうと娘の部屋のドアを軽くノックしたが返事がない。隙間からそっと覗くと、娘はベッドの上で丸くなり、毛布を下半身に引き寄せて天井をぼんやり見つめていた。ノックの音にも気づかないほど深い放心。その指先は無意識のように自分の唇をなぞり、首筋、そして胸元へと滑り落ちていく。男に激しく愛撫され貫かれた肉体の疼きを、一人で反芻しているかのような濃密な色香が部屋中に充満していた……。",
+  "choices": [
+    {
+      "id": "choice_parenting_bed_daze_leave_quietly",
+      "label": "邪魔をしないようそっと扉を閉じ、娘だけの甘美な余韻の時間を守ってあげる",
+      "effects": {
+        "happiness": 6,
+        "stress": -2,
+        "morality": 4,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "音を立てないようにゆっくりとドアを引いた。初めて誰かに全身を委ね、心も身体も塗り替えられた直後のあのみずみずしい時間は、誰にも奪われてはならない宝物だ。娘の成長を遠くから見守り、静かにリビングへと戻った。",
+          "diary": "自室のベッドでぼんやりと愛の余韻に浸る娘の姿。初めて男を知った日のあの陶酔を守るため、声をかけずにそっと部屋を離れた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_bed_daze_intoxicated_mother",
+      "label": "艶めかしい娘の姿に、自らの子宮が甘くうずくような熱い目眩を覚える",
+      "effects": {
+        "happiness": 5,
+        "stress": 1,
+        "tabooAwareness": 4,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "ベッドで甘く乱れた娘の横顔を見つめているうちに、自分自身の奥底にも熱い波が押し寄せ、下腹がキュッと疼いた。男の感触を噛み締める娘の生々しい色気に当てられ、母親である前に一人の雌としての本能が刺激されるような、禁断の昂ぶりを覚えた。",
+          "diary": "初体験の甘い余韻に沈む娘の姿から漂う生々しい色香に、自分自身の身体の奥までもが疼くような錯覚を覚えた。女の性を継承した娘の姿に圧倒された。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_first_time_confession_late_night",
+  "title": "深夜の台所・「お母さん、痛かった？」と小さく問いかける娘",
+  "age": [
+    35,
+    65
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 15 && childAge <= 20);
+  },
+  "weight": 22,
+  "once": true,
+  "text": "真夜中の一時過ぎ、喉の渇きを覚えて台所に降りると、間接照明の下で娘がマグカップを両手で抱えてうずくまっていた。足音に驚いて振り返った娘の瞳は潤んで赤く、どこか切なげだった。「眠れないの？」と隣に腰掛けると、娘は膝を抱え、消え入りそうな声でぽつりと呟いた。「お母さん……初めてのときって、やっぱり痛かった？……私、痛くて怖くて……でも、嬉しかったの……」。打ち明けられた小さな告白に、胸が熱く震えた……。",
+  "choices": [
+    {
+      "id": "choice_parenting_confession_warm_tea_guidance",
+      "label": "温かいハーブティーを淹れて隣に座り、「痛かったけど、大切な思い出よ」と優しく抱きしめる",
+      "effects": {
+        "happiness": 8,
+        "stress": -4,
+        "morality": 5,
+        "selfKnowledge": 5
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "湯気立つカモミールティーを娘の前に置き、その華奢な肩を抱き寄せた。「お母さんも痛くて泣きそうだったわ。でも好きな人と結ばれる痛みは、怖がらなくていいの。よく話してくれたね」。娘は私の肩に顔を埋めて静かに涙を流し、心の強張りを溶かしていった。",
+          "diary": "深夜の台所で、初体験の痛みと喜びを打ち明けてくれた娘。温かいお茶を飲みながら母娘で女の身体と心の痛みを分かち合い、かけがえのない絆を結んだ。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_confession_adult_sensual_secret",
+      "label": "「痛みの先にある本当の快感」について、母から娘への大人の手解きを静かに語る",
+      "effects": {
+        "happiness": 6,
+        "stress": -1,
+        "tabooAwareness": 3,
+        "selfKnowledge": 5
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「身体が慣れてくるとね、痛みは全部とろけるような快感に変わっていくのよ」。一人の大人の女性として、身体が感じていく仕組みと愛される悦びについて優しく解き明かした。娘は赤面しながらも真剣に瞳を輝かせ、未知の世界へ進む勇気を得たようだった。",
+          "diary": "初めてを終えた娘に、痛みがいずれ愛と快感に変わっていく女性の身体の神秘を教えた。少し照れくさかったが、娘にとって大切な導きとなったはずだ。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_late_night_orgasm_doubt",
+  "title": "深夜の台所・「女の人がイクってどういう感じ？」と悩む娘",
+  "age": [
+    36,
+    68
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 16 && childAge <= 23);
+  },
+  "weight": 22,
+  "once": true,
+  "text": "丑三つ時、冷水を飲みに台所に降りると、カウンターで娘が頬杖をついてぼんやりしていた。氷をグラスに入れる私に、娘は爪先を見つめながらぽつりと呟いた。「ねえ、お母さん……女の人がイクって、本当はどういう感じなの？ 彼はいっぱい気持ちよくなってくれるけど……私は気持ちいいのかよく分からなくて。私がおかしいのかな」。真面目な子だからこそ、快感に達せない自分に劣等感を抱えている。深夜の静寂の中、女の性の本質を打ち明けられる……。",
+  "choices": [
+    {
+      "id": "choice_parenting_orgasm_doubt_gentle_advice",
+      "label": "「頭で考えず身体を預けるのよ」と教え、女性の快感のグラデーションを優しく解き明かす",
+      "effects": {
+        "happiness": 7,
+        "stress": -4,
+        "morality": 4,
+        "selfKnowledge": 5
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「男性みたいに分かりやすいゴールじゃないの。全身が波に包まれるようにじわじわ溶けていくのも立派な絶頂なのよ。演技なんてしなくていいの」。肩の力を抜いてあげる母の言葉に、娘は胸を撫で下ろし、「なんだ、私がおかしいわけじゃないんだ……」と微かな笑みを浮かべた。",
+          "diary": "オーガズムに達せないと悩む娘に、女性の快感の奥深さと心の解放を教えた。男性の都合に合わせたプレッシャーから解き放ち、安心感を与えることができた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_orgasm_doubt_sensual_resonance",
+      "label": "自らが快感に溺れ、潮を吹くほどの痙攣を覚えた時の記憶がよみがえり肌を熱くする",
+      "effects": {
+        "happiness": 5,
+        "stress": 1,
+        "tabooAwareness": 4,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "娘の切実な疑問に答えながら、かつて自分が快楽の深淵に呑まれ、息も絶え絶えに腰を跳ねさせて絶頂に達した時の生々しい痺れが脳裏をよぎった。身体の芯がじんわりと疼き、娘に大人の女の秘め事を受け継ぐ背徳的な悦びに酔った。",
+          "diary": "娘に快感の真髄を教えながら、自分自身の情欲と絶頂の記憶が生々しく疼いた。母と娘でありながら、同じ快楽を求める雌としての血の連なりを実感した。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_late_night_fetish_shame",
+  "title": "深夜の台所・「乱暴にされると濡れちゃうの」・背徳の快感に怯える娘",
+  "age": [
+    36,
+    68
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 17 && childAge <= 23);
+  },
+  "weight": 22,
+  "once": true,
+  "text": "夜更けのキッチン、暗がりの中で娘が背中を丸めて震えていた。心配して声をかけると、娘は顔を両手で覆い、恥辱に涙を滲ませながら絞り出すように打ち明けてきた。「お母さん、軽蔑しないで……。彼にきつく抱きすくめられたり、ちょっと意地悪に命令されたりすると……怖いはずなのに、下着がぐしょぐしょに濡れちゃうの。私、頭がおかしいのかな……変態なのかな……っ」。自らの肉体が示す歪んだ淫靡な反応に怯える娘の姿に、胸が締めつけられる……。",
+  "choices": [
+    {
+      "id": "choice_parenting_fetish_shame_accept",
+      "label": "娘の手を包み込み「変なんかじゃないわ。支配される悦びも女の肉体の一部よ」と肯定する",
+      "effects": {
+        "happiness": 8,
+        "stress": -5,
+        "morality": 3,
+        "selfKnowledge": 5
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「恥じることなんて一つもないわ。無防備に屈服させられる快感は、多くの女性が心の奥に隠し持っている本能なのよ」。娘の涙を優しく拭い、肉体の反応を受け入れて抱きしめると、娘は激しい安堵に嗚咽を漏らして私の胸にすがりついた。",
+          "diary": "被虐的な快感に目覚めて自責の念に怯えていた娘。それは女性の深層にある自然な官能だと教え、自己嫌悪から救い出してあげることができた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_fetish_shame_safety_warning",
+      "label": "快感を否定せず受け止めつつも、本当の暴力や危険には絶対にNOと言うよう釘を刺す",
+      "effects": {
+        "happiness": 7,
+        "morality": 5,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「感じるのは自由だけど、本当に嫌なことや痛いだけの暴力には絶対にNOと言いなさい。プレイと虐待の境界線は見失わないこと」。母としての厳しい眼差しで釘を刺すと、娘はハッと表情を引き締め、「うん……ちゃんと自分の身を守る」と誓った。",
+          "diary": "背徳的なプレイを求める娘の感覚を肯定しつつ、合意なき暴力や支配に呑まれないための安全な境界線を教え込んだ。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_late_night_sex_frequency_gap",
+  "title": "深夜の台所・「身体目的なのかな」・求められすぎる重圧と愛の不安",
+  "age": [
+    36,
+    68
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 16 && childAge <= 23);
+  },
+  "weight": 22,
+  "once": true,
+  "text": "真夜中、リビングのソファで膝を抱えていた娘。淹れたての温かいミルクティーを差し出すと、娘はカップの温もりを確かめながら消え入りそうな声で呟いた。「会うとね、デートらしいデートもあんまりしないで、すぐ部屋に行って服を脱がされるの。痛くても疲れてても求められて……断ったら嫌われちゃうんじゃないかって。私のこと、身体目的でしか見てないのかな……」。若い男の激しすぎる情欲と、断れない娘の葛藤が胸を締めつける……。",
+  "choices": [
+    {
+      "id": "choice_parenting_sex_frequency_encourage_refusal",
+      "label": "「疲れているときはハッキリ断りなさい。それで去る男ならそこまでよ」と毅然と励ます",
+      "effects": {
+        "happiness": 7,
+        "stress": -3,
+        "morality": 5,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「身体を差し出すことが愛情表現じゃないの。あなたがつらいなら『今日は寝かせて』って言えなきゃダメ。それで怒るような男なら、こっちから捨ててやりなさい」。母のきっぱりとした言葉に、娘はふっと肩の荷が下りたように涙ぐみ、頷いた。",
+          "diary": "彼氏の過剰な情欲に怯え身体目的を疑っていた娘に、毅然と拒絶する権利と尊厳を教えた。都合のいい女にならないための強い意志を授けた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_sex_frequency_men_nature_talk",
+      "label": "若い男の盛んな性欲の仕組みを解説し、愛され方のコントロールを大人の知恵として伝授する",
+      "effects": {
+        "happiness": 6,
+        "selfKnowledge": 5
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「あの年代の男の子はね、あなたが好きすぎて理性が追いつかない部分もあるのよ。でもだからこそ、女側が手綱を引いて焦らす技を覚えなさい」。男の情欲の操り方を少し悪戯っぽく伝授すると、娘はクスリと笑い、自信を取り戻した眼差しになった。",
+          "diary": "男の性欲の衝動とコントロール法を娘に伝授した。ただ怯えるのではなく、男を手玉に取る大人の女の知恵を教えることができた。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_late_night_masturbation_guilt",
+  "title": "深夜の台所・「自分でお風呂で触っちゃう」・秘められた自慰と罪悪感の告白",
+  "age": [
+    36,
+    68
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 16 && childAge <= 23);
+  },
+  "weight": 22,
+  "once": true,
+  "text": "深夜、長風呂から上がってきた娘が、濡れ髪のまま台所でうつむいていた。氷を浮かべた水を渡すと、娘は喉を鳴らして飲み干し、赤く火照った首筋を隠すように縮こまった。「お母さん……私、自分が汚いんじゃないかって落ち込んでて。一人でお風呂に入ってるときとか……下腹がうずいて、指で触っちゃうの。イクとすごくみじめで罪悪感があって……」。成熟した肉体が求める自然な自慰の衝動に、一人で苦しんでいたのだ……。",
+  "choices": [
+    {
+      "id": "choice_parenting_masturbation_healthy_affirmation",
+      "label": "「身体が健康に育っている証拠よ」と微笑み、セルフプレジャーの自然さを肯定する",
+      "effects": {
+        "happiness": 8,
+        "stress": -5,
+        "morality": 4,
+        "selfKnowledge": 5
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「汚いことなんて何一つないわ。自分の身体がどこをどう触られると気持ちいいか知るのは、女性にとってとても自然で大切なことよ」。母の柔らかな肯定に、娘は目を見開き、張り詰めていた心の棘がぽろぽろと涙になってこぼれ落ちた。",
+          "diary": "自慰への罪悪感に苛まれていた娘に、女性の身体にとって自然で健やかな行為だと教えた。深い羞恥の呪縛を解き、自分を慈しむ感覚を肯定できた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_masturbation_sensual_empathy",
+      "label": "自らも夜の湯船で指を這わせ、甘い痙攣に身を震わせる女の性を思って静かに頷く",
+      "effects": {
+        "happiness": 5,
+        "stress": 1,
+        "tabooAwareness": 4,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "娘の火照った肌を見つめながら、自分自身もまた一人寝の夜にシーツの中で秘唇を擦り合わせ、快楽の波に溺れる生身の女であることを強く意識した。同じ肉体の業を抱えた娘の背中を、言葉少なに温かく撫でてやった。",
+          "diary": "一人で身体を慰める娘の告白を聞き、同じ女としての情欲の疼きを共有した。女が避けて通れない肉体の衝動を静かに認め合った。"
+        }
+      ]
+    }
+  ]
+});
+
+window.defineEvent({
+  "id": "story_parenting_daughter_late_night_body_complex_intimacy",
+  "title": "深夜の台所・「胸やあそこの形が嫌で脱げない」・裸への恐怖とコンプレックス",
+  "age": [
+    36,
+    68
+  ],
+  "trigger": "normal",
+  "classification": "major",
+  "is_major": true,
+  "content_rating": "adult",
+  "presets": [
+    "has_children"
+  ],
+  "requires": function (s) {
+    const childAge = s.flags?.childBirthAge ? (s.age - s.flags.childBirthAge) : null;
+    return !!(s.flags?.hasChildren && s.flags?.child_born && childAge !== null && childAge >= 16 && childAge <= 23);
+  },
+  "weight": 22,
+  "once": true,
+  "text": "深夜のキッチンでアイスをすくっていた娘。スプーンを止めて、伏し目がちに呟いた。「ねえお母さん……部屋を真っ暗にしないと服を脱げないの。胸も小さいし、それに……あそこの形とか色も、変なんじゃないかってすごく怖くて。彼にじっと見られたら幻滅されるんじゃないかって……」。ネットの過剰な情報や男性目線の偏見に傷つき、自分の神聖な肉体にコンプレックスを抱き縮こまる娘。女として最も脆く繊細な痛みが吐露される……。",
+  "choices": [
+    {
+      "id": "choice_parenting_body_complex_praise_beauty",
+      "label": "「あなたの身体はみずみずしくて本当に綺麗よ」と抱きしめ、唯一無二の美しさを吹き込む",
+      "effects": {
+        "happiness": 8,
+        "stress": -4,
+        "morality": 5,
+        "selfKnowledge": 5
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「誰一人として同じ形の人なんていないの。ネットの不自然な画像なんかと比べちゃダメ。本当にあなたを愛している男性なら、そのすべてを宝物のように愛おしんでくれるわ」。母の温かい眼差しに、娘は胸を撫で下ろし、涙ぐみながら強く抱きついてきた。",
+          "diary": "胸や性器の形にコンプレックスを抱き裸を怖がっていた娘に、唯一無二の女性の美しさと尊さを伝えた。深い劣等感を和らげ、自信を取り戻させることができた。"
+        }
+      ]
+    },
+    {
+      "id": "choice_parenting_body_complex_mother_own_insecurity",
+      "label": "かつて自分も同じように悩み、愛されることで克服してきた体験談を打ち明ける",
+      "effects": {
+        "happiness": 7,
+        "morality": 4,
+        "selfKnowledge": 4
+      },
+      "outcomes": [
+        {
+          "weight": 1,
+          "narrative": "「実はお母さんも昔、胸の形が気になって電気を消してばかりいたのよ」。笑いながら若き日の劣等感を打ち明けると、娘は安心したように瞳を丸くして聞き入った。「愛し合うことで、自然と恥ずかしさは消えていくものよ」。母の生きた実感が娘の心を解きほぐした。",
+          "diary": "かつて自分も抱えていた肉体へのコンプレックスを娘に話し、共感を示した。母も同じ道を歩んだと知ることで、娘の恐怖心はすっかり晴れたようだった。"
+        }
+      ]
+    }
+  ]
+});
+
+
+
 
 
 
