@@ -154,16 +154,20 @@ function lifeMilestones(isBirthMonth = false) {
     }
   }
 
-  // === 月次判定：結婚後の第一子誕生（23〜41歳・異性配偶者との婚姻中） ===
-  if (a >= 23 && a <= 41 && hasSpouse(s) && hasMalePartner(s) && !s.flags.hasChildren && !s.flags.childfree_chosen) {
-    const annualBirthProb = s.flags.trying_for_baby ? 0.45 : 0.22;
-    const monthlyBirthProb = 1 - Math.pow(1 - annualBirthProb, 1 / 12);
-    if (rng.next() < monthlyBirthProb) {
-      s.flags.hasChildren = true;
-      s.flags.childBirthAge = a;
-      const sp = getPrimaryPartner(s);
-      const spName = sp ? sp.name + 'との間に' : '';
-      recordMilestone('childbirth', `${spName}新しい命を授かり、元気な我が子を出産した。小さな手を握りしめ、母になった実感が胸に溢れた。`, '陣痛の苦しみを乗り越えて聞いた産声。この小さな命を大切に育てていきたい。');
+  // === 月次判定：結婚後の妊娠兆候（23〜41歳・異性配偶者との婚姻中） ===
+  if (a >= 23 && a <= 41 && hasSpouse(s) && hasMalePartner(s) && !s.flags.hasChildren && !s.flags.pregnant && !s.flags.childfree_chosen) {
+    const annualPregnancyProb = s.flags.trying_for_baby ? 0.45 : 0.22;
+    const monthlyPregnancyProb = 1 - Math.pow(1 - annualPregnancyProb, 1 / 12);
+    if (rng.next() < monthlyPregnancyProb) {
+      s.chains ??= [];
+      if (!s.chains.some(c => c.eventId === 'story_pregnancy_discovery')) {
+        s.chains.push({
+          eventId: 'story_pregnancy_discovery',
+          targetAge: a,
+          targetAgeMonths: (s.age_months || 0) + 1,
+          prob: 1.0
+        });
+      }
     }
   }
 

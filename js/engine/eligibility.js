@@ -18,27 +18,6 @@ function isGenderAllowed(e, st = s) {
   return true;
 }
 
-function needsMultiplePartners(event) {
-  if (!event) return false;
-  if (event.requires_multiple_partners) return true;
-  const t = (event.title || '') + ' ' + (event.description || '') + ' ' + (event.id || '');
-  return /複数交際|ポリアモリー|二股|三角関係|multiple_relationship|sexual_multiple/.test(t);
-}
-function needsSpouse(event) {
-  if (!event) return false;
-  const t = (event.title || '') + ' ' + (event.description || '') + ' ' + (event.id || '');
-  return /夫婦|配偶者|結婚生活|離婚|marital_|marriage_ceremony/.test(t) && !/プロポーズ|婚約/.test(t);
-}
-function needsPartner(event) {
-  if (!event) return false;
-  if (event.context === 'partner' || event.context === 'multiple_partner') return true;
-  const t = (event.title || '') + ' ' + (event.description || '') + ' ' + (event.id || '');
-  if (/partner_|交際相手|パートナーと|恋人と|二人の記念日|初夜|長い交際|蜜月|ベッドの中で貪り合う|湯船の中の密やか/.test(t)) return true;
-  return event.choices?.some(c => {
-    const lbl = typeof c === 'string' ? c : (c.label || c[0] || '');
-    return /パートナーと|交際相手と|恋人と|二人で|相手と相談|相手に相談|相手と話し合|パートナーに/.test(lbl);
-  }) || false;
-}
 function isEventPhaseAllowed(event, st = s) {
   if (!event.phase || event.phase === 'any') return true;
   if (event.phase === 'virgin' && hasHadSex(st)) return false;

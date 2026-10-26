@@ -26,12 +26,11 @@ function changeSummary(before, after) {
     if (Math.abs(dCash) >= 10000) changes.push(`所持金${dCash > 0 ? '+' : ''}${Math.round(dCash / 10000)}万円`);
   }
   if (before.occupation && after.occupation && before.occupation !== after.occupation) changes.push(`${after.occupation}`);
-  const statusNameMap = { acquaintance: '知人', close: '親しい友人', partner: '交際中', spouse: '配偶者', former: '元交際', widowed: '死別' };
   const newBonds = (after.bonds || []).filter(b => !(before.bonds || []).some(a => a.id === b.id));
   if (newBonds.length > 0) {
     newBonds.forEach(b => {
       const rLabel = BOND_ROLE_LABELS[b.role] || '知人';
-      const sLabel = statusNameMap[b.status] || b.status;
+      const sLabel = BOND_STATUS_LABELS[b.status] || b.status;
       changes.push(`人間関係＋${b.name}（${rLabel}・${sLabel}）`);
     });
   }

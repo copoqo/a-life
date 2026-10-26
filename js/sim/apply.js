@@ -4,9 +4,21 @@
 function balancedChoiceEffect(event, effect) {
   return { ...effect };
 }
+function annualDailyEventLimit(age) {
+  if (age < 6) return 1;
+  if (age >= 18 && age < 65) return 2; // 成人期は日常枠最大2件
+  return 1;
+}
+function annualStoryEventLimit(age) {
+  if (age < 6) return 0;
+  if (age >= 18 && age < 65) return 2; // 成人期はストーリー枠最大2件
+  return 1;
+}
 function annualEventLimit(age) {
-  let base = age < 6 ? 1 : age < 12 ? 2 : 3;
-  return Math.min(3, base);
+  if (age < 6) return 1;
+  if (age < 18) return 2;
+  if (age >= 65) return 2;
+  return 3; // 成人期（18〜64歳）: 日常＋ストーリー合わせて最大3件
 }
 
 function applyCashDelta(person, delta) {

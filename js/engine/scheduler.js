@@ -84,6 +84,13 @@ function getEventNarrativeConflictGroup(e) {
   return null;
 }
 
+function isStoryEvent(e) {
+  if (!e) return false;
+  if (e.is_major || e.classification === 'major') return true;
+  if (['adult_marriage_proposal', 'marriage_ceremony', 'adult_future_together', 'youth_first_apartment_hunt', 'young_living_alone', 'confessed_to', 'first_kiss_milestone', 'same_sex_first_kiss', 'first_intimacy_milestone', 'partner_first_intimacy_experienced', 'first_date_milestone', 'adult_first_date', 'youth_job_hunting_suit', 'youth_first_paycheck_parents', 'story_cohabitation_routine_rut', 'story_cohabitation_ultimatum', 'story_partner_infidelity_suspicion', 'story_partner_infidelity_confrontation', 'story_wavering_heart_temptation', 'story_wavering_heart_resolution', 'story_premarital_pregnancy_test', 'story_premarital_pregnancy_announcement', 'story_marriage_third_anniversary', 'story_pregnancy_discovery', 'story_childbirth_miracle', 'story_parenting_tender_days'].includes(e.id)) return true;
+  return false;
+}
+
 function getStoryArcBoost(e, st = s) {
   if (!e || !st) return 1.0;
   let boost = 1.0;
@@ -104,16 +111,42 @@ function getStoryArcBoost(e, st = s) {
       boost *= 2.6;
     }
   } else if (stage === 4) {
-    if ((p?.affection ?? 0) >= 62 && (p?.trust ?? 0) >= 52) {
+    const partnerYears = p?.intimateSinceAge != null ? Math.max(0, (st.age ?? 0) - p.intimateSinceAge) : (p?.partnerYears || 0);
+    const maturityBonus = Math.min(3.5, 1.0 + partnerYears * 0.6);
+
+    // 進行中シナリオの次ステップへの優先ブースト
+    if (isScenarioActive('cohabitation_limbo', null, st) && e.id === 'story_cohabitation_ultimatum') boost *= 6.0;
+    if (isScenarioActive('infidelity_crisis', null, st) && e.id === 'story_partner_infidelity_confrontation') boost *= 6.0;
+    if (isScenarioActive('wavering_heart', null, st) && e.id === 'story_wavering_heart_resolution') boost *= 6.0;
+    if (isScenarioActive('premarital_pregnancy', null, st) && e.id === 'story_premarital_pregnancy_announcement') boost *= 7.0;
+
+    // 同棲中・長引く関係でのストーリー分岐トリガー
+    if (p?.cohabiting && !st.flags?.married) {
+      if (e.id === 'story_cohabitation_routine_rut' && !st.seen?.[e.id]) boost *= (3.5 * maturityBonus);
+      if (e.id === 'story_wavering_heart_temptation' && !st.seen?.[e.id]) boost *= 2.4;
+      if (e.id === 'story_partner_infidelity_suspicion' && !st.seen?.[e.id]) boost *= 2.4;
+    }
+    // 妊娠発覚ストーリー（適齢期・肉体関係あり・未婚）
+    if (st.gender === 'female' && p?.intimate && !st.flags?.married && st.age >= 20 && st.age <= 38 && !st.seen?.story_premarital_pregnancy_test) {
+      if (e.id === 'story_premarital_pregnancy_test') boost *= 2.8;
+    }
+
+    if ((p?.affection ?? 50) >= 42 && (p?.trust ?? 45) >= 38) {
       if (['adult_future_together', 'adult_marriage_proposal', 'partner_anniversary_deep_love', 'positive_anniversary', 'partner_sex_mastered_pleasure', 'same_sex_society_bond'].includes(e.id)) {
-        boost *= 2.8;
+        boost *= (3.2 * maturityBonus);
       }
-    } else if ((p?.affection ?? 50) < 42 || (st.flags?.partner_distance || 0) >= 1) {
+    } else if ((p?.affection ?? 50) < 38 || (st.flags?.partner_distance || 0) >= 1) {
       if (CRISIS_ROMANCE_IDS.has(e.id)) boost *= 2.5;
     }
   } else if (stage === 5) {
     if (e.id === 'marriage_ceremony' && !st.seen?.marriage_ceremony) boost *= 5.0;
-    else if (['marital_life_intimacy', 'life_household', 'life_parenthood_question'].includes(e.id)) boost *= 2.2;
+    else if (st.flags?.pregnant && e.id === 'story_childbirth_miracle') boost *= 8.0;
+    else if (st.flags?.hasChildren && e.id === 'story_parenting_tender_days' && !st.seen?.story_parenting_tender_days) boost *= 5.0;
+    else if (!st.flags?.hasChildren && !st.flags?.pregnant && e.id === 'story_pregnancy_discovery' && !st.seen?.story_pregnancy_discovery) {
+      boost *= st.flags?.trying_for_baby ? 4.5 : 2.8;
+    }
+    else if (e.id === 'story_marriage_third_anniversary' && !st.seen?.story_marriage_third_anniversary) boost *= 4.0;
+    else if (['marital_life_intimacy', 'marital_cooking_together', 'marital_living_room_cuddle', 'marital_bedtime_whisper', 'marital_holiday_stroll', 'marital_affection_skinship', 'life_household', 'life_parenthood_question'].includes(e.id)) boost *= 2.2;
   }
 
   // 2. ライフステージ転換期（進学・新社会人・就活・失業）の文脈ブースト
@@ -178,53 +211,100 @@ function pickMonthEvents() {
     }
   }
 
-  // 4. 通常抽選イベント（月ごとの抽選・季節親和性・年間上限管理）
-  const maxPerYear = annualEventLimit(s.age);
-  const usedThisYear = s.eventsThisYear || 0;
-  if (usedThisYear < maxPerYear && triggered.length === 0) {
-    const ageMultiplier = s.age < 6 ? .30 : s.age < 10 ? .58 : s.age < 15 ? .82 : s.age <= 35 ? 1.35 : s.age <= 49 ? 1.05 : s.age <= 64 ? .85 : s.age <= 79 ? .7 : .55;
-    const candidatePool = [];
-    for (const e of eventDefs) {
-      const trig = e.trigger || (e.is_fixed ? 'fixed' : 'normal');
-      if (trig !== 'normal') continue;
-      if (triggered.includes(e.id)) continue;
-      if (!isEventMonthCompatible(e, curM)) continue;
-      if (!isEventEligible(e, s)) continue;
+  // 4. イベント抽選（v2仕様準拠: ストーリーイベント枠と日常・突発枠の独立2系統抽選）
+  const maxStoryPerYear = annualStoryEventLimit(s.age);
+  const maxDailyPerYear = annualDailyEventLimit(s.age);
+  const maxTotalPerYear = annualEventLimit(s.age);
+  const usedStory = s.storyEventsThisYear || 0;
+  const usedDaily = s.dailyEventsThisYear || 0;
+  const usedTotal = s.eventsThisYear || 0;
 
-      const prefMonths = getPreferredMonths(e);
-      // 季節限定イベントはその該当月・季節で本来の確率を発揮し、通年イベントは月次（約1/10.5）に分散
-      const monthScale = prefMonths ? (1 / Math.max(1, prefMonths.length * 0.85)) : (1 / 10.5);
-      const arcBoost = getStoryArcBoost(e, s);
-      const prob = Math.min(0.85, eventProbability(e) * ageMultiplier * arcBoost * monthScale);
-      if (rng.next() < prob) {
-        const seasonBonus = prefMonths ? 0.6 : 0;
-        candidatePool.push({ e, priority: arcBoost + seasonBonus + rng.next() * 0.8 });
+  const canDrawStory = (usedTotal < maxTotalPerYear) && (usedStory < maxStoryPerYear) && triggered.length === 0;
+  const canDrawDaily = (usedTotal < maxTotalPerYear) && (usedDaily < maxDailyPerYear) && triggered.length === 0;
+
+  if (canDrawStory || canDrawDaily) {
+    const ageMultiplier = s.age < 6 ? .20 : s.age < 12 ? .40 : s.age < 18 ? .55 : s.age <= 35 ? 0.70 : s.age <= 49 ? 0.60 : s.age <= 64 ? .50 : .35;
+
+    // A. ストーリー枠の選定（進行中シナリオの次ステップや重大な転機を日常イベントと競合させずに選定）
+    if (canDrawStory) {
+      const storyCandidates = [];
+      for (const e of eventDefs) {
+        const trig = e.trigger || (e.is_fixed ? 'fixed' : 'normal');
+        if (trig !== 'normal') continue;
+        if (triggered.includes(e.id)) continue;
+        if (s.seenThisYear?.includes(e.id)) continue;
+        if (!isStoryEvent(e)) continue;
+        if (!isEventMonthCompatible(e, curM)) continue;
+        if (!isEventEligible(e, s)) continue;
+
+        const arcBoost = getStoryArcBoost(e, s);
+        // ストーリー枠の月次確率を適正化（年間最大1件、重要シナリオはブーストで着実に発生）
+        const prob = Math.min(0.40, eventProbability(e) * ageMultiplier * arcBoost * 0.20);
+        if (rng.next() < prob) {
+          storyCandidates.push({ e, priority: arcBoost * 2.0 + rng.next() });
+        }
+      }
+      storyCandidates.sort((a, b) => b.priority - a.priority);
+
+      for (const { e } of storyCandidates) {
+        const grp = getEventNarrativeConflictGroup(e);
+        if (grp === 'sweet_romance' && s.crisisThisYear) continue;
+        if (grp === 'crisis_romance' && s.sweetThisYear) continue;
+
+        const precursor = eventDefs.find(pre => pre.trigger === 'precursor' && Array.isArray(pre.precursor_for) && pre.precursor_for.includes(e.id) && isEventEligible(pre, s));
+        if (precursor && !s.chains.some(c => c.eventId === e.id)) {
+          triggered.push(precursor.id);
+          s.chains.push({ eventId: e.id, targetAgeMonths: (s.age_months || 0) + 2, targetAge: s.age, prob: 1.0 });
+        } else {
+          triggered.push(e.id);
+        }
+
+        s.storyEventsThisYear = (s.storyEventsThisYear || 0) + 1;
+        s.eventsThisYear = (s.eventsThisYear || 0) + 1;
+        if (grp === 'sweet_romance') s.sweetThisYear = true;
+        if (grp === 'crisis_romance') s.crisisThisYear = true;
+        break; // 1ヶ月に発生するストーリー枠は最大1件
       }
     }
 
-    candidatePool.sort((a, b) => b.priority - a.priority);
-    const maxTabooPerYear = s.occupation === '風俗' ? 2 : 1;
+    // B. 日常・突発枠の選定（ストーリー枠が発生しなかった月に生活感を描写）
+    if (canDrawDaily && triggered.length === 0) {
+      const dailyCandidates = [];
+      for (const e of eventDefs) {
+        const trig = e.trigger || (e.is_fixed ? 'fixed' : 'normal');
+        if (trig !== 'normal') continue;
+        if (triggered.includes(e.id)) continue;
+        if (s.seenThisYear?.includes(e.id)) continue; // 同一年内重複防止
+        if (s.lastSeenAge?.[e.id] != null && (s.age - s.lastSeenAge[e.id]) <= 1) continue; // 日常クールダウン
+        if (isStoryEvent(e)) continue; // ストーリーイベントは除外
+        if (!isEventMonthCompatible(e, curM)) continue;
+        if (!isEventEligible(e, s)) continue;
 
-    for (const { e } of candidatePool) {
-      const grp = getEventNarrativeConflictGroup(e);
-      if (grp === 'sweet_romance' && s.crisisThisYear) continue;
-      if (grp === 'crisis_romance' && s.sweetThisYear) continue;
-      if (grp === 'stranger_taboo' && (s.tabooCountThisYear || 0) >= maxTabooPerYear) continue;
-
-      // 先行伏線イベント (trigger === 'precursor') が適格かつ未発生なら、今月は伏線を発生させ本編を2ヶ月後に予約
-      const precursor = eventDefs.find(pre => pre.trigger === 'precursor' && Array.isArray(pre.precursor_for) && pre.precursor_for.includes(e.id) && isEventEligible(pre, s));
-      if (precursor && !s.chains.some(c => c.eventId === e.id)) {
-        triggered.push(precursor.id);
-        s.chains.push({ eventId: e.id, targetAgeMonths: (s.age_months || 0) + 2, targetAge: s.age, prob: 1.0 });
-      } else {
-        triggered.push(e.id);
+        const prefMonths = getPreferredMonths(e);
+        const monthScale = prefMonths ? (1 / Math.max(1, prefMonths.length * 0.85)) : (1 / 10.5);
+        const arcBoost = getStoryArcBoost(e, s);
+        // 日常枠の月次確率を適正化（年間最大1件）
+        const prob = Math.min(0.30, eventProbability(e) * ageMultiplier * arcBoost * monthScale * 0.65);
+        if (rng.next() < prob) {
+          const seasonBonus = prefMonths ? 0.6 : 0;
+          dailyCandidates.push({ e, priority: arcBoost + seasonBonus + rng.next() * 0.8 });
+        }
       }
+      dailyCandidates.sort((a, b) => b.priority - a.priority);
 
-      s.eventsThisYear = (s.eventsThisYear || 0) + 1;
-      if (grp === 'sweet_romance') s.sweetThisYear = true;
-      if (grp === 'crisis_romance') s.crisisThisYear = true;
-      if (grp === 'stranger_taboo') s.tabooCountThisYear = (s.tabooCountThisYear || 0) + 1;
-      break; // 1ヶ月に発生する通常イベントは最大1件
+      const maxTabooPerYear = s.occupation === '風俗' ? 2 : 1;
+      for (const { e } of dailyCandidates) {
+        const grp = getEventNarrativeConflictGroup(e);
+        if (grp === 'sweet_romance' && s.crisisThisYear) continue;
+        if (grp === 'crisis_romance' && s.sweetThisYear) continue;
+        if (grp === 'stranger_taboo' && (s.tabooCountThisYear || 0) >= maxTabooPerYear) continue;
+
+        triggered.push(e.id);
+        s.dailyEventsThisYear = (s.dailyEventsThisYear || 0) + 1;
+        s.eventsThisYear = (s.eventsThisYear || 0) + 1;
+        if (grp === 'stranger_taboo') s.tabooCountThisYear = (s.tabooCountThisYear || 0) + 1;
+        break;
+      }
     }
   }
 
@@ -235,6 +315,11 @@ function pickMonthEvents() {
 }
 const pickYearEvents = pickMonthEvents;
 
+function setPendingEvent(eventId) {
+  s.pending = eventId;
+  s.activeVariantIndex = Math.floor(rng.next() * 20);
+}
+
 function processMonthEvents() {
   const queue = s.monthEvents?.length ? s.monthEvents : (s.yearEvents || []);
   while (queue.length && !s.pending && !s.finished) {
@@ -243,8 +328,7 @@ function processMonthEvents() {
     const e = eventDefs.find(x => x.id === id);
     if (!e || !isEventEligible(e, s)) continue;
 
-    s.pending = e.id;
-    s.activeVariantIndex = Math.floor(rng.next() * 20);
+    setPendingEvent(e.id);
 
     const isNarrative = e.is_narrative || !e.choices || e.choices.length === 0;
     if (document.getElementById('mode').value === 'auto') {

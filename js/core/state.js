@@ -5,5 +5,3 @@
 
 
 let s, rng;
-
-function chance(p) { return rng.next() < Math.max(0, Math.min(1, p)) }

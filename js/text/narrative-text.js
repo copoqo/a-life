@@ -1,5 +1,5 @@
 'use strict';
-// 選択肢ラベル整形・過去形変換・パートナー名差し込み
+// 選択肢ラベル整形・過去形変換・テンプレート差し込み
 
 // 選択肢と結果の分離・文章整形ヘルパー
 function toPastTense(str) {
@@ -78,4 +78,3 @@ function injectPartnerName(str, partner) {
   }
   return res;
 }
-

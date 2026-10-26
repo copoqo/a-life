@@ -6,9 +6,8 @@ function start(seed = (Date.now() >>> 0)) {
   s = makeState(seed);
   rng = random(s.rngState);
   s.photo = pickRandomAdultPhoto(rng);
-  const infancyList = ['photo/infancy01.png', 'photo/infancy02.png', 'photo/infancy03.png'];
   const infancyRand = (rng && typeof rng.next === 'function') ? rng.next() : Math.random();
-  s.infancyPhoto = infancyList[Math.floor(infancyRand * infancyList.length)];
+  s.infancyPhoto = INFANCY_PHOTOS[Math.floor(infancyRand * INFANCY_PHOTOS.length)];
 
   // 本人の誕生月から人生が始まる（0歳0ヶ月）
   const bm = s.birth_month || 4;
@@ -74,13 +73,6 @@ if (window.ResizeObserver) {
 }
 window.addEventListener('resize', syncProfileSummaryHeight);
 syncProfileSummaryHeight();
-
-window.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    const modal = document.getElementById('photoModal');
-    if (modal) modal.classList.remove('active');
-  }
-});
 
 const bondsMql = window.matchMedia('(max-width: 600px)');
 if (bondsMql.addEventListener) {

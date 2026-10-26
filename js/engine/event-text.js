@@ -78,8 +78,13 @@ function getEventCurrent(rawEvent) {
       varObj = rawEvent.variations.find(v => v.sub_id === s.activeVariationSubId);
     }
     if (!varObj) {
-      const vIdx = Math.floor(rng.next() * vList.length);
-      varObj = vList[vIdx];
+      let pool = vList;
+      if (vList.length > 1 && s.lastVariationSubId?.[rawEvent.id]) {
+        const withoutLast = vList.filter(v => v.sub_id !== s.lastVariationSubId[rawEvent.id]);
+        if (withoutLast.length) pool = withoutLast;
+      }
+      const vIdx = Math.floor(rng.next() * pool.length);
+      varObj = pool[vIdx];
       s.activeVariationSubId = varObj.sub_id;
     }
 
@@ -106,23 +111,22 @@ function getEventCurrent(rawEvent) {
     };
   }
 
-  if (partner && isPartnerEvent(rawEvent)) {
-    e.title = injectPartnerName(e.title, partner);
-    e.text = injectPartnerName(e.text, partner);
-    e.description = injectPartnerName(e.description || e.text, partner);
-    if (e.choices) {
-      e.choices = e.choices.map(c => Array.isArray(c) ? [injectPartnerName(c[0], partner), c[1]] : { ...c, label: injectPartnerName(c.label || '', partner) });
-    }
-    if (Array.isArray(e.diary)) {
-      e.diary = e.diary.map(d => injectPartnerName(d, partner));
-    } else if (typeof e.diary === 'string') {
-      e.diary = injectPartnerName(e.diary, partner);
-    }
-    if (Array.isArray(e.variantDiary)) {
-      e.variantDiary = e.variantDiary.map(d => injectPartnerName(d, partner));
-    } else if (typeof e.variantDiary === 'string') {
-      e.variantDiary = injectPartnerName(e.variantDiary, partner);
-    }
+  // テンプレート記法（{partner}等）の展開
+  e.title = injectPartnerName(e.title, partner);
+  e.text = injectPartnerName(e.text, partner);
+  e.description = injectPartnerName(e.description || e.text, partner);
+  if (e.choices) {
+    e.choices = e.choices.map(c => Array.isArray(c) ? [injectPartnerName(c[0], partner), c[1]] : { ...c, label: injectPartnerName(c.label || '', partner) });
+  }
+  if (Array.isArray(e.diary)) {
+    e.diary = e.diary.map(d => injectPartnerName(d, partner));
+  } else if (typeof e.diary === 'string') {
+    e.diary = injectPartnerName(e.diary, partner);
+  }
+  if (Array.isArray(e.variantDiary)) {
+    e.variantDiary = e.variantDiary.map(d => injectPartnerName(d, partner));
+  } else if (typeof e.variantDiary === 'string') {
+    e.variantDiary = injectPartnerName(e.variantDiary, partner);
   }
   return e;
 }

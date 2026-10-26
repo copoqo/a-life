@@ -59,9 +59,12 @@ function step() {
   if (isBirthMonth) {
     s.age++;
     s.eventsThisYear = 0;
+    s.dailyEventsThisYear = 0;
+    s.storyEventsThisYear = 0;
     s.sweetThisYear = false;
     s.crisisThisYear = false;
     s.tabooCountThisYear = 0;
+    s.seenThisYear = [];
     updateSexualityForAge();
   }
 

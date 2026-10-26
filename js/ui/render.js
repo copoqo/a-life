@@ -104,9 +104,11 @@ function render() {
     return `<div class="sexual-record-card ${cls}"><div class="sexual-record-label">${label}：${escapeHtml(rec.age)}歳（相手：${escapeHtml(rec.partnerName)}）</div><div class="sexual-record-meta"><strong>${escapeHtml(rec.title)}</strong>${rec.satisfaction != null ? ` / 満足度 ${escapeHtml(rec.satisfaction)}` : ''}</div><div style="margin-top:2px;">${escapeHtml(rec.description)}</div>${rec.diary ? `<div class="sexual-record-diary">「${escapeHtml(rec.diary)}」</div>` : ''}</div>`;
   };
 
-  // 左ステータス領域のスクロール位置を退避
+  // スクロール位置の退避（人生の記録追加やDOM再描画によるリセットを防止）
   const profilePanel = document.querySelector('.profile-panel');
   const prevProfileScroll = profilePanel ? profilePanel.scrollTop : 0;
+  const initialBondsExpList = document.querySelector('.bonds-panel .exp-list');
+  const prevBondsExpListScroll = initialBondsExpList ? initialBondsExpList.scrollTop : 0;
 
   // 内部パラメータ表示
   const internalParamsEl = document.getElementById('internalParams');
@@ -131,7 +133,15 @@ function render() {
   const bondsEl = document.getElementById('bonds');
   if (bondsEl) {
     const bondsWasOpen = !!document.getElementById('bondDetails')?.open;
-    const newBondsHtml = `<div class="bonds-box"><details id="bondDetails" ${bondsWasOpen ? 'open' : ''}><summary>人間関係：知人 ${s.bonds.filter(b => b.status === 'acquaintance').length} / 親しい友人 ${s.bonds.filter(b => b.status === 'close').length} / 交際中 ${s.bonds.filter(b => b.status === 'partner').length} / 配偶者 ${s.bonds.filter(b => b.status === 'spouse').length} / 合計 ${s.bonds.length}人</summary><div style="padding:6px 0;margin-bottom:8px;border-bottom:1px solid #e2e8f0;font-size:0.9em;"><strong>性経験人数</strong>：${getSexualPartnerCount(s)}人（交際・婚姻関係：${getSexualPartnerList(s).filter(p => p.type === 'bond').length}人 / 逢瀬・風俗・見知らぬ人等：${getSexualPartnerList(s).filter(p => p.type !== 'bond').length}人）</div><div class="exp-list" style="display:flex;flex-direction:column;gap:6px;">${s.bonds.map(b => {
+    const prevBondsExpList = bondsEl.querySelector('.exp-list');
+    const prevBondsExpListScroll = prevBondsExpList ? prevBondsExpList.scrollTop : 0;
+    const prevBondsBox = bondsEl.querySelector('.bonds-box');
+    const prevBondsBoxScroll = prevBondsBox ? prevBondsBox.scrollTop : 0;
+    const prevBondsElScroll = bondsEl.scrollTop;
+    const bondsPanel = document.querySelector('.bonds-panel');
+    const prevBondsPanelScroll = bondsPanel ? bondsPanel.scrollTop : 0;
+
+    const newBondsHtml = `<div class="bonds-box"><details id="bondDetails" ${bondsWasOpen ? 'open' : ''}><summary>人間関係：知人 ${s.bonds.filter(b => b.status === 'acquaintance').length} / 親しい友人 ${s.bonds.filter(b => b.status === 'close').length} / 交際中 ${s.bonds.filter(b => b.status === 'partner').length} / 配偶者 ${s.bonds.filter(b => b.status === 'spouse').length} / 合計 ${s.bonds.length}人</summary><div style="padding:6px 0;margin-bottom:8px;border-bottom:1px solid #e2e8f0;font-size:0.9em;"><strong>経験人数</strong>：${getSexualPartnerCount(s)}人（交際・婚姻関係：${getSexualPartnerList(s).filter(p => p.type === 'bond').length}人 / 逢瀬・風俗・見知らぬ人等：${getSexualPartnerList(s).filter(p => p.type !== 'bond').length}人）</div><div class="exp-list" style="display:flex;flex-direction:column;gap:6px;">${s.bonds.map(b => {
       const metText = b.metContext || (b.metAge != null ? `${b.metAge}歳で出会い` : '出会い');
       const fallbackRelText = {
         spouse: '配偶者',
@@ -155,10 +165,24 @@ function render() {
       const hasSpecificRelationContext = !!(b.relationContext && b.relationContext !== b.metContext && b.relationContext !== metText);
       const isRelationChanged = (hasSpecificRelationContext || isStatusChanged) && (relText !== metText);
 
-      return `<div style="padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;display:flex;justify-content:space-between;align-items:center;gap:6px;"><div style="min-width:0;"><strong style="color:${b.gender === 'female' ? '#e11d48' : '#1e293b'};font-size:0.95em;">${escapeBond(b.name)}</strong>${getSexualPartnerList(s).some(p => p.id === b.id) || b.intimate ? '<span title="肉体関係あり" style="color:#e11d48;margin-left:4px;">❤</span>' : (b.kissed ? '<span title="キス済み" style="color:#ec4899;margin-left:4px;font-size:0.85em;">💋</span>' : '')}<span style="color:#64748b;font-size:0.85em;margin-left:6px;">（${b.gender === 'female' ? '<span style="color:#e11d48;font-weight:600;">女性</span>' : '男性'}・${BOND_ROLE_LABELS[b.role] || '知人'}）</span>${b.metAge != null ? `<span style="color:#94a3b8;font-size:0.8em;margin-left:5px;">${b.metAge}歳で出会い</span>` : ''}<div style="color:#64748b;font-size:0.78em;margin-top:2px;line-height:1.2;">きっかけ：${escapeHtml(metText)}</div>${isRelationChanged ? `<div style="color:#334155;font-size:0.78em;margin-top:1px;line-height:1.2;font-weight:500;">今の関係：${escapeHtml(relText)}${b.private ? ' <span style="color:#7c3aed;font-weight:600;">[秘密]</span>' : ''}</div>` : ''}</div><div style="flex-shrink:0;"><span class="badge" style="background:${b.status === 'spouse' ? '#fdf2f8;color:#be185d;border:1px solid #fbcfe8' : b.status === 'partner' ? '#fef2f2;color:#b91c1c;border:1px solid #fecaca' : b.status === 'close' ? '#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe' : '#f1f5f9;color:#475569;border:1px solid #e2e8f0'};padding:2px 8px;border-radius:10px;font-size:0.8em;font-weight:600;">${({ acquaintance: '知人', close: '親しい友人', partner: '交際中', spouse: '配偶者', former: '元交際', widowed: '死別' })[b.status] || b.status}</span></div></div>`;
+      return `<div style="padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;display:flex;justify-content:space-between;align-items:center;gap:6px;"><div style="min-width:0;"><strong style="color:${b.gender === 'female' ? '#e11d48' : '#1e293b'};font-size:0.95em;">${escapeBond(b.name)}</strong>${getSexualPartnerList(s).some(p => p.id === b.id) || b.intimate ? '<span title="肉体関係あり" style="color:#e11d48;margin-left:4px;">❤</span>' : (b.kissed ? '<span title="キス済み" style="color:#ec4899;margin-left:4px;font-size:0.85em;">💋</span>' : '')}<span style="color:#64748b;font-size:0.85em;margin-left:6px;">（${b.gender === 'female' ? '<span style="color:#e11d48;font-weight:600;">女性</span>' : '男性'}・${BOND_ROLE_LABELS[b.role] || '知人'}）</span>${b.metAge != null ? `<span style="color:#94a3b8;font-size:0.8em;margin-left:5px;">${b.metAge}歳で出会い</span>` : ''}<div style="color:#64748b;font-size:0.78em;margin-top:2px;line-height:1.2;">きっかけ：${escapeHtml(metText)}</div>${isRelationChanged ? `<div style="color:#334155;font-size:0.78em;margin-top:1px;line-height:1.2;font-weight:500;">今の関係：${escapeHtml(relText)}${b.private ? ' <span style="color:#7c3aed;font-weight:600;">[秘密]</span>' : ''}</div>` : ''}</div><div style="flex-shrink:0;display:flex;align-items:center;gap:4px;">${s.age >= 18 && b.status === 'partner' && !s.flags.married ? `<button type="button" onclick="triggerProposal('${b.id}')" style="background:#e11d48;color:#fff;border:none;border-radius:4px;padding:2px 8px;font-size:0.75em;cursor:pointer;font-weight:700;" title="パートナーにプロポーズする">💍 プロポーズ</button>` : ''}<span class="badge" style="background:${b.status === 'spouse' ? '#fdf2f8;color:#be185d;border:1px solid #fbcfe8' : b.status === 'partner' ? '#fef2f2;color:#b91c1c;border:1px solid #fecaca' : b.status === 'close' ? '#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe' : '#f1f5f9;color:#475569;border:1px solid #e2e8f0'};padding:2px 8px;border-radius:10px;font-size:0.8em;font-weight:600;">${BOND_STATUS_LABELS[b.status] || b.status}</span></div></div>`;
     }).join('') || '<p class="muted" style="padding:6px 0;">まだ出会いはありません。</p>'}</div></details></div>`;
     if (bondsEl.innerHTML !== newBondsHtml) {
       bondsEl.innerHTML = newBondsHtml;
+      const nextBondsExpList = bondsEl.querySelector('.exp-list');
+      if (nextBondsExpList && prevBondsExpListScroll > 0) {
+        nextBondsExpList.scrollTop = prevBondsExpListScroll;
+      }
+      const nextBondsBox = bondsEl.querySelector('.bonds-box');
+      if (nextBondsBox && prevBondsBoxScroll > 0) {
+        nextBondsBox.scrollTop = prevBondsBoxScroll;
+      }
+      if (prevBondsElScroll > 0) {
+        bondsEl.scrollTop = prevBondsElScroll;
+      }
+      if (bondsPanel && prevBondsPanelScroll > 0) {
+        bondsPanel.scrollTop = prevBondsPanelScroll;
+      }
     }
   }
 
@@ -169,11 +193,17 @@ function render() {
   const expPanel = document.getElementById('experiencePanel');
   if (expPanel) {
     const experienceWasOpen = !!document.getElementById('experienceDetails')?.open;
+    const prevExpList = expPanel.querySelector('.exp-list');
+    const prevExpListScroll = prevExpList ? prevExpList.scrollTop : 0;
     const sexualRecordsWasOpen = document.getElementById('sexualRecordsDetails') ? document.getElementById('sexualRecordsDetails').open : true;
-    const sexualRecordsHtml = `<details class="sexual-records-box" id="sexualRecordsDetails" ${sexualRecordsWasOpen ? 'open' : ''} style="margin:7px 0 9px;background:#faf4f8;border:1px solid #ebdbe5;border-radius:8px;padding:8px;"><summary style="cursor:pointer;font-size:11.5px;font-weight:700;color:#6a4a70;outline:none;">心に刻まれた性行為の記憶 ▾</summary><div style="margin-top:6px;">${formatSexCard(sh.firstSex, '🌸 初めての性行為（初体験）', 'first')}${formatSexCard(sh.mostMemorable, '🔥 最も心に残った性行為', 'memorable')}${formatSexCard(sh.latestSex, s.finished ? '🌙 人生最後の性行為' : '🌙 最も直近の性行為', 'latest')}</div></details>`;
+    const sexualRecordsHtml = `<details class="sexual-records-box" id="sexualRecordsDetails" ${sexualRecordsWasOpen ? 'open' : ''} style="margin:7px 0 9px;background:#faf4f8;border:1px solid #ebdbe5;border-radius:8px;padding:8px;"><summary style="cursor:pointer;font-size:11.5px;font-weight:700;color:#6a4a70;outline:none;">心に刻まれた性行為の記憶 ▾</summary><div style="margin-top:6px;">${formatSexCard(sh.firstSex, '🌸 初体験', 'first')}${formatSexCard(sh.mostMemorable, '🔥 心に残った経験', 'memorable')}</div></details>`;
     const newExpHtml = `<div class="experience-panel"><details id="experienceDetails" ${experienceWasOpen ? 'open' : ''}><summary>性的・親密な経験　${exp.length}件 ▾</summary>${sexualRecordsHtml}<div class="exp-counts">${Object.entries(expCounts).map(([k, v]) => `${escapeHtml(k)} ${v}件`).join(' / ') || '記録なし'}</div><div class="exp-list">${exp.length ? exp.slice().reverse().map(e => `<div class="exp-entry"><div class="exp-meta">${escapeHtml(e.age)}歳 ・ ${escapeHtml(expLabels[e.kind] || 'その他')}${e.private ? ' ・ 非公開' : ''}</div><div>${escapeHtml(e.description)}</div>${e.partnerId ? `<div class="exp-meta">相手：${escapeHtml(s.bonds.find(b => b.id === e.partnerId)?.name || '不明')}（${escapeHtml(e.partnerId)}）</div>` : ''}${e.satisfaction != null ? `<div class="exp-meta">満足感 ${escapeHtml(e.satisfaction)}</div>` : ''}</div>`).join('') : '<div class="exp-empty">まだ経験の記録はありません。出会い・交際・親密さに関する出来事が起きると、ここに追加されます。</div>'}</div></details></div>`;
     if (expPanel.innerHTML !== newExpHtml) {
       expPanel.innerHTML = newExpHtml;
+      const nextExpList = expPanel.querySelector('.exp-list');
+      if (nextExpList && prevExpListScroll > 0) {
+        nextExpList.scrollTop = prevExpListScroll;
+      }
     }
   }
 
@@ -181,19 +211,11 @@ function render() {
   if (!s.photo || !AVAILABLE_ADULT_PHOTOS.includes(s.photo)) {
     s.photo = pickRandomAdultPhoto(rng);
   }
-  const infancyList = ['photo/infancy01.png', 'photo/infancy02.png', 'photo/infancy03.png'];
-  if (!s.infancyPhoto || !infancyList.includes(s.infancyPhoto)) {
+  if (!s.infancyPhoto || !INFANCY_PHOTOS.includes(s.infancyPhoto)) {
     const randVal = (rng && typeof rng.next === 'function') ? rng.next() : Math.random();
-    s.infancyPhoto = infancyList[Math.floor(randVal * infancyList.length)];
+    s.infancyPhoto = INFANCY_PHOTOS[Math.floor(randVal * INFANCY_PHOTOS.length)];
   }
-  const knownDedicatedChilds = ['photo/0001-1.png', 'photo/0002-1.png', 'photo/0003-1.png'];
-  let currentPhoto = s.photo;
-  if (s.age <= 3) {
-    currentPhoto = s.infancyPhoto || 'photo/infancy01.png';
-  } else if (s.age <= 11) {
-    const dedicated = s.photo ? s.photo.replace(/\.png$/, '-1.png') : null;
-    currentPhoto = (dedicated && knownDedicatedChilds.includes(dedicated)) ? dedicated : 'photo/child01.png';
-  }
+  const currentPhoto = getPhotoForAge(s);
 
   // アバター・名前のインプレース更新（画像再読み込み点滅を防止）
   updateIdentity(s, currentPhoto, escapeHtml);
@@ -208,6 +230,11 @@ function render() {
   if (partnerEl) {
     const newPartnerHtml = getPartnerSummary(s);
     if (partnerEl.innerHTML !== newPartnerHtml) partnerEl.innerHTML = newPartnerHtml;
+  }
+  const slotEl = document.getElementById('statusEmptySlot');
+  if (slotEl) {
+    const newScenarioSlotHtml = renderScenarioBoxHtml(s);
+    if (slotEl.innerHTML !== newScenarioSlotHtml) slotEl.innerHTML = newScenarioSlotHtml;
   }
 
   const locEl = document.getElementById('location');
@@ -336,4 +363,12 @@ function render() {
   if (document.getElementById('act')) document.getElementById('act').disabled = s.finished || !!s.pending;
   updateAutoPlayUI();
   syncProfileSummaryHeight();
+  // スクロール位置の最終復元（人生の記録追加や全体再レイアウトによるリセットを防止）
+  if (profilePanel && prevProfileScroll > 0 && profilePanel.scrollTop !== prevProfileScroll) {
+    profilePanel.scrollTop = prevProfileScroll;
+  }
+  const finalBondsExpList = document.querySelector('.bonds-panel .exp-list');
+  if (finalBondsExpList && prevBondsExpListScroll > 0 && finalBondsExpList.scrollTop !== prevBondsExpListScroll) {
+    finalBondsExpList.scrollTop = prevBondsExpListScroll;
+  }
 }

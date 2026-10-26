@@ -24,8 +24,8 @@ function getPersonality(st) {
     const precocious = (states.current_libido ?? 0) >= 15 || (sexuality.curiosity ?? 0) >= 50;
     if (precocious) {
       const modesty = traits.baseline_modesty?.current ?? 0;
-      if (modesty >= 10) return 'お股のむず痒さに戸惑う早熟';
-      return '秘所の疼きに手が伸びるおませ';
+      if (modesty >= 10) return '自分の体が気になる';
+      return '敏感な年頃';
     }
     const ext = (traits.extraversion?.current ?? 0) + (display.sociability ?? 0);
     if (ext >= 15) return '明るく元気いっぱい';
@@ -39,13 +39,13 @@ function getPersonality(st) {
     const modesty = traits.baseline_modesty?.current ?? 0;
     const maso = traits.masochistic_preference?.current ?? 0;
     if (libido >= 25) {
-      if (maso >= 12) return 'いじめられて奥を濡らす被虐の芽生え';
-      if (modesty >= 12) return '下腹の疼きを恥じて耐える純情生娘';
-      return '愛液でショーツを濡らす早熟な肉穴';
+      if (maso >= 12) return 'いじめられると悦び覚える';
+      if (modesty >= 12) return '体の疼きを耐える純情';
+      return '歓びを知った体';
     }
     if (libido >= 12) {
-      if (modesty >= 10) return '恥じらいつつも身体の火照りに戸惑う娘';
-      return '秘所の疼きに指を沈めて息を荒げる早熟';
+      if (modesty >= 10) return '身体の火照りに戸惑';
+      return '自分でさわって息を荒げる';
     }
     const ext = (traits.extraversion?.current ?? 0) + (display.sociability ?? 0);
     if (ext >= 15) return '多感で活発な少女';
@@ -241,6 +241,10 @@ function getPartnerSummary(st) {
     if (partners.length > 1 || secretPartners.length > 0) {
       statusType = 'cheating'; statusLabel = '浮気中';
       itemsHtml = partners.map((p, idx) => `<div class="partner-item">${idx === 0 ? '<strong>本命</strong>' : '<strong>交際相手</strong>'}：${escapeBond(p.name)}${p.private ? ' <span class="partner-subtext">（秘密）</span>' : ''}</div>`).join('');
+    } else if (st.flags?.engaged) {
+      statusType = 'dating'; statusLabel = '婚約中';
+      const p = partners[0];
+      itemsHtml = `<div class="partner-item"><strong>婚約者</strong>：${escapeBond(p.name)}<span style="color:#e11d48;font-size:0.85em;margin-left:6px;">💍 婚約中</span></div>`;
     } else {
       statusType = 'dating'; statusLabel = '交際中';
       const p = partners[0];
@@ -257,6 +261,67 @@ function getPartnerSummary(st) {
   }
   return `<div class="partner-box"><div class="partner-header"><strong>パートナー状態</strong><span class="partner-badge ${statusType}">${statusLabel}</span></div><div class="partner-info">${itemsHtml}</div></div>`;
 }
+
+function renderScenarioBoxHtml(st = s) {
+  harmonizeScenarios(st);
+  const activeList = (st.scenarios || []).filter(x => x.status === 'active');
+  const labels = {
+    romance: { name: '恋愛', phases: { dating: '交際中', dating_active: 'デート', kissed: '初キス', intimate: '肉体関係', cohabiting: '同棲', engaged: '婚約中' } },
+    cohabitation_limbo: { name: '同棲の行方', phases: { comfortable_rut: '慣れ合い', marriage_avoidance: '結婚の膠着', ultimatum: '決断の時' } },
+    infidelity_crisis: { name: '浮気疑惑', phases: { suspicion: '疑念', confrontation: '修羅場', reconciled: '再構築' } },
+    wavering_heart: { name: '揺れる心', phases: { temptation: '秘密の誘惑', secret_hesitation: '背徳と葛藤', resolved: '決断' } },
+    premarital_pregnancy: { name: '授かり婚', phases: { positive_test: '妊娠発覚', wedding_rush: '入籍準備' } },
+    marriage_life: { name: '夫婦生活', phases: { newlywed: '新婚', pregnant: '妊娠中', settled: '安定期', parenting: '子育て期', mature: '円熟期', silver: '寄り添う老後' } },
+    independence: { name: '自立', phases: { living_alone: '一人暮らし' } },
+    career: { name: '仕事', phases: { job_hunting: '就職活動', employed: '社会人', established: '自立' } }
+  };
+
+  let badgeHtml = '';
+  let contentHtml = '';
+
+  if (!activeList.length) {
+    badgeHtml = `<span class="scenario-badge none">日常</span>`;
+    contentHtml = `<div class="scenario-item muted">（平穏な日常）</div>`;
+  } else {
+    badgeHtml = `<span class="scenario-badge active">${activeList.length}件</span>`;
+    contentHtml = activeList.map(sc => {
+      const info = labels[sc.id] || { name: sc.id, phases: {} };
+      const phaseLabel = info.phases[sc.phase] || sc.phase;
+      return `<div class="scenario-item"><strong>${info.name}</strong>：${phaseLabel}</div>`;
+    }).join('');
+  }
+
+  return `<div class="scenarios-box">
+    <div class="scenarios-header">
+      <strong>📖 ストーリー</strong>
+      ${badgeHtml}
+    </div>
+    <div class="scenarios-info">
+      ${contentHtml}
+    </div>
+  </div>`;
+}
+
+window.triggerProposal = function (bondId) {
+  if (s.pending || s.finished) {
+    alert('イベント選択中または人生終了時はプロポーズできません。');
+    return;
+  }
+  if (s.age < 18) {
+    alert('成人後にプロポーズできます。');
+    return;
+  }
+  const partner = s.bonds.find(b => b.id === bondId && b.status === 'partner');
+  if (!partner) {
+    alert('対象の交際相手が見つかりません。');
+    return;
+  }
+  const proposalEv = eventDefs.find(e => e.id === 'adult_marriage_proposal');
+  if (proposalEv) {
+    setPendingEvent(proposalEv.id);
+    render();
+  }
+};
 function choiceTooltip(c, i, e) {
   if (!c || !c[1]) return '';
   const eff = c[1];

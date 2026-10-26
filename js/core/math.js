@@ -25,3 +25,7 @@ function normal(mean = 0, std = 20, r) {
   const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
   return mean + z0 * std;
 }
+
+// 仕様書準拠 内部パラメータ辞書 (第4章)
+
+function chance(p) { return rng.next() < Math.max(0, Math.min(1, p)) }

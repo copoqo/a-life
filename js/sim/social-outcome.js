@@ -1,6 +1,118 @@
 'use strict';
 // イベント結果に応じた人間関係・経験の処理
 
+function updateBondRelation(target, relationText) {
+  if (!target) return;
+  target.relationContext = relationText;
+  if (!target.metContext) target.metContext = relationText;
+}
+
+function upsertEventBond(spec = {}, event = null) {
+  const role = spec.role || null;
+  const gender = spec.gender || null;
+  const targetStatus = spec.status || 'acquaintance';
+  const metContext = spec.metContext || (event?.title ? event.title : null);
+  const mode = spec.mode || 'upsert';
+
+  // 既存の同種・同属性の知人/友人がいるか探す（createモード以外）
+  if (mode !== 'create') {
+    const existing = s.bonds.find(b =>
+      (b.status === 'acquaintance' || b.status === 'close') &&
+      (!role || b.role === role) &&
+      (!gender || b.gender === gender)
+    );
+    if (existing) {
+      const wasAcq = existing.status === 'acquaintance';
+      if (targetStatus === 'close' && wasAcq) {
+        existing.status = 'close';
+      }
+      existing.affection = clamp((existing.affection || 35) + (spec.affectionDelta ?? (targetStatus === 'close' ? 12 : 7)));
+      existing.trust = clamp((existing.trust || 35) + (spec.trustDelta ?? (targetStatus === 'close' ? 8 : 5)));
+      if (spec.romanticInterest != null) existing.romanticInterest = Math.max(existing.romanticInterest || 0, spec.romanticInterest);
+      if (metContext) {
+        if (!existing.metContext) existing.metContext = metContext;
+        existing.relationContext = spec.relationContext || metContext;
+      }
+      const roleLabel = BOND_ROLE_LABELS[existing.role] || '知人';
+      if (wasAcq && existing.status === 'close') {
+        recordExperience('friendship', `${existing.name}（${roleLabel}）と親しくなった${metContext ? `（${metContext}）` : ''}`, existing.id);
+        log(`${existing.name}（${roleLabel}）との絆が深まり、「親しい友人」になった。`);
+      } else {
+        recordExperience('friendship', `${existing.name}（${roleLabel}）との親交を深めた${metContext ? `（${metContext}）` : ''}`, existing.id);
+      }
+      s.relationships = s.bonds.length;
+      return existing;
+    }
+  }
+
+  if (s.bonds.length >= 30) return null;
+  const custom = { ...spec, status: targetStatus, initialStatus: targetStatus };
+  if (metContext) {
+    custom.metContext = metContext;
+    if (spec.relationContext && spec.relationContext !== metContext) {
+      custom.relationContext = spec.relationContext;
+    }
+  }
+  const b = createBond(role, gender, custom);
+  if (spec.affection != null) b.affection = clamp(spec.affection);
+  else if (targetStatus === 'close') b.affection = Math.max(b.affection || 45, 52);
+  if (spec.trust != null) b.trust = clamp(spec.trust);
+  else if (targetStatus === 'close') b.trust = Math.max(b.trust || 40, 45);
+  if (spec.romanticInterest != null) b.romanticInterest = clamp(spec.romanticInterest);
+  s.bonds.push(b);
+  s.relationships = s.bonds.length;
+  const roleLabel = BOND_ROLE_LABELS[b.role] || '知人';
+  if (targetStatus === 'close') {
+    recordExperience('friendship', `${b.name}（${roleLabel}）と出会い、親しい友人になった${metContext ? `（${metContext}）` : ''}`, b.id);
+    log(`${b.name}（${roleLabel}）と親しくなり、人間関係に「親しい友人」として記録された。`);
+  } else {
+    recordExperience('meeting', `${b.name}（${roleLabel}）と知り合った${metContext ? `（${metContext}）` : ''}`, b.id);
+    log(`${b.name}（${roleLabel}）との新たな出会いがあり、人間関係に記録された。`);
+  }
+  return b;
+}
+
+function resolveRoleSpecificBond(eventId) {
+  if (!eventId) return null;
+  if (eventId.startsWith('encounter_teacher')) {
+    let b = s.bonds.find(x => x.role === 'teacher');
+    if (!b && s.bonds.length < 30) {
+      b = createBond('teacher', 'male', { status: 'close', private: true, metContext: '放課後の個別指導の先生' });
+      s.bonds.push(b);
+      s.relationships = s.bonds.length;
+    }
+    return b;
+  }
+  if (eventId.startsWith('encounter_colleague')) {
+    let b = s.bonds.find(x => x.role === 'colleague');
+    if (!b && s.bonds.length < 30) {
+      b = createBond('colleague', 'male', { status: 'close', private: true, metContext: '深夜残業の職場の同僚' });
+      s.bonds.push(b);
+      s.relationships = s.bonds.length;
+    }
+    return b;
+  }
+  if (eventId.startsWith('encounter_parent_friend')) {
+    let b = s.bonds.find(x => x.role === 'parent_friend');
+    if (!b && s.bonds.length < 30) {
+      b = createBond('parent_friend', 'male', { status: 'close', private: true, metContext: '送迎で知り合った子供の友達の親' });
+      s.bonds.push(b);
+      s.relationships = s.bonds.length;
+    }
+    return b;
+  }
+  if (eventId.startsWith('encounter_partner_sibling')) {
+    let b = s.bonds.find(x => x.role === 'partner_sibling');
+    if (!b && s.bonds.length < 30) {
+      b = createBond('partner_sibling', 'male', { status: 'close', private: true, metContext: 'パートナーのきょうだい' });
+      s.bonds.push(b);
+      s.relationships = s.bonds.length;
+    }
+    return b;
+  }
+  return null;
+}
+
 function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
   // 選択肢効果 (choiceEff) や choice に指定された明示的な人間関係定義
   const bondDef = choiceEff.bond || choiceEff.relationship;
@@ -48,14 +160,15 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
         confessor.affection = clamp(Math.max(confessor.affection || 50, 58));
         confessor.trust = clamp(Math.max(confessor.trust || 40, 48));
         confessor.romanticInterest = clamp(Math.max(confessor.romanticInterest || 75, 78));
-        confessor.metContext = '告白を機に友人へ';
+        updateBondRelation(confessor, '告白を機に友人へ');
       } else if (s.bonds.length < 30) {
         confessor = createBond(defaultRole, targetGender, {
           status: 'close',
           affection: 58,
           trust: 48,
           romanticInterest: 78,
-          metContext: '告白を機に友人へ'
+          metContext: '告白を機に友人へ',
+          relationContext: '告白を機に友人へ'
         });
         s.bonds.push(confessor);
       }
@@ -73,14 +186,15 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
       if (confessor) {
         confessor.affection = clamp(Math.max(confessor.affection || 45, 52));
         confessor.romanticInterest = clamp(Math.max(confessor.romanticInterest || 75, 82));
-        confessor.metContext = '告白の返事を保留中';
+        updateBondRelation(confessor, '告白の返事を保留中');
       } else if (s.bonds.length < 30) {
         confessor = createBond(defaultRole, targetGender, {
           status: 'acquaintance',
           affection: 52,
           trust: 42,
           romanticInterest: 82,
-          metContext: '告白の返事を保留中'
+          metContext: '告白の返事を保留中',
+          relationContext: '告白の返事を保留中'
         });
         s.bonds.push(confessor);
       }
@@ -101,12 +215,13 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
           affection: 62,
           trust: 50,
           romanticInterest: 85,
-          metContext: '告白を受けて交際'
+          metContext: '告白を受けて交際',
+          relationContext: '告白を受けて交際'
         });
         s.bonds.push(target);
         s.relationships = s.bonds.length;
       } else {
-        target.metContext = '告白を受けて交際';
+        updateBondRelation(target, '告白を受けて交際');
         target.affection = clamp(Math.max(target.affection || 50, 62));
       }
       if (!hasPartner(s)) {
@@ -160,11 +275,11 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
     let fPartner = s.bonds.find(b => (b.status === 'partner' || b.status === 'spouse') && b.gender === 'female')
       || s.bonds.find(b => b.gender === 'female' && (b.status === 'close' || b.status === 'acquaintance'));
     if (!fPartner) {
-      fPartner = createBond('classmate', 'female', { status: 'close', affection: 62, trust: 52, romanticInterest: 85, metContext: '放課後の図書室で初キスを交わした相手' });
+      fPartner = createBond('classmate', 'female', { status: 'close', affection: 62, trust: 52, romanticInterest: 85, metContext: '放課後の図書室で初キスを交わした相手', relationContext: '放課後の図書室で初キスを交わした相手' });
       s.bonds.push(fPartner);
       s.relationships = s.bonds.length;
     } else {
-      fPartner.metContext = '放課後の図書室で初キスを交わした相手';
+      updateBondRelation(fPartner, '放課後の図書室で初キスを交わした相手');
     }
     if (!hasPartner(s)) startRelationship(fPartner);
     else if (fPartner.status !== 'partner' && fPartner.status !== 'spouse') proposeRelationship(fPartner);
@@ -182,7 +297,7 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
       fp.cohabiting = true;
       fp.trust = clamp((fp.trust || 50) + 12);
       fp.affection = clamp((fp.affection || 50) + 12);
-      fp.metContext = 'パートナーシップを誓い合った伴侶';
+      updateBondRelation(fp, 'パートナーシップを誓い合った伴侶');
       s.flags.cohabiting = true;
       recordExperience('relationship', fp.name + 'とパートナーシップの誓いを交わした', fp.id, { mutual: true });
     }
@@ -194,14 +309,14 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
   if (outcome === 'reconcile_friend') {
     let friendBond = s.bonds.find(b => b.status === 'close' || b.status === 'acquaintance');
     if (!friendBond && s.bonds.length < 30) {
-      friendBond = createBond('classmate', null, { status: 'close', affection: 60, trust: 58, metContext: '本音で話し合い仲直りした親友' });
+      friendBond = createBond('classmate', null, { status: 'close', affection: 60, trust: 58, metContext: '本音で話し合い仲直りした親友', relationContext: '本音で話し合い仲直りした親友' });
       s.bonds.push(friendBond);
       s.relationships = s.bonds.length;
     } else if (friendBond) {
       friendBond.status = 'close';
       friendBond.affection = clamp((friendBond.affection || 45) + 12);
       friendBond.trust = clamp((friendBond.trust || 45) + 12);
-      friendBond.metContext = '本音で話し合い仲直りした親友';
+      updateBondRelation(friendBond, '本音で話し合い仲直りした親友');
     }
     if (friendBond) {
       recordExperience('friendship', friendBond.name + 'と本音で向き合い、友情を取り戻した', friendBond.id);
@@ -288,7 +403,7 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
         b.status = 'close';
         b.private = true;
       }
-      if (contextMap[e.id]) b.metContext = contextMap[e.id];
+      if (contextMap[e.id]) updateBondRelation(b, contextMap[e.id]);
     }
     if (isIntimateEncounter) {
       const encounterIntimacyDescs = {
@@ -331,11 +446,22 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
       p.cohabiting = true;
       p.trust = clamp(p.trust + 10);
       p.affection = clamp(p.affection + 10);
-      p.metContext = '生涯を誓い合った配偶者';
+      updateBondRelation(p, '生涯を誓い合った配偶者');
+      s.flags.engaged = false;
       s.flags.married = true;
       s.flags.cohabiting = true;
+      s.flags.living_alone = false;
       s.flags.had_first_kiss_with_partner = true;
       s.flags.had_first_intimacy_with_partner = true;
+      advanceScenario('romance', 'married');
+      completeScenario('romance');
+      completeScenario('independence');
+      completeScenario('cohabitation_limbo');
+      completeScenario('premarital_pregnancy');
+      completeScenario('infidelity_crisis');
+      completeScenario('wavering_heart');
+      startScenario('marriage_life', 'newlywed', { partnerId: p.id, partnerName: p.name });
+      harmonizeScenarios(s);
       if (!alreadySpouse) {
         recordExperience('relationship', p.name + 'と生涯を誓い合い、婚姻関係を結んだ', p.id, { mutual: true });
         log(p.name + 'と結婚した。新しい家庭を築き、夫婦としての人生が始まる。', ageDiary(p.name + 'と婚姻の誓いを交わした。左手の薬指に輝く指輪の重みと温もりに、生涯を共にする実感が胸に満ちた。'));
@@ -346,7 +472,7 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
   if (outcome === 'infidelity') {
     let target = s.bonds.find(b => (b.status === 'close' || (b.status === 'partner' && b.private)) && b.status !== 'spouse' && isRomanticallyCompatible(b, s));
     if (!target) {
-      target = createBond(null, 'male', { status: 'partner', private: true, intimate: true, metContext: '配偶者に隠れた秘密の不倫相手' });
+      target = createBond(null, 'male', { status: 'partner', private: true, intimate: true, metContext: '配偶者に隠れた秘密の不倫相手', relationContext: '配偶者に隠れた秘密の不倫相手' });
       s.bonds.push(target);
       s.relationships = s.bonds.length;
     }
@@ -354,7 +480,7 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
     target.private = true;
     target.intimate = true;
     target.intimateSinceAge ??= s.age;
-    target.metContext = '配偶者に隠れた秘密の不倫相手';
+    updateBondRelation(target, '配偶者に隠れた秘密の不倫相手');
     target.affection = clamp(target.affection + 15);
     target.trust = clamp(target.trust + 5);
     s.secrecy = clamp(s.secrecy + 15);
@@ -369,8 +495,16 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
   if (outcome === 'divorce') {
     const sp = s.bonds.find(b => b.status === 'spouse');
     if (sp) {
-      sp.status = 'former'; sp.consent = false; sp.metContext = '離婚した元配偶者';
+      sp.status = 'former'; sp.consent = false; updateBondRelation(sp, '離婚した元配偶者');
       s.flags.married = false; s.flags.divorced = true; s.flags.cohabiting = false;
+      s.flags.living_alone = true;
+      failScenario('romance', 'divorce');
+      failScenario('marriage_life', 'divorce');
+      failScenario('cohabitation_limbo', 'divorce');
+      failScenario('infidelity_crisis', 'divorce');
+      failScenario('wavering_heart', 'divorce');
+      startScenario('independence', 'living_alone');
+      harmonizeScenarios(s);
       recordExperience('breakup', sp.name + 'と離婚届を提出し、婚姻関係を解消した', sp.id);
       log(sp.name + 'と離婚した。夫婦としての生活に終止符を打った。');
     }
@@ -379,8 +513,16 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
   if (outcome === 'bereavement') {
     const sp = s.bonds.find(b => b.status === 'spouse') || s.bonds.find(b => b.status === 'partner');
     if (sp) {
-      sp.status = 'widowed'; sp.consent = false; sp.metContext = '死別した最愛の伴侶';
+      sp.status = 'widowed'; sp.consent = false; updateBondRelation(sp, '死別した最愛の伴侶');
       s.flags.married = false; s.flags.widowed = true; s.flags.cohabiting = false;
+      s.flags.living_alone = true;
+      failScenario('romance', 'bereavement');
+      failScenario('marriage_life', 'bereavement');
+      failScenario('cohabitation_limbo', 'bereavement');
+      failScenario('infidelity_crisis', 'bereavement');
+      failScenario('wavering_heart', 'bereavement');
+      startScenario('independence', 'living_alone');
+      harmonizeScenarios(s);
       recordExperience('bereavement', '最愛の伴侶 ' + sp.name + ' と永遠の死別を迎えた', sp.id);
       log(sp.name + 'が静かに息を引き取った。最愛の伴侶を見送り、深い悲しみに暮れた。');
     }
@@ -391,7 +533,7 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
     if (old) {
       old.trust = clamp(old.trust + 6);
       old.affection = clamp(old.affection + 8);
-      old.metContext = '再会して言葉を交わした元恋人';
+      updateBondRelation(old, '再会して言葉を交わした元恋人');
       recordExperience('reunion', old.name + 'と再会し、懐かしい時間を分かち合った', old.id);
       log(`${old.name}（元恋人）と再会し、穏やかに近況を語り合った。`);
     }
@@ -400,7 +542,7 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
   if (outcome === 'approach' || outcome === 'closer') {
     let target = s.bonds.find(b => (b.status === 'close' || b.status === 'acquaintance') && isRomanticallyCompatible(b, s));
     if (!target && s.bonds.length < 30) {
-      target = createBond(null, getRomanticTargetGender(s), { status: 'close', affection: 52, trust: 45, romanticInterest: 78, metContext: '想いを寄せた相手' });
+      target = createBond(null, getRomanticTargetGender(s), { status: 'close', affection: 52, trust: 45, romanticInterest: 78, metContext: '想いを寄せた相手', relationContext: '想いを寄せた相手' });
       s.bonds.push(target);
       s.relationships = s.bonds.length;
     }
@@ -410,7 +552,7 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
       target.affection = clamp((target.affection || 40) + 15);
       target.trust = clamp((target.trust || 35) + 8);
       target.romanticInterest = clamp(Math.max(target.romanticInterest || 60, 72));
-      target.metContext ||= '距離を縮めた大切な人';
+      updateBondRelation(target, '距離を縮めた大切な人');
       recordExperience('friendship', target.name + 'との距離が縮まり、親しい関係になった', target.id);
       log(`${target.name}との距離が少しずつ縮まり、人間関係が「親しい友人」へ深まった。`);
       return;
@@ -420,11 +562,11 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
     target.trust = clamp((target.trust || 40) + 10);
     const willingness = Math.max(0.55, approachProbability(target));
     if (chance(willingness)) {
-      target.metContext = '自分から想いを伝えて結ばれた相手';
+      updateBondRelation(target, '自分から想いを伝えて結ばれた相手');
       proposeRelationship(target);
     } else {
       target.status = 'close';
-      target.metContext = '想いを伝えた大切な友人';
+      updateBondRelation(target, '想いを伝えた大切な友人');
       recordExperience('rejection', target.name + 'に想いを伝えたが、まずは友人として関係を続けることになった', target.id);
       log(`${target.name}に想いを伝えた。すぐには交際に至らなかったが、大切な友人として関係を続けることになった。`);
     }
@@ -441,7 +583,7 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
     // 「本当の恋人同士になりたいと耳元で甘く囁く」
     bond.affection = clamp((bond.affection || 50) + 15);
     bond.trust = clamp((bond.trust || 45) + 10);
-    bond.metContext = '深夜残業から恋人へと進んだ同僚';
+    updateBondRelation(bond, '深夜残業から恋人へと進んだ同僚');
     proposeRelationship(bond);
     return;
   }
@@ -504,6 +646,22 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
   if (outcome === 'mutual_talk') { bond.trust = clamp(bond.trust + 4); bond.affection = clamp((bond.affection || 35) + 3); recordExperience('communication', bond.name + 'と希望や境界線について対話した', bond.id); log('互いの希望を話し合い、理解が少し深まった。'); return }
   if (outcome === 'boundary') { recordExperience('boundary', '望まないことを伝えた', bond.id); log('自分の境界線を伝えた。'); return }
   if (outcome === 'distance') { bond.affection = clamp(bond.affection - 8); log(bond.name + 'との距離を少し置いた。'); return }
-  if (outcome === 'breakup') { bond.status = 'former'; bond.consent = false; bond.metContext = '話し合いで別れた元恋人'; s.flags.cohabiting = false; recordExperience('breakup', bond.name + 'との関係を終える選択をした', bond.id); log(bond.name + 'と話し合いの末、交際関係を終えた。'); return }
+  if (outcome === 'breakup') {
+    bond.status = 'former';
+    bond.consent = false;
+    updateBondRelation(bond, '話し合いで別れた元恋人');
+    s.flags.cohabiting = false;
+    s.flags.engaged = false;
+    s.flags.living_alone = true;
+    failScenario('romance', 'breakup');
+    failScenario('cohabitation_limbo', 'breakup');
+    failScenario('infidelity_crisis', 'breakup');
+    failScenario('wavering_heart', 'breakup');
+    startScenario('independence', 'living_alone');
+    harmonizeScenarios(s);
+    recordExperience('breakup', bond.name + 'との関係を終える選択をした', bond.id);
+    log(bond.name + 'と話し合いの末、交際関係を終えた。');
+    return;
+  }
   if (outcome === 'reflection' || outcome === 'privacy') recordExperience(outcome, '自分の価値観について考えた');
 }

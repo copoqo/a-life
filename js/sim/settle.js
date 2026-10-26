@@ -110,6 +110,7 @@ function settle(event, index, continueYear = true) {
       s.flags.firstKiss = true;
       s.flags.had_first_kiss_with_partner = true;
       if (curPartner) curPartner.kissed = true;
+      advanceScenario('romance', 'kissed');
     } else {
       skipSeenMark = true;
     }
@@ -124,30 +125,262 @@ function settle(event, index, continueYear = true) {
         curPartner.intimate = true;
         curPartner.intimateSinceAge ??= s.age;
       }
+      advanceScenario('romance', 'intimate');
     } else {
       skipSeenMark = true;
     }
   }
-  if (event.id === 'marriage_ceremony' || event.id === 'adult_marriage_ceremony' || event.id === 'adult_marriage_proposal' || event.id === 'fixed_milestone_marriage') {
-    if (index === 0 || event.id === 'marriage_ceremony') {
+  if (event.id === 'adult_marriage_proposal') {
+    if (index === 0) {
+      s.flags.engaged = true;
       s.flags.had_first_intimacy_with_partner = true;
       s.flags.had_first_kiss_with_partner = true;
       s.flags.cohabiting = true;
-      s.flags.living_alone = false;
       if (curPartner) {
         curPartner.kissed = true;
         curPartner.intimate = true;
         curPartner.cohabiting = true;
       }
+      advanceScenario('romance', 'engaged');
+      s.chains ??= [];
+      if (!s.chains.some(c => c.eventId === 'marriage_ceremony')) {
+        s.chains.push({
+          eventId: 'marriage_ceremony',
+          targetAge: s.age,
+          targetAgeMonths: (s.age_months || 0) + (3 + Math.floor(rng.next() * 3)),
+          prob: 1.0
+        });
+      }
+    }
+  }
+  if (event.id === 'marriage_ceremony' || event.id === 'adult_marriage_ceremony' || event.id === 'fixed_milestone_marriage') {
+    s.flags.engaged = false;
+    s.flags.married = true;
+    s.flags.cohabiting = true;
+    s.flags.living_alone = false;
+    s.flags.had_first_intimacy_with_partner = true;
+    s.flags.had_first_kiss_with_partner = true;
+    if (curPartner) {
+      curPartner.status = 'spouse';
+      curPartner.kissed = true;
+      curPartner.intimate = true;
+      curPartner.cohabiting = true;
+      curPartner.marriedAge = s.age;
+      updateBondRelation(curPartner, '生涯を誓い合った配偶者');
+    }
+    advanceScenario('romance', 'married');
+    completeScenario('romance');
+    completeScenario('independence');
+    completeScenario('cohabitation_limbo');
+    completeScenario('premarital_pregnancy');
+    completeScenario('infidelity_crisis');
+    completeScenario('wavering_heart');
+    if (curPartner) {
+      startScenario('marriage_life', 'newlywed', { partnerId: curPartner.id, partnerName: curPartner.name });
+    }
+    harmonizeScenarios(s);
+    if (s.flags.pregnant || s.flags.shotgun_wedding) {
+      s.chains ??= [];
+      if (!s.chains.some(c => c.eventId === 'story_childbirth_miracle')) {
+        s.chains.push({
+          eventId: 'story_childbirth_miracle',
+          targetAge: s.age,
+          targetAgeMonths: (s.age_months || 0) + 6,
+          prob: 1.0
+        });
+      }
     }
   }
   if ((event.id === 'youth_first_apartment_hunt' || event.id === 'young_living_alone') && index === 0) {
     s.flags.living_alone = true;
+    startScenario('independence', 'living_alone');
+  }
+  if (event.id === 'youth_job_hunting_suit') {
+    startScenario('career', 'job_hunting');
   }
   if (event.id === 'adult_future_together' && index === 0) {
     s.flags.cohabiting = true;
     s.flags.living_alone = false;
     if (curPartner) curPartner.cohabiting = true;
+    advanceScenario('romance', 'cohabiting');
+    completeScenario('independence');
+    harmonizeScenarios(s);
+  }
+
+  // === 結婚分岐ストーリー群の進行・解決処理 ===
+  if (event.id === 'story_cohabitation_routine_rut') {
+    if (index === 0) advanceScenario('cohabitation_limbo', 'marriage_avoidance');
+    else if (index === 1) startScenario('cohabitation_limbo', 'comfortable_rut');
+    else if (index === 2) {
+      startScenario('cohabitation_limbo', 'comfortable_rut');
+      if (curPartner) curPartner.intimate = true;
+    }
+  }
+  if (event.id === 'story_cohabitation_ultimatum') {
+    if (index === 0) {
+      completeScenario('cohabitation_limbo');
+      advanceScenario('romance', 'engaged');
+      s.flags.engaged = true;
+      if (curPartner) updateBondRelation(curPartner, '婚約中');
+      s.chains ??= [];
+      s.chains.push({ eventId: 'marriage_ceremony', targetAge: s.age, targetAgeMonths: (s.age_months || 0) + (3 + Math.floor(rng.next() * 3)), prob: 1.0 });
+    } else if (index === 1) {
+      failScenario('cohabitation_limbo', 'broken');
+      completeScenario('romance');
+      if (curPartner) {
+        curPartner.status = 'former';
+        curPartner.cohabiting = false;
+        updateBondRelation(curPartner, '同棲解消・元恋人');
+      }
+      s.flags.cohabiting = false;
+      s.flags.engaged = false;
+      s.flags.living_alone = true;
+      startScenario('independence', 'living_alone');
+      harmonizeScenarios(s);
+    } else if (index === 2) {
+      completeScenario('cohabitation_limbo');
+      s.flags.cohabitation_accepted = true;
+      if (curPartner) updateBondRelation(curPartner, '同棲パートナー');
+    }
+  }
+  if (event.id === 'story_partner_infidelity_suspicion') {
+    if (index === 0) {
+      startScenario('infidelity_crisis', 'suspicion');
+      s.flags.found_infidelity_evidence = true;
+    } else if (index === 1) {
+      startScenario('infidelity_crisis', 'suspicion');
+    } else if (index === 2) {
+      startScenario('infidelity_crisis', 'confrontation');
+    }
+  }
+  if (event.id === 'story_partner_infidelity_confrontation') {
+    if (index === 0) {
+      completeScenario('infidelity_crisis');
+      advanceScenario('romance', 'engaged');
+      s.flags.engaged = true;
+      if (curPartner) updateBondRelation(curPartner, '婚約中');
+      s.chains ??= [];
+      s.chains.push({ eventId: 'marriage_ceremony', targetAge: s.age, targetAgeMonths: (s.age_months || 0) + (4 + Math.floor(rng.next() * 3)), prob: 1.0 });
+    } else if (index === 1) {
+      failScenario('infidelity_crisis', 'broken');
+      completeScenario('romance');
+      completeScenario('cohabitation_limbo');
+      if (curPartner) {
+        curPartner.status = 'former';
+        curPartner.cohabiting = false;
+        updateBondRelation(curPartner, '浮気され破局した元恋人');
+      }
+      s.flags.cohabiting = false;
+      s.flags.engaged = false;
+      s.flags.living_alone = true;
+      startScenario('independence', 'living_alone');
+      harmonizeScenarios(s);
+    } else if (index === 2) {
+      completeScenario('infidelity_crisis');
+      if (curPartner) curPartner.intimate = true;
+    }
+  }
+  if (event.id === 'story_wavering_heart_temptation') {
+    if (index === 0) {
+      completeScenario('wavering_heart');
+    } else if (index === 1) {
+      startScenario('wavering_heart', 'secret_hesitation');
+      s.flags.wavering_stolen_kiss = true;
+    } else if (index === 2) {
+      startScenario('wavering_heart', 'temptation');
+      s.flags.secret_affair_started = true;
+    }
+  }
+  if (event.id === 'story_wavering_heart_resolution') {
+    if (index === 0) {
+      completeScenario('wavering_heart');
+      advanceScenario('romance', 'engaged');
+      s.flags.engaged = true;
+      if (curPartner) updateBondRelation(curPartner, '婚約中');
+      s.chains ??= [];
+      s.chains.push({ eventId: 'marriage_ceremony', targetAge: s.age, targetAgeMonths: (s.age_months || 0) + (3 + Math.floor(rng.next() * 3)), prob: 1.0 });
+    } else if (index === 1) {
+      completeScenario('wavering_heart');
+    } else if (index === 2) {
+      failScenario('wavering_heart', 'switch');
+      completeScenario('romance');
+      completeScenario('cohabitation_limbo');
+      if (curPartner) {
+        curPartner.status = 'former';
+        curPartner.cohabiting = false;
+        updateBondRelation(curPartner, '心変わりにより別れた元恋人');
+      }
+      s.flags.cohabiting = false;
+      s.flags.engaged = false;
+      s.flags.living_alone = true;
+      startScenario('independence', 'living_alone');
+      harmonizeScenarios(s);
+    }
+  }
+  if (event.id === 'story_premarital_pregnancy_test') {
+    startScenario('premarital_pregnancy', 'positive_test');
+    s.flags.pregnant = true;
+    s.flags.premarital_pregnant = true;
+  }
+  if (event.id === 'story_premarital_pregnancy_announcement') {
+    completeScenario('premarital_pregnancy');
+    completeScenario('cohabitation_limbo');
+    completeScenario('wavering_heart');
+    advanceScenario('romance', 'engaged');
+    s.flags.engaged = true;
+    s.flags.shotgun_wedding = true;
+    if (curPartner) updateBondRelation(curPartner, '婚約中（授かり婚）');
+    s.chains ??= [];
+    s.chains.push({ eventId: 'marriage_ceremony', targetAge: s.age, targetAgeMonths: (s.age_months || 0) + 2, prob: 1.0 });
+    harmonizeScenarios(s);
+  }
+  if (event.id === 'story_marriage_third_anniversary') {
+    s.flags.marriage_3rd_anniversary_done = true;
+    advanceScenario('marriage_life', 'settled');
+    harmonizeScenarios(s);
+  }
+  if (event.id === 'story_pregnancy_discovery') {
+    s.flags.pregnant = true;
+    s.flags.pregnancyAge = s.age;
+    advanceScenario('marriage_life', 'pregnant');
+    s.chains ??= [];
+    if (!s.chains.some(c => c.eventId === 'story_childbirth_miracle')) {
+      s.chains.push({
+        eventId: 'story_childbirth_miracle',
+        targetAge: s.age,
+        targetAgeMonths: (s.age_months || 0) + 10,
+        prob: 1.0
+      });
+    }
+    harmonizeScenarios(s);
+  }
+  if (event.id === 'story_childbirth_miracle') {
+    s.flags.pregnant = false;
+    s.flags.hasChildren = true;
+    s.flags.child_born = true;
+    s.flags.childBirthAge = s.age;
+    s.family ??= {};
+    s.family.children_ids = ['child_1'];
+    s.children ??= [];
+    if (!s.children.length) {
+      s.children.push({ id: 'child_1', birthAge: s.age, name: '我が子' });
+    }
+    advanceScenario('marriage_life', 'parenting');
+    s.chains ??= [];
+    if (!s.chains.some(c => c.eventId === 'story_parenting_tender_days')) {
+      s.chains.push({
+        eventId: 'story_parenting_tender_days',
+        targetAge: s.age + 1,
+        targetAgeMonths: (s.age_months || 0) + 14,
+        prob: 1.0
+      });
+    }
+    harmonizeScenarios(s);
+  }
+  if (event.id === 'story_parenting_tender_days') {
+    s.flags.seen_parenting_story = true;
+    advanceScenario('marriage_life', 'parenting');
+    harmonizeScenarios(s);
   }
   if (event.id === 'life_parenthood_question') {
     if (index === 0) s.flags.trying_for_baby = true;
@@ -223,6 +456,10 @@ function settle(event, index, continueYear = true) {
   if (event.id === 'move' && index === 0) { const next = newLocation(rng); setLocation(next, '引っ越し') }
   if (!skipSeenMark) {
     s.seen[event.id] = (s.seen[event.id] || 0) + 1;
+    s.lastSeenAge ??= {};
+    s.lastSeenAge[event.id] = s.age;
+    s.seenThisYear ??= [];
+    if (!s.seenThisYear.includes(event.id)) s.seenThisYear.push(event.id);
   }
 
   // 新アーキテクチャ: バリエーション outcomes マトリクス処理
@@ -259,17 +496,23 @@ function settle(event, index, continueYear = true) {
 
   const { label: choiceLabel, result: parsedResult } = parseChoice(active, index, choice);
   const rawResult = finalChoiceResult || parsedResult;
-  const displayResult = isPartnerEvent(event) ? injectPartnerName(rawResult, getPrimaryPartner(s)) : rawResult;
-  const displayDiary = finalDiary ? ageDiary(injectPartnerName(finalDiary, getPrimaryPartner(s))) : ageDiary(diaryForEvent(active, index));
+  const p = getPrimaryPartner(s);
+  const displayResult = injectPartnerName(rawResult, p);
+  const displayDiary = finalDiary ? ageDiary(injectPartnerName(finalDiary, p)) : ageDiary(injectPartnerName(diaryForEvent(active, index), p));
 
   log(active.title, displayDiary, changeSummary(before, snapshot()), {
     choice: choiceLabel,
     result: displayResult,
     classification: active.classification || 'daily'
   });
+  s.lastVariationSubId ??= {};
+  if (active.currentVariation?.sub_id) {
+    s.lastVariationSubId[event.id] = active.currentVariation.sub_id;
+  }
   s.activeVariationSubId = null;
   if (s.pending !== 'multiple_relationship') s.pending = null;
   if (continueYear && !s.pending) processYearEvents();
+  harmonizeScenarios(s);
   s.rngState = rng.state(); render();
   if (!s.pending && !s.finished && isAutoPlaying) scheduleNextAutoStep(800);
 }
@@ -277,6 +520,10 @@ function settleNarrative(rawEvent, continueYear = true) {
   if (!rawEvent) return;
   const before = snapshot();
   s.seen[rawEvent.id] = (s.seen[rawEvent.id] || 0) + 1;
+  s.lastSeenAge ??= {};
+  s.lastSeenAge[rawEvent.id] = s.age;
+  s.seenThisYear ??= [];
+  if (!s.seenThisYear.includes(rawEvent.id)) s.seenThisYear.push(rawEvent.id);
 
   // 効果の適用
   if (rawEvent.effects) {
@@ -315,18 +562,21 @@ function settleNarrative(rawEvent, continueYear = true) {
     }
   }
 
-  const diaryText = rawEvent.diary || ageDiary(diaryForEvent(rawEvent, 0));
-  const badgeLabel = rawEvent.narrative_type === 'precursor' ? 'きっかけ' :
-    rawEvent.narrative_type === 'followup' ? '後日談' : '出来事';
+  const active = getEventCurrent(rawEvent);
+  const p = getPrimaryPartner(s);
+  const diaryText = active.diary || ageDiary(injectPartnerName(diaryForEvent(active, 0), p));
+  const badgeLabel = active.narrative_type === 'precursor' ? 'きっかけ' :
+    active.narrative_type === 'followup' ? '後日談' : '出来事';
 
-  log(rawEvent.title, diaryText, changeSummary(before, snapshot()), {
+  log(active.title, diaryText, changeSummary(before, snapshot()), {
     narrative: true,
-    narrativeType: rawEvent.narrative_type || 'story',
+    narrativeType: active.narrative_type || 'story',
     badgeLabel
   });
 
   if (s.pending === rawEvent.id) s.pending = null;
   if (continueYear && !s.pending) processYearEvents();
+  harmonizeScenarios(s);
   s.rngState = rng.state();
   render();
   if (!s.pending && !s.finished && isAutoPlaying) scheduleNextAutoStep(800);

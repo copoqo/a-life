@@ -1,7 +1,6 @@
 'use strict';
 // 静的データ定義（写真・パラメータキー・地域・名前・職業・人間関係ロール）
 
-// 仕様書準拠 内部パラメータ辞書 (第4章)
 // 利用可能な大人アバター画像（0001〜0077から削除済みの0013を除外）
 const EXCLUDED_ADULT_PHOTOS = new Set(['photo/0013.png']);
 const AVAILABLE_ADULT_PHOTOS = Array.from({ length: 77 }, (_, i) => {
@@ -13,6 +12,29 @@ function pickRandomAdultPhoto(rngObj) {
   const randVal = (rngObj && typeof rngObj.next === 'function') ? rngObj.next() : Math.random();
   const idx = Math.floor(randVal * AVAILABLE_ADULT_PHOTOS.length);
   return AVAILABLE_ADULT_PHOTOS[idx] || 'photo/0001.png';
+}
+
+const INFANCY_PHOTOS = ['photo/infancy01.png', 'photo/infancy02.png', 'photo/infancy03.png'];
+const KNOWN_DEDICATED_CHILDS = ['photo/0001-1.png', 'photo/0002-1.png', 'photo/0003-1.png'];
+const BOND_STATUS_LABELS = {
+  acquaintance: '知人',
+  close: '親しい友人',
+  partner: '交際中',
+  spouse: '配偶者',
+  former: '元交際',
+  widowed: '死別'
+};
+
+function getPhotoForAge(person) {
+  if (!person) return 'photo/0001.png';
+  if (person.age <= 3) {
+    return person.infancyPhoto || 'photo/infancy01.png';
+  }
+  if (person.age <= 11) {
+    const dedicated = person.photo ? person.photo.replace(/\.png$/, '-1.png') : null;
+    return (dedicated && KNOWN_DEDICATED_CHILDS.includes(dedicated)) ? dedicated : 'photo/child01.png';
+  }
+  return person.photo || 'photo/0001.png';
 }
 const TRAIT_KEYS = [
   'constitution', 'cognitive_potential', 'learning_drive', 'extraversion',
@@ -93,7 +115,3 @@ const terrainWeights = [35, 27, 17, 12, 8, 1];
 
 // 性・親密さ関連定数
 const SEXUAL_KEYS = [['desire', '性的欲求'], ['initiative', '積極性'], ['shyness', '羞恥度'], ['curiosity', '好奇心'], ['selfKnowledge', '自己理解'], ['selfAcceptance', '自己肯定感'], ['boundaryVoice', '意思表明力'], ['intimacyNeed', '親密さ欲求']];
-
-const PARTNER_NAMES = { female: FEMALE_NAMES, male: ['直樹', '陽介', '大輔', '健太', '翔太', '拓海', '悠斗', '蓮', '航平', '颯太', '雄大', '和也', '誠', '亮介', '智也', '陸', '駿', '圭介', '修平', '祐樹'] };
-const BOND_ROLES = ['friend', 'colleague', 'teacher', 'neighbor', 'stranger', 'friends_sibling', 'partner_sibling', 'parent_friend', 'childs_teacher', 'bar_encounter'];
-const BOND_ROLE_LABELS = { friend: '友人', classmate: '同級生・クラスメイト', childhood_friend: '幼馴染', club_mate: '部活・趣味の仲間', cram_school_friend: '塾の勉強仲間', senior: '先輩', junior: '後輩', mentor: '恩師・講師', colleague: '同僚', teacher: '学校の先生', neighbor: '隣人', stranger: '街で出会った人', friends_sibling: '友達のきょうだい', partner_sibling: 'パートナーのきょうだい', parent_friend: '子供の友達の親', childs_teacher: '子供の担任の先生', bar_encounter: 'お店で居合わせた人' };

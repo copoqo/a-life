@@ -23,6 +23,15 @@ function setRingProgress(pct, duration = 0, color = null) {
   }
 }
 
+function getBirthYearProgress(st = s) {
+  const bm = st?.birth_month || 4;
+  const curM = st?.current_month || bm;
+  const monthsSinceBirthday = (curM - bm + 12) % 12;
+  const startPct = Math.round((monthsSinceBirthday / 12) * 100);
+  const endPct = Math.round(((monthsSinceBirthday + 1) / 12) * 100);
+  return { bm, curM, monthsSinceBirthday, startPct, endPct };
+}
+
 function updateAutoPlayUI() {
   const btn = document.getElementById('autoToggle');
   const icon = document.getElementById('autoToggleIcon');
@@ -31,12 +40,9 @@ function updateAutoPlayUI() {
   const label = document.getElementById('timeProgressLabel');
   const ageLabel = document.getElementById('timeProgressAge');
 
-  const bm = s?.birth_month || 4;
-  const curM = s?.current_month || bm;
+  const { curM, monthsSinceBirthday, endPct: curYearPct } = getBirthYearProgress(s);
   const seasonName = getSeasonName(curM);
-  const monthsSinceBirthday = (curM - bm + 12) % 12;
   const monthsUntilBirthday = 12 - monthsSinceBirthday;
-  const curYearPct = Math.round(((monthsSinceBirthday + 1) / 12) * 100);
 
   if (ageLabel && s) {
     if (s.finished) {
@@ -99,11 +105,7 @@ function scheduleNextAutoStep(delay = null) {
   // 誕生月から次の誕生月までの12ステップ円形リング表示
   const bar = document.getElementById('timeProgressBar');
   if (bar && s) {
-    const bm = s.birth_month || 4;
-    const curM = s.current_month || bm;
-    const monthsSinceBirthday = (curM - bm + 12) % 12;
-    const startPct = Math.round((monthsSinceBirthday / 12) * 100);
-    const endPct = Math.round(((monthsSinceBirthday + 1) / 12) * 100);
+    const { startPct, endPct } = getBirthYearProgress(s);
     setRingProgress(startPct, 0, '#6366f1');
     if (typeof requestAnimationFrame !== 'undefined') {
       requestAnimationFrame(() => {

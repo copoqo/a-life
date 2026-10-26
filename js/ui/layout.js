@@ -35,6 +35,13 @@ window.openPhotoModal = function (src) {
   modal.classList.add('active');
 };
 
+window.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const modal = document.getElementById('photoModal');
+    if (modal) modal.classList.remove('active');
+  }
+});
+
 // デスクトップ／スマホに応じた「人間関係パネル」の動的配置切り替え
 // デスクトップ：左カラムのパラメータ（#stats）直下（性的・親密な経験パネルの上）
 // スマホ：操作パネル（.play-panel）の上（.workspace直下）
