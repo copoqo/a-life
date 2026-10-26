@@ -63,6 +63,11 @@ function injectPartnerName(str, partner) {
     res = res.replace(/\{spouse(?:_?name)?\}/gi, '配偶者');
   }
 
+  // 記念日関連テンプレート（既婚時は結婚記念日、未婚交際時は結ばれた記念日）
+  const isMarriedState = partner?.status === 'spouse' || (typeof s !== 'undefined' && (s.flags?.married || s.bonds?.some(b => b.status === 'spouse')));
+  res = res.replace(/\{anniversary\}/g, isMarriedState ? '結婚記念日' : '二人が結ばれた記念日');
+  res = res.replace(/\{anniversary_short\}/g, isMarriedState ? '結婚記念' : '記念');
+
   if (partner && partner.gender === 'female') {
     // 同性パートナー時の汎用テキスト内での身体・行為表現の自然な補正
     res = res.replace(/太い熱情/g, '熱い指先と柔肌');

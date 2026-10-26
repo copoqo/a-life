@@ -406,6 +406,11 @@ function injectPartnerName(str, partner) {
     res = res.replace(/\{spouse(?:_?name)?\}/gi, '配偶者');
   }
 
+  // 記念日関連テンプレート（既婚時は結婚記念日、未婚交際時は結ばれた記念日）
+  const isMarriedState = partner?.status === 'spouse' || (typeof s !== 'undefined' && (s.flags?.married || s.bonds?.some(b => b.status === 'spouse')));
+  res = res.replace(/\{anniversary\}/g, isMarriedState ? '結婚記念日' : '二人が結ばれた記念日');
+  res = res.replace(/\{anniversary_short\}/g, isMarriedState ? '結婚記念' : '記念');
+
   if (partner && partner.gender === 'female') {
     // 同性パートナー時の汎用テキスト内での身体・行為表現の自然な補正
     res = res.replace(/太い熱情/g, '熱い指先と柔肌');
@@ -1726,16 +1731,19 @@ function balancedChoiceEffect(event, effect) {
 }
 function annualDailyEventLimit(age) {
   if (age < 6) return 1;
-  if (age < 12) return 2;
-  return 2; // 日常・突発・風情枠: 年間最大2件
+  if (age >= 18 && age < 65) return 2; // 成人期は日常枠最大2件
+  return 1;
 }
 function annualStoryEventLimit(age) {
   if (age < 6) return 0;
-  if (age < 15) return 1;
-  return 2; // ストーリー枠（重大な転機・シナリオ進行）: 年間最大2件
+  if (age >= 18 && age < 65) return 2; // 成人期はストーリー枠最大2件
+  return 1;
 }
 function annualEventLimit(age) {
-  return annualDailyEventLimit(age) + annualStoryEventLimit(age);
+  if (age < 6) return 1;
+  if (age < 18) return 2;
+  if (age >= 65) return 2;
+  return 3; // 成人期（18〜64歳）: 日常＋ストーリー合わせて最大3件
 }
 
 function applyCashDelta(person, delta) {
@@ -2398,14 +2406,16 @@ function pickMonthEvents() {
   // 4. イベント抽選（v2仕様準拠: ストーリーイベント枠と日常・突発枠の独立2系統抽選）
   const maxStoryPerYear = annualStoryEventLimit(s.age);
   const maxDailyPerYear = annualDailyEventLimit(s.age);
+  const maxTotalPerYear = annualEventLimit(s.age);
   const usedStory = s.storyEventsThisYear || 0;
   const usedDaily = s.dailyEventsThisYear || 0;
+  const usedTotal = s.eventsThisYear || 0;
 
-  const canDrawStory = (usedStory < maxStoryPerYear) && triggered.length === 0;
-  const canDrawDaily = (usedDaily < maxDailyPerYear) && triggered.length === 0;
+  const canDrawStory = (usedTotal < maxTotalPerYear) && (usedStory < maxStoryPerYear) && triggered.length === 0;
+  const canDrawDaily = (usedTotal < maxTotalPerYear) && (usedDaily < maxDailyPerYear) && triggered.length === 0;
 
   if (canDrawStory || canDrawDaily) {
-    const ageMultiplier = s.age < 6 ? .30 : s.age < 10 ? .58 : s.age < 15 ? .82 : s.age <= 35 ? 1.35 : s.age <= 49 ? 1.05 : s.age <= 64 ? .85 : s.age <= 79 ? .7 : .55;
+    const ageMultiplier = s.age < 6 ? .20 : s.age < 12 ? .40 : s.age < 18 ? .55 : s.age <= 35 ? 0.70 : s.age <= 49 ? 0.60 : s.age <= 64 ? .50 : .35;
 
     // A. ストーリー枠の選定（進行中シナリオの次ステップや重大な転機を日常イベントと競合させずに選定）
     if (canDrawStory) {
@@ -2420,8 +2430,8 @@ function pickMonthEvents() {
         if (!isEventEligible(e, s)) continue;
 
         const arcBoost = getStoryArcBoost(e, s);
-        // ストーリー枠は日常プールとの競合がなく、シナリオの進行を確実に担保
-        const prob = Math.min(0.85, eventProbability(e) * ageMultiplier * arcBoost * 0.40);
+        // ストーリー枠の月次確率を適正化（年間最大1件、重要シナリオはブーストで着実に発生）
+        const prob = Math.min(0.40, eventProbability(e) * ageMultiplier * arcBoost * 0.20);
         if (rng.next() < prob) {
           storyCandidates.push({ e, priority: arcBoost * 2.0 + rng.next() });
         }
@@ -2465,7 +2475,8 @@ function pickMonthEvents() {
         const prefMonths = getPreferredMonths(e);
         const monthScale = prefMonths ? (1 / Math.max(1, prefMonths.length * 0.85)) : (1 / 10.5);
         const arcBoost = getStoryArcBoost(e, s);
-        const prob = Math.min(0.85, eventProbability(e) * ageMultiplier * arcBoost * monthScale);
+        // 日常枠の月次確率を適正化（年間最大1件）
+        const prob = Math.min(0.30, eventProbability(e) * ageMultiplier * arcBoost * monthScale * 0.65);
         if (rng.next() < prob) {
           const seasonBonus = prefMonths ? 0.6 : 0;
           dailyCandidates.push({ e, priority: arcBoost + seasonBonus + rng.next() * 0.8 });
