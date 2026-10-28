@@ -325,15 +325,30 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
     return;
   }
 
-  if (outcome === 'closer_stranger') {
+  if (outcome.startsWith('closer_')) {
+    const role = outcome.replace('closer_', '');
+    const closerContextMap = {
+      teen_encounter_library_glance: '放課後の図書室で勉強を教えてもらった先輩',
+      teen_encounter_rainy_bus_stop_umbrella: '雨のバス停で相合傘を差し出してくれた他校生',
+      teen_encounter_cram_school_break: '塾の非常階段で缶ココアを分け合った相手',
+      teen_encounter_sports_festival_sweat: '用具倉庫で倒れそうになったところを抱きとめてくれた相手',
+      teen_encounter_cultural_festival_costume: '買い出しの人混みで恋人繋ぎをしてくれた同級生',
+      teen_encounter_infirmary_afternoon: '午後の保健室で秘密の囁きを交わした同級生',
+      teen_romance_adjacent_desks_doodle: '授業中に机の下で膝を触れ合わせた隣の席の同級生',
+      teen_romance_cleaning_duty_dustpan: '放課後の教室で二人きりで掃除当番をした同級生',
+      teen_romance_sharing_earphones_bicycle_parking: '駐輪場で有線イヤホンを分け合って肩を寄せた同級生',
+      teen_romance_print_handout_backward_glance: 'プリントを回すたびに密かに指先を重ねた同級生',
+      teen_romance_convenience_store_famichiki_bench: '学校帰りのコンビニで肉まんを半分こした同級生',
+      teen_romance_study_group_family_restaurant: 'テスト前のファミレスで夜まで二人で残った同級生'
+    };
     upsertEventBond({
-      role: 'stranger',
+      role: role,
       status: 'close',
       mode: 'create',
-      affection: 52,
-      trust: 40,
-      romanticInterest: 74,
-      metContext: '街角で声をかけられカフェで意気投合'
+      affection: 56,
+      trust: 44,
+      romanticInterest: 78,
+      metContext: closerContextMap[e.id] || (role === 'stranger' ? '街角で声をかけられカフェで意気投合' : '学生時代の印象的な出会い')
     }, e);
     return;
   }
@@ -381,7 +396,19 @@ function handleSocialOutcome(e, index, choiceEff = {}, choice = null) {
       encounter_parent_friend: '送迎の車内で接近した子供の友達の親',
       encounter_childs_teacher: '夕暮れの面談室で接近した担任教師',
       encounter_bar_stranger: 'バーのカウンターで隣り合った人',
-      encounter_neighbor: '深夜に訪れた隣人'
+      encounter_neighbor: '深夜に訪れた隣人',
+      teen_encounter_library_glance: '図書室で本棚越しに出会った先輩',
+      teen_encounter_rainy_bus_stop_umbrella: '夕立のバス停で居合わせた他校生',
+      teen_encounter_cram_school_break: '塾の自習室の合間に話した勉強仲間',
+      teen_encounter_sports_festival_sweat: '体育祭の準備で倉庫を手伝ってくれた仲間',
+      teen_encounter_cultural_festival_costume: '文化祭の買い出しに一緒に行った同級生',
+      teen_encounter_infirmary_afternoon: '午後の保健室で居合わせた同級生',
+      teen_romance_adjacent_desks_doodle: '授業中にメモを回し合った隣の席の同級生',
+      teen_romance_cleaning_duty_dustpan: '放課後の掃除当番で居合わせた同級生',
+      teen_romance_sharing_earphones_bicycle_parking: '駐輪場で音楽を聴いていた同級生',
+      teen_romance_print_handout_backward_glance: '前後の席でプリントを回し合う同級生',
+      teen_romance_convenience_store_famichiki_bench: '学校帰りにコンビニに寄り道した同級生',
+      teen_romance_study_group_family_restaurant: '放課後にファミレスで勉強した同級生'
     };
     let b = role ? s.bonds.find(x => x.role === role && (x.status === 'acquaintance' || x.status === 'close')) : null;
     if (!b || !e.id.startsWith('encounter_')) {

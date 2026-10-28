@@ -1,5 +1,5 @@
 // ============================================================================
-// Pack: 03_teen_school_puberty — 中高生の学園生活・部活・受験・思春期の芽生え・背伸び (59 events)
+// Pack: 03_teen_school_puberty — 中高生の学園生活・部活・受験・思春期の芽生え・背伸び (71 events)
 // ============================================================================
 window.defineEvent({
   "id": "mild_sexuality_first_bra_shopping",
@@ -4135,4 +4135,1009 @@ window.defineEvent({
     "事後の甘い反省会。お互いの身体の性感帯を話し合っているうちにまた興奮してきて、結局もう一回抱き合ってしまった。覚えたてって本当に止まらない。"
   ]
 });
+
+window.defineEvent({
+  "id": "teen_encounter_library_glance",
+  "title": "放課後の図書室・本棚の間で重なる指先と先輩の匂い",
+  "age": [
+    14,
+    18
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [
+    "school_student",
+    "unmarried"
+  ],
+  "weight": 35,
+  "is_encounter": true,
+  "text": "放課後の図書室。高い書架の隙間から西日が差し込み、静寂の中に埃が金色に舞う空間。背伸びをして目当ての参考書に手を伸ばした瞬間、横から伸びてきた大きな手と指先が重なった。見上げると、涼やかな目元の先輩。制服のシャツ越しに微かに漂う柑橘系と清潔な石鹸の匂い。「あ、ごめん。使いたい？」。低く落ち着いた声に心臓がドクンと跳ね、耳まで真っ赤になって息を呑む……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "「どうぞ使ってください」と本を譲り、照れくさそうに言葉を交わす",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 4,
+            "shyness": 3,
+            "communication": 3,
+            "sexualEffects": {
+              "libido": 1
+            }
+          },
+          "narrative": "顔を真っ赤にして本を譲ると、先輩は柔らかく目を細めて「ありがとう。でも一緒に見ようか」と机へ促してくれた。並んで座る距離の近さに、シャツ越しに伝わる体温と匂いに胸がときめき、ページをめくる指が微かに震えた。",
+          "id": "outcome_0"
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "「もしよかったら、少し教えてもらえませんか……？」と勉強を口実に隣へ誘う",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 5,
+            "knowledge": 3,
+            "shyness": 4,
+            "sexualEffects": {
+              "libido": 2,
+              "intimacy": 2
+            }
+          },
+          "narrative": "勇気を出して小声でお願いすると、先輩は「いいよ、どこが分からない？」と隣に座ってノートを覗き込んできた。肩と肩が触れ合いそうな至近距離。先輩の低く優しい息遣いが耳元をかすめるたび、下腹がきゅんと甘く痺れ、勉強どころではない陶酔に包まれた。",
+          "id": "outcome_1"
+        }
+      ]
+    },
+    {
+      "id": "choice_2",
+      "label": "恥ずかしさのあまり小さく頭を下げてその場を駆け去る",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "shyness": 5,
+            "stress": 1
+          },
+          "narrative": "憧れの先輩の至近距離の視線に耐えきれず、小さくお辞儀をして逃げるように図書室を飛び出した。廊下を走りながら、指先に残る触れ合った温もりと跳ね上がる鼓動を必死に抑え込んだ。",
+          "id": "outcome_2"
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    "meeting_senior",
+    "closer_senior",
+    "none"
+  ],
+  "diary": [
+    "図書室で本を取ろうとしたら、先輩と手が触れ合っちゃった！ 石鹸のいい匂いがして、胸が張り裂けそうなくらいドキドキした。",
+    "憧れの先輩に勉強を教えてもらった。距離がすごく近くて、先輩の横顔と低い声にずっと見とれて下腹が熱くなっていた。"
+  ]
+});
+
+window.defineEvent({
+  "id": "teen_encounter_rainy_bus_stop_umbrella",
+  "title": "夕立のバス停・他校生の差し出した相合傘と触れ合う肩",
+  "age": [
+    15,
+    18
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [
+    "school_student",
+    "unmarried"
+  ],
+  "weight": 35,
+  "is_encounter": true,
+  "text": "激しい夕立に見舞われた放課後。駅前のバス停の小さなトタン屋根の下、濡れた制服のスカートを気にしながら途方に暮れていた。そこへ息を切らして駆け込んできた他校の男子生徒。「ずぶ濡れじゃん、駅まで入ってく？」。差し出された紺色の大きな傘。狭い傘の下、肩と肩が触れ合い、湿った雨の匂いと男の子特有の熱い体温が鼻腔をくすぐる。一歩歩くごとに触れ合う腕の感触に、下腹部が甘くざわめく……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "「ありがとうございます……」と傘に入り、触れ合う肩の熱に胸を高鳴らせる",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 5,
+            "shyness": 3,
+            "communication": 2,
+            "sexualEffects": {
+              "libido": 2
+            }
+          },
+          "narrative": "おずおずと傘の下へ潜り込むと、雨粒がトントンと傘を叩く音だけが二人を包んだ。「濡れないように」と引き寄せられた肩の逞しさ。男の子の体温が濡れた制服越しにじわじわと伝わり、心臓の鼓動が雨音よりも大きく胸に響いた。",
+          "id": "outcome_0"
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "駅に着いた後、「傘、ありがとうございました。あの、連絡先……」と勇気を出す",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 6,
+            "shyness": 4,
+            "courage": 3,
+            "sexualEffects": {
+              "libido": 2,
+              "intimacy": 2
+            }
+          },
+          "narrative": "改札の前で傘を畳む彼に、思い切ってスマートフォンの画面を見せた。彼は驚いたように目を丸くした後、嬉しそうに照れ笑いを浮かべて連絡先を交換してくれた。「今度は晴れてる日に会おうよ」。別れ際の一言に、足元から熱い痺れが駆け上がった。",
+          "id": "outcome_1"
+        }
+      ]
+    },
+    {
+      "id": "choice_2",
+      "label": "緊張して「すぐ止むと思うので大丈夫です」と遠慮して見送る",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "shyness": 4,
+            "independence": 2
+          },
+          "narrative": "見知らぬ他校生との相合傘に気後れして遠慮してしまった。去っていく彼の広い背中を雨の向こうに見送りながら、ちょっぴり後悔と切なさが胸をかすめた。",
+          "id": "outcome_2"
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    "meeting_stranger",
+    "closer_stranger",
+    "none"
+  ],
+  "diary": [
+    "夕立で立ち往生していたら、他校の男の子が傘に入れてくれた。狭い傘の中で肩が触れ合って、すごく熱くてドキドキした。",
+    "雨の日に傘に入れてくれた男の子と連絡先を交換しちゃった！ 晴れた日にまた会おうって言われて、帰り道ずっと顔が緩みっぱなしだった。"
+  ]
+});
+
+window.defineEvent({
+  "id": "teen_encounter_cram_school_break",
+  "title": "夜の塾の自習室・薄暗い非常階段と温かい缶ココア",
+  "age": [
+    15,
+    18
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [
+    "school_student",
+    "unmarried"
+  ],
+  "weight": 35,
+  "is_encounter": true,
+  "text": "夜の進学塾。張り詰めた空気の自習室で勉強に疲れ、夜風に当たろうと非常階段の踊り場へ出た。そこには自販機の前でいつも見かける他校の男の子。「お疲れ。これ、飲む？」。差し出された温かい缶ココア。指先が触れた瞬間、じんわりと温もりが伝わり、冷えた手先から胸へと熱が巡る。薄暗い階段の隅、夜風にスカートを揺らしながら二人きりで交わす秘密の雑談。背伸びして大人びた世界に迷い込んだような胸の高鳴り……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "ココアを受け取り、階段に並んで座って学校の愚痴や受験の不安を語り合う",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 5,
+            "stress": -3,
+            "communication": 3,
+            "sexualEffects": {
+              "libido": 1
+            }
+          },
+          "narrative": "温かい缶を両手で包み、コンクリートの階段に腰掛けて他愛ない話に花を咲かせた。普段学校では話せない本音を打ち明けるうち、二人だけの秘密基地のような親密さが生まれ、夜の冷気の中で互いの距離が少しずつ縮まっていった。",
+          "id": "outcome_0"
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "「明日もこの時間に会える？」と小声で甘えるように約束を交わす",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 6,
+            "shyness": 4,
+            "sexualEffects": {
+              "libido": 2,
+              "intimacy": 2
+            }
+          },
+          "narrative": "空になった缶を握りしめ、上目遣いに見つめて約束をねだると、彼は少し照れたように耳を赤くして「うん、絶対来る」と頷いてくれた。薄暗い踊り場で見つめ合う数秒の沈黙に、言葉にできない熱い情欲の芽生えを感じた。",
+          "id": "outcome_1"
+        }
+      ]
+    },
+    {
+      "id": "choice_2",
+      "label": "軽くお礼だけ言って、すぐに自習室へと戻る",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "knowledge": 3,
+            "stress": 1
+          },
+          "narrative": "勉強の遅れが気になり、お礼を言って一口ココアを飲んですぐに席へ戻った。それでも机に向かいながら、階段で触れ合った指の温もりがいつまでも消えなかった。",
+          "id": "outcome_2"
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    "meeting_cram_school_friend",
+    "closer_cram_school_friend",
+    "none"
+  ],
+  "diary": [
+    "塾の非常階段で、いつも見かける男の子からココアをもらった。夜風の中で並んで話した時間が、なんだか特別で胸がキュッとした。",
+    "塾の合間に階段で話す彼と、明日も会う約束をした。受験勉強は辛いけれど、彼に会えると思うと塾に行くのが楽しみになる。"
+  ]
+});
+
+window.defineEvent({
+  "id": "teen_encounter_sports_festival_sweat",
+  "title": "体育祭の用具倉庫・倒れかかった瞬間抱きとめられた熱い胸板",
+  "age": [
+    14,
+    18
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [
+    "school_student",
+    "unmarried"
+  ],
+  "weight": 35,
+  "is_encounter": true,
+  "text": "体育祭の準備期間、放課後の薄暗い用具倉庫。石灰の粉と砂埃が舞う中、重いハードルを片付けようとして足をもつれさせてしまった。倒れかけた身体を、背後から逞しい腕がガッシリと抱きとめる。「危ねえよ、大丈夫か？」。運動部の男子。汗ばんだ体操服越しに押し当てられた胸板の硬さと熱い鼓動、荒い息遣いが首筋に吹きかかり、触れ合っている下腹のあたりがじんと痺れるように熱くなる……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "抱きしめられた体勢のまま固まり、相手の胸板の感触に息を呑む",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 4,
+            "shyness": 4,
+            "sexualEffects": {
+              "libido": 3
+            }
+          },
+          "narrative": "逞しい腕に抱きとめられたまま、男の子の身体の厚みと力強さに頭が真っ白になった。「怪我ない？」と顔を覗き込まれ、間近にある汗の光る鎖骨と荒い呼吸に、太ももの内側がぎゅっと引き締まるような激しい昂ぶりを覚えた。",
+          "id": "outcome_0"
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "「ありがとう……すごく力持ちなんだね」と上目遣いで見つめて微笑む",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 6,
+            "shyness": 3,
+            "charm": 3,
+            "sexualEffects": {
+              "libido": 2,
+              "intimacy": 3
+            }
+          },
+          "narrative": "腕の中から見上げると、彼は急に気まずそうに顔を真っ赤にして視線を逸らした。「……これくらい普通だし。残りは俺が運ぶから座ってろよ」。無骨な優しさに胸がときめき、倉庫の薄暗がりで二人きりの甘い空気が漂った。",
+          "id": "outcome_1"
+        }
+      ]
+    },
+    {
+      "id": "choice_2",
+      "label": "恥ずかしさで慌てて飛び退き、顔を真っ赤にしてペコペコ謝る",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "shyness": 5,
+            "agility": 1
+          },
+          "narrative": "男の子の肉体の生々しさに怯えて咄嗟に身体を離し、真っ赤になって頭を下げて倉庫を出た。自分の胸の奥で暴れる激しい動悸に、男の子の身体に触れられた衝撃が残っていた。",
+          "id": "outcome_2"
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    "meeting_club_mate",
+    "closer_club_mate",
+    "none"
+  ],
+  "diary": [
+    "体育祭の準備で倉庫で倒れそうになった時、運動部の男子に抱きとめられた。胸板がすごく硬くて汗の匂いがして、頭がくらくらした。",
+    "助けてくれた彼が照れて残りの荷物を全部運んでくれた。男の子の強さと逞しさを間近で感じて、胸がずっと熱かった。"
+  ]
+});
+
+window.defineEvent({
+  "id": "teen_encounter_cultural_festival_costume",
+  "title": "文化祭の買い出し・人混みの商店街で絡められた恋人繋ぎ",
+  "age": [
+    15,
+    18
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [
+    "school_student",
+    "unmarried"
+  ],
+  "weight": 35,
+  "is_encounter": true,
+  "text": "文化祭の準備で、装飾資材の買い出しを任された夕暮れの商店街。セールで賑わう人混みの中、はぐれそうになった私の手首を、買い出し当番の同級生男子がぎゅっと掴んだ。「はぐれたら困るから」。そのまま指と指を絡め合わせる『恋人繋ぎ』に変えられた。男の子の少し汗ばんだ大きな手のひら、硬い節くれだった指の温もり。心臓が早鐘を打ち、人混みの中で手をつないで歩く背徳的な甘い羞恥に足がふらつく……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "繋がれた手をそっと握り返し、顔を赤らめながら並んで歩く",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 5,
+            "shyness": 4,
+            "communication": 2,
+            "sexualEffects": {
+              "libido": 2
+            }
+          },
+          "narrative": "絡められた指先を小さく握り返すと、彼の手がさらに力強く握りしめてくれた。夕暮れの風の中、繋いだ手のひらから汗が滲み出るほど熱く、周りの目線を気にしながら歩く背徳的な甘酸っぱさに胸がいっぱいになった。",
+          "id": "outcome_0"
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "「……このまま、少し寄り道していかない？」と上目遣いで甘えてみる",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 6,
+            "shyness": 3,
+            "charm": 3,
+            "sexualEffects": {
+              "libido": 3,
+              "intimacy": 3
+            }
+          },
+          "narrative": "手を繋いだまま路地裏のクレープ屋へ誘うと、彼は嬉しそうに頷いてクレープを半分こしてくれた。食べさせ合いながら触れ合う唇と指先。買い出しという口実の裏で、二人だけの初デートのような密やかな時間を過ごした。",
+          "id": "outcome_1"
+        }
+      ]
+    },
+    {
+      "id": "choice_2",
+      "label": "「ちょ、ちょっと恥ずかしいよ」と手を離そうとしつつも離せない",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "shyness": 4,
+            "happiness": 3
+          },
+          "narrative": "照れくさくて手をほどこうとしたけれど、彼の指が離してくれず、結局買い出しが終わるまで手を繋いだまま歩いた。繋がれた手のひらの熱が、夜になってもずっと残っていた。",
+          "id": "outcome_2"
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    "meeting_classmate",
+    "closer_classmate",
+    "none"
+  ],
+  "diary": [
+    "文化祭の買い出し中、人混みで同級生の男の子に恋人繋ぎされた。手のひらが大きくて熱くて、恥ずかしさで心臓が飛び出そうだった。",
+    "買い出しの帰りに二人で寄り道した。手を繋いだままクレープを食べて、まるで本当の恋人同士みたいで夢見心地だった。"
+  ]
+});
+
+window.defineEvent({
+  "id": "teen_encounter_infirmary_afternoon",
+  "title": "午後の保健室・白いカーテン越しに重なる微熱と秘密の囁き",
+  "age": [
+    14,
+    18
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [
+    "school_student",
+    "unmarried"
+  ],
+  "weight": 35,
+  "is_encounter": true,
+  "text": "体育の後の午後、生理痛と微熱で保健室のベッドに横たわっていた。静まり返った室内、白い仕切りカーテンの向こうに誰かが入ってくる気配。部活の練習で膝を擦りむいた男子生徒が、湿布を探して奥へやってきた。カーテンが不意にシャッと開かれ、目が合ってしまう。「あ……ごめん、寝てた？」「……ううん」。薄暗いベッドの上、無防備な制服姿で横たわる自分を見下ろす男子の眼差し。カーテンで閉ざされた密室で、消毒液の匂いとともに甘い背徳の緊張が走る……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "カーテン越しに小さな声でヒソヒソとお互いの秘密を語り合う",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 5,
+            "shyness": 4,
+            "communication": 3,
+            "sexualEffects": {
+              "libido": 2
+            }
+          },
+          "narrative": "カーテンを少しだけ開けたまま、先生が戻ってこないか気にしながら小声で語り合った。「お腹痛いの？」「うん、ちょっとね……」。布団の上の自分を見つめる彼の優しい視線に、下腹の痛みがいつの間にか甘い疼きへと溶けていった。",
+          "id": "outcome_0"
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "「膝、手当てしてあげようか？」と起き上がり、ガーゼを貼ってあげる",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 6,
+            "shyness": 4,
+            "sexualEffects": {
+              "libido": 3,
+              "intimacy": 3
+            }
+          },
+          "narrative": "ベッドから身を起こし、彼の膝の傷にそっと消毒液をつけてガーゼを貼ってあげた。至近距離で見つめ合う二人。「ありがとう……なんか、すごくドキドキした」と彼が呟き、耳まで赤くなった顔を見合わせて小さく笑い合った。",
+          "id": "outcome_1"
+        }
+      ]
+    },
+    {
+      "id": "choice_2",
+      "label": "毛布を頭まで引き被り、恥ずかしさに身を縮こまらせる",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "shyness": 5,
+            "stress": -1
+          },
+          "narrative": "すっぴんで乱れた髪を見られるのが恥ずかしくて毛布に潜り込んだ。彼は「ごめん、ゆっくり休んで」と小さく言ってカーテンを閉めてくれた。暗い毛布の中で、胸の鼓動が激しく波打っていた。",
+          "id": "outcome_2"
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    "meeting_classmate",
+    "closer_classmate",
+    "none"
+  ],
+  "diary": [
+    "保健室で休んでいたら、怪我をした男子が入ってきてカーテン越しに話した。静かな部屋で二人きりって、すごくドキドキする。",
+    "保健室で彼の擦り傷を手当てしてあげた。触れ合う指先と至近距離の視線に、お腹の痛みも忘れて身体中が火照ってしまった。"
+  ]
+});
+
+window.defineEvent({
+  "id": "teen_romance_adjacent_desks_doodle",
+  "title": "隣の席の彼・教科書の余白の落書きと机の隙間の膝",
+  "age": [
+    14,
+    18
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [
+    "school_student",
+    "unmarried"
+  ],
+  "weight": 35,
+  "is_encounter": true,
+  "text": "席替えで窓際の隣同士になったクラスメイトの男子。午後の眠たい授業中、退屈そうにシャーペンを回す彼の横顔。机と机の間はわずか十センチ。彼が体勢を変えるたび、ブレザーの袖が擦れ合う。ふとノートの切れ端がこちらの机に滑り込んできた。『眠すぎ、あと何分？』。下手くそな落書きのメモ。先生の目を盗んで返事を書く瞬間、机の下で伸ばされた彼の膝がこちらのスカートの裾にコツンと触れ、下腹部が甘く跳ね上がる……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "「あと二十分。寝たら先生に怒られるよ」とメモを返してクスクス笑い合う",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 5,
+            "shyness": 2,
+            "communication": 3,
+            "sexualEffects": {
+              "libido": 1
+            }
+          },
+          "narrative": "メモを押し戻すと、彼はそれを読んで吹き出しそうになり、慌てて口元を手で押さえた。先生に見つからないよう机に突っ伏して笑い合う二人。共有する秘密のやり取りに、退屈だった授業が特別な時間へと変わっていった。",
+          "id": "outcome_0"
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "机の下で触れ合った膝をあえて引かず、布越しに伝わる温もりにじっと耐える",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 6,
+            "shyness": 4,
+            "sexualEffects": {
+              "libido": 3,
+              "intimacy": 2
+            }
+          },
+          "narrative": "当たったままの膝をお互いに引かないまま、無言で黒板を見つめ続けた。制服の薄い生地越しにじんわりと伝わってくる彼の体温。心臓の鼓動が激しくなり、下腹の奥がきゅっと疼いて、授業の内容が一切頭に入ってこなくなった。",
+          "id": "outcome_1"
+        }
+      ]
+    },
+    {
+      "id": "choice_2",
+      "label": "先生に見つからないようメモを筆箱に隠し、真面目に前を向く",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "knowledge": 2,
+            "shyness": 3
+          },
+          "narrative": "真面目なふりをして前を向いたけれど、机の引き出しにしまった彼のメモが気になって仕方がない。視線の端に映る彼の動向に、胸がずっと落ち着かなかった。",
+          "id": "outcome_2"
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    "meeting_classmate",
+    "closer_classmate",
+    "none"
+  ],
+  "diary": [
+    "席替えで隣になった男の子と、授業中にメモを回し合いっこした。くだらない落書きだったけれど、二人でこっそり笑い合えて楽しかった。",
+    "机の下で彼と膝が触れ合ったまま、お互い引かずに授業を受けた。布越しに伝わる熱がすごくて、下腹がずっとドキドキしていた。"
+  ]
+});
+
+window.defineEvent({
+  "id": "teen_romance_cleaning_duty_dustpan",
+  "title": "放課後の掃除当番・二人きりの教室と舞うチョークの粉",
+  "age": [
+    14,
+    18
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [
+    "school_student",
+    "unmarried"
+  ],
+  "weight": 35,
+  "is_encounter": true,
+  "text": "放課後の教室。他の班員が部活や委員会で抜け出し、掃除当番で彼と二人きりになった夕暮れ。机を後方に下げ、箒で埃を集める彼と、ちりとりを構える自分。西日に照らされて舞う白いチョークの粉。「そっちの角、まだゴミあるじゃん」「お前がちゃんと集めろよ」。いつもの軽口を叩き合いながら、ゴミを集めるために至近距離でしゃがみ込んだ瞬間、ふと目が合った。急に訪れる無言の数秒間。男子特有の汗の匂いと、目の前の彼の喉仏の上下に、息が止まりそうになる……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "照れくささを誤魔化すように「早く終わらせて帰ろ！」とちりとりを差し出す",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 5,
+            "shyness": 3,
+            "communication": 2,
+            "sexualEffects": {
+              "libido": 1
+            }
+          },
+          "narrative": "わざと明るく声をかけると、彼も照れくさそうに「おう」と箒を動かした。ゴミを捨てに行く廊下、並んで歩く歩幅の心地よさに、なんでもない日常の掃除が宝物のように思えた。",
+          "id": "outcome_0"
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "しゃがんだまま視線を逸らさず、二人だけの沈黙の緊張をじっと見つめ返す",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 6,
+            "shyness": 4,
+            "sexualEffects": {
+              "libido": 3,
+              "intimacy": 3
+            }
+          },
+          "narrative": "至近距離で見つめ合うと、彼の耳がみるみる赤く染まっていった。「……お前さ、そういう顔すんなよ」。低く掠れた声で呟き、気まずそうに視線を泳がせる彼。二人きりの夕暮れの教室に、甘く重たい空気が充満した。",
+          "id": "outcome_1"
+        }
+      ]
+    },
+    {
+      "id": "choice_2",
+      "label": "恥ずかしくなって立ち上がり、黒板消しを叩きに窓辺へ逃げる",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "shyness": 5,
+            "stress": -1
+          },
+          "narrative": "耐えきれなくなってパッと立ち上がり、窓を開けて黒板消しをパンパンと叩いた。外から吹き込む夕風を浴びながら、真っ赤になった頬を手で冷ました。",
+          "id": "outcome_2"
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    "meeting_classmate",
+    "closer_classmate",
+    "none"
+  ],
+  "diary": [
+    "掃除当番で彼と二人きりになった。ゴミを集める時に目が合って、急に静かになってすっごく緊張した。",
+    "しゃがんで掃除している時、彼と見つめ合っちゃった。耳まで真っ赤にして照れる彼がすごく格好良くて、胸がぎゅっとなった。"
+  ]
+});
+
+window.defineEvent({
+  "id": "teen_romance_sharing_earphones_bicycle_parking",
+  "title": "放課後の駐輪場・片方ずつの有線イヤホンと肩の距離",
+  "age": [
+    14,
+    18
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [
+    "school_student",
+    "unmarried"
+  ],
+  "weight": 35,
+  "is_encounter": true,
+  "text": "放課後の駐輪場。自転車の鍵を開けていると、隣に止めていたクラスメイトの男子がやってきた。「お、まだいたんだ」。スマホから有線イヤホンを伸ばして音楽を聴いている私に、彼がひょいと覗き込んできた。「何聴いてんの？ 片方貸して」。断る間もなく右耳に突っ込まれる白いイヤホン。短いコードに引っ張られ、自然と肩と頭が触れ合いそうなほど近づく。自転車のサドルに腰掛け、同じロックバンドの曲を聴きながら流れる静かな夕暮れの時間。耳元から漂う彼の体温と息遣いに、全身の血が騒ぎ出す……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "「このバンド、好きなの？」と肩を寄せ合いながら音楽の好みを語り合う",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 5,
+            "communication": 3,
+            "shyness": 3,
+            "sexualEffects": {
+              "libido": 2
+            }
+          },
+          "narrative": "同じリズムに頭を揺らしながら、お互いの好きなアルバムの話で盛り上がった。コードに引っ張られて近づくたびに触れ合う肩。なんでもない夕暮れの駐輪場が、二人だけのライブハウスのように思えた。",
+          "id": "outcome_0"
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "コードが短いのをいいことに、ほんの少し彼の肩に頭を寄せてみる",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 7,
+            "shyness": 4,
+            "courage": 2,
+            "sexualEffects": {
+              "libido": 3,
+              "intimacy": 3
+            }
+          },
+          "narrative": "そっと頭を傾けて彼の肩に触れると、彼が一瞬息を呑んで硬直した。けれど突き放されることはなく、そっと私の頭を受け止めるように肩を寄せてくれた。夕暮れの風の中、二人で同じ曲を聴きながら、言葉以上の甘い約束を交わした。",
+          "id": "outcome_1"
+        }
+      ]
+    },
+    {
+      "id": "choice_2",
+      "label": "「もう帰るから返して！」と照れ隠しにイヤホンを引っ張る",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "shyness": 4,
+            "happiness": 3
+          },
+          "narrative": "近すぎる距離に心臓が持ちそうになく、イヤホンを抜き取って自転車に飛び乗った。「また明日な！」と手を振る彼の笑顔が、ペダルを漕ぐ背中をいつまでも温かく見送ってくれた。",
+          "id": "outcome_2"
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    "meeting_classmate",
+    "closer_classmate",
+    "none"
+  ],
+  "diary": [
+    "駐輪場で彼と片方ずつイヤホンをつけて音楽を聴いた。コードが短くて肩がずっと触れ合っていて、すごくドキドキした。",
+    "イヤホンを聴きながら、思い切って彼の肩に頭を寄せてみた。彼も受け止めてくれて、夕暮れの駐輪場で二人きりの宝物の時間になった。"
+  ]
+});
+
+window.defineEvent({
+  "id": "teen_romance_print_handout_backward_glance",
+  "title": "前後の席のプリント回し・振り返るたびに触れる指先",
+  "age": [
+    14,
+    18
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [
+    "school_student",
+    "unmarried"
+  ],
+  "weight": 35,
+  "is_encounter": true,
+  "text": "前後の席になった彼。前から回ってきたプリントを後ろの彼に渡すため、椅子の上で身体をひねって振り返る。授業のたびに一日に何度も繰り返される、誰の目にも留まらない日常の動作。けれど、プリントを受け取る彼の親指が、こちらの指先にいつもペタッと微かに触れる。「ありがと」「……うん」。視線が絡み合うわずか一秒。他の誰にも気づかれない、二人だけの秘密の接触。席を前に戻した後も、触れられた指先の熱が授業中ずっと消えず、スカートの中で太ももをもじもじと擦り合わせてしまう……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "次にプリントを渡す時、少しだけ長めに指先を重ねて微笑みかける",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 6,
+            "shyness": 4,
+            "sexualEffects": {
+              "libido": 3,
+              "intimacy": 2
+            }
+          },
+          "narrative": "紙を受け取る瞬間に指先を少し絡めるように触れさせると、彼がハッとして目を見開き、耳まで真っ赤になった。教卓の先生には見えない机の上の密やかな戯れ。背中越しに伝わってくる彼の意識に、授業中ずっと下腹が甘く疼き続けた。",
+          "id": "outcome_0"
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "放課後に二人きりになった時、「いつも指、当たってるよね」と小さくからかう",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 6,
+            "charm": 3,
+            "shyness": 3,
+            "sexualEffects": {
+              "libido": 2,
+              "intimacy": 3
+            }
+          },
+          "narrative": "下校前の廊下で耳打ちすると、彼は激しく動揺して視線を泳がせた。「……わざとじゃねえよ。でも、嫌なら言ってくれよ」「嫌じゃないよ」。小さな囁きに、彼は言葉を失って真っ赤になり、二人の距離が一気に縮まった。",
+          "id": "outcome_1"
+        }
+      ]
+    },
+    {
+      "id": "choice_2",
+      "label": "意識しすぎてプリントを机の上にバサッと無言で置いて前を向く",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "shyness": 5,
+            "stress": 1
+          },
+          "narrative": "指先が触れるのが恥ずかしくて、わざと雑に机へ置いてすぐに前を向いてしまった。後ろから小さく「あ……」と困ったような声が聞こえ、素直になれない自分に自己嫌悪を覚えた。",
+          "id": "outcome_2"
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    "meeting_classmate",
+    "closer_classmate",
+    "none"
+  ],
+  "diary": [
+    "プリントを後ろに回す時、いつも彼の指が私の指に触れる。誰にも見えない一瞬の触れ合いなのに、心臓が跳ね上がって仕方がない。",
+    "プリントを渡す時にちょっと長く指を重ねてみた。彼が真っ赤になってて、私と同じ気持ちなんだって分かってすごく嬉しかった。"
+  ]
+});
+
+window.defineEvent({
+  "id": "teen_romance_convenience_store_famichiki_bench",
+  "title": "学校帰りのコンビニの前・ひとつの肉まんを半分こする夕暮れ",
+  "age": [
+    14,
+    18
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [
+    "school_student",
+    "unmarried"
+  ],
+  "weight": 35,
+  "is_encounter": true,
+  "text": "テスト返却の日の放課後、クラスメイトの彼と並んで学校を出た。駅前のコンビニに寄り道し、温かい肉まんを一つ買う。「金欠だから一口くれよ」「えー、半分だけだよ」。寒空の下、縁石に並んで座り、紙包みを破って半分こにする。湯気の立つ肉まんを頬張る彼の横顔。彼の齧った側の温もりを確かめながら口を運ぶ間接キス。ブレザーの袖が触れ合うたびに伝わってくる温もりと、夕暮れの帰り道を一緒に歩くことへの淡い幸せに、胸の奥がきゅんと甘酸っぱく疼く……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "「おいしいね」と笑い合い、お互いの食べた跡を気にしながら食べ進める",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 5,
+            "communication": 3,
+            "shyness": 2,
+            "sexualEffects": {
+              "libido": 1
+            }
+          },
+          "narrative": "口いっぱいに頬張りながら、テストの点数の酷さを笑い合った。冷たい冬の空気の中、分け合った肉まんの温もりと、隣にいる彼のぬくもりが身体の芯までぽかぽかと温めてくれた。",
+          "id": "outcome_0"
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "「はい、あーん」と自分の持っている分を彼の口元へ直接差し出してみる",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 7,
+            "shyness": 4,
+            "charm": 3,
+            "sexualEffects": {
+              "libido": 3,
+              "intimacy": 3
+            }
+          },
+          "narrative": "冗談めかして差し出すと、彼は一瞬驚きつつも、照れくさそうにパクリと口を開けてかじりついた。唇が指先に微かに触れ、濡れた感触に指先から火が出そうになった。「……うまい」。赤面する彼の瞳に、甘い情熱が宿っていた。",
+          "id": "outcome_1"
+        }
+      ]
+    },
+    {
+      "id": "choice_2",
+      "label": "「寒くなってきたから、もう行こっか」と並んで駅の改札へと歩き出す",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 4,
+            "health": 2
+          },
+          "narrative": "ゴミ箱に紙包みを捨て、駅へと並んで歩いた。夕方の雑踏の中、付かず離れずの距離を歩く心地よさに、この道がずっと続けばいいのにと願った。",
+          "id": "outcome_2"
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    "meeting_classmate",
+    "closer_classmate",
+    "none"
+  ],
+  "diary": [
+    "放課後、コンビニの前で彼と肉まんを半分こした。寒かったけれど、彼と並んで座って食べた肉まんは世界で一番おいしかった。",
+    "肉まんを『あーん』って食べさせてあげたら、彼の唇が指に触れちゃった。真っ赤になって照れる彼が愛おしくてたまらなかった。"
+  ]
+});
+
+window.defineEvent({
+  "id": "teen_romance_study_group_family_restaurant",
+  "title": "テスト前のファミレス・二人きりで残されたドリンクバーの席",
+  "age": [
+    14,
+    18
+  ],
+  "trigger": "normal",
+  "classification": "daily",
+  "content_rating": "general",
+  "presets": [
+    "school_student",
+    "unmarried"
+  ],
+  "weight": 35,
+  "is_encounter": true,
+  "text": "テスト前、放課後に何人かで駅前のファミレスに集まって勉強会を開いた。夕暮れを過ぎ、他の友達が部活や門限で一人、また一人と帰っていき、気づけばボックス席に彼と二人きりで残されていた。散らかったノートの向こう、「マジで頭に入んねえ……」と机に突っ伏してあくびをする彼。無防備に晒された首筋のほくろ、制服のシャツから覗く鎖骨。「お代わり取ってくるけど、メロンソーダでいい？」と立ち上がる彼のさりげない優しさ。静まり始めた夜の店内で、二人だけの時間が特別に色づき始める……。",
+  "choices": [
+    {
+      "id": "choice_0",
+      "label": "「私も全然ダメ」と向かい合って机に突っ伏し、至近距離で目を見つめ合う",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 6,
+            "shyness": 4,
+            "sexualEffects": {
+              "libido": 3,
+              "intimacy": 2
+            }
+          },
+          "narrative": "両腕を枕にして机に突っ伏すと、向かいの彼と視線の高さがぴたりと合った。間近で見つめ合う数秒間。「……なんか、照れるな」「私も」。小声で囁き合いながら、夜のファミレスの片隅で、二人だけの世界に閉じ込められたような甘い眩暈に浸った。",
+          "id": "outcome_0"
+        }
+      ]
+    },
+    {
+      "id": "choice_1",
+      "label": "「私のノート見せてあげるから、駅まで一緒に帰ってよ」と小さくおねだりする",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "happiness": 7,
+            "shyness": 3,
+            "charm": 3,
+            "sexualEffects": {
+              "libido": 2,
+              "intimacy": 3
+            }
+          },
+          "narrative": "自分のまとめたノートを差し出すと、彼は目を輝かせて「マジで！？ 助かる！ 絶対送る！」と身を乗り出してきた。勉強を口実に手に入れた夜道の帰り道。暗い夜道を二人並んで歩きながら、胸の高鳴りが止まらなかった。",
+          "id": "outcome_1"
+        }
+      ]
+    },
+    {
+      "id": "choice_2",
+      "label": "「そろそろ私たちも帰ろっか」とノートをまとめて立ち上がる",
+      "outcomes": [
+        {
+          "weight": 1,
+          "effects": {
+            "knowledge": 3,
+            "happiness": 4
+          },
+          "narrative": "遅くならないうちに勉強会をお開きにした。伝票を持ってレジに向かう彼の頼もしい後ろ姿に、友達以上の感情が静かに芽生えているのを感じた。",
+          "id": "outcome_2"
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    "meeting_classmate",
+    "closer_classmate",
+    "none"
+  ],
+  "diary": [
+    "ファミレスで勉強会をしていたら、気づけば彼と二人きりに。向かい合って机に突っ伏して見つめ合った時、心臓が爆発しそうだった。",
+    "ノートを見せてあげる代わりに夜道を一緒に帰ってもらった。暗い道で並んで歩きながら、彼のことが好きかもしれないって自覚した。"
+  ]
+});
+
+
 
